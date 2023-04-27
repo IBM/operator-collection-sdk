@@ -1,5 +1,5 @@
 # Overview
-The Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy local changes in seconds, and delete the operator once development is complete.
+The Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy your local modifications in seconds, and delete the operator once development is complete.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
