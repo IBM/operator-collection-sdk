@@ -1,0 +1,130 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Verify
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Find collections directory
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}/collections"
+      register: collections_path
+
+    - name: Assert that collections directory contains requirement files
+      ansible.builtin.assert:
+        that: 
+          - "'requirements.txt' in collections_path.files[0].path"
+          - "'requirements.yml' in collections_path.files[1].path"
+
+    - name: Read requirements.txt
+      set_fact:
+        requirementstxt: "{{ lookup('file', '{{ collections_path.files[0].path }}') }}"
+
+    - name: Assert that requirements.txt contains kubernetes module
+      ansible.builtin.assert:
+        that: 
+          - requirementstxt == "kubernetes==11.0.0"
+
+    - name: Read requirements.yml
+      set_fact:
+        requirementsyml: "{{ lookup('template', '{{ collections_path.files[1].path}}') | from_yaml }}"
+
+    - name: Assert that requirements.yml contains correct ansible requirements
+      ansible.builtin.assert:
+        that: 
+          -  "'operator_sdk.util' in requirementsyml.collections[0].name"
+          -  "'kubernetes.core' in requirementsyml.collections[1].name"
+
+    - name: Find playbooks directory
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}/playbooks"
+      register: playbooks_path
+
+    - name: Assert that playbooks directory contains playbook.yml
+      ansible.builtin.assert:
+        that: 
+          - "'playbook.yml' in playbooks_path.files[0].path"
+
+    - name: Read playbook
+      set_fact:
+        playbookyml: "{{ lookup('template', '{{ playbooks_path.files[0].path }}') | from_yaml }}"
+
+    - name: Assert that requirements.yml contains correct ansible requirements
+      ansible.builtin.assert:
+        that: 
+          -  "'all' in playbookyml[0].hosts"
+          -  "'vars/my_vars.yml' in playbookyml[0].vars_files[0]"
+
+    - name: Find roles directory
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}/playbooks/roles"
+      register: roles_path
+
+    - name: Assert that the roles directory exists
+      ansible.builtin.assert:
+        that: 
+          -  roles_path.warnings is not defined
+
+    - name: Find galaxy.yml file
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}"
+        patterns: galaxy.yml
+      register: galaxyyml
+
+    - name: Assert that the galaxy.yml file exists
+      ansible.builtin.assert:
+        that: 
+          -  galaxyyml.matched == 1
+
+    - name: Read galaxy.yml
+      set_fact:
+        galaxydata: "{{ lookup('template', '{{ galaxyyml.files[0].path }}') | from_yaml }}"
+
+    - name: Find operator-config.yml file
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}"
+        patterns: operator-config.yml
+      register: operatorconfig
+
+    - name: Assert that the operator-config.yml file exists
+      ansible.builtin.assert:
+        that: 
+          -  operatorconfig.matched == 1
+
+    - name: Read operator-config
+      set_fact:
+        operatorconfigdata: "{{ lookup('template', '{{ operatorconfig.files[0].path }}') | from_yaml }}"
+
+    - name: Assert that operator-config.yml contains correct values
+      ansible.builtin.assert:
+        that: 
+          -  operatorconfigdata.description == galaxydata.description
+          -  operatorconfigdata.version == galaxydata.version
+          -  operatorconfigdata.displayName is defined
+          -  operatorconfigdata.domain == "{{ collectionNamespace  | lower | replace('_','-') }}"
+          -  operatorconfigdata.name == "{{ collectionName  | lower | replace('_','-') }}"
+          -  operatorconfigdata.resources[0].description is defined
+          -  operatorconfigdata.resources[0].displayName is defined
+          -  operatorconfigdata.resources[0].kind is defined
+          -  operatorconfigdata.resources[0].playbook == 'playbooks/playbook.yml'
+          -  operatorconfigdata.resources[0].vars[0].description is defined
+          -  operatorconfigdata.resources[0].vars[0].displayName is defined
+          -  operatorconfigdata.resources[0].vars[0].name is defined
+          -  operatorconfigdata.resources[0].vars[0].type is defined
+
+    

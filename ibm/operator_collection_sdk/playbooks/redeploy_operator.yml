@@ -1,0 +1,151 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Upload new collection and redeploy operator
+  hosts: localhost
+  connection: local
+  gather_facts: false
+    
+  tasks:
+  - name: Set local directory
+    set_fact: 
+        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+
+  - name: Prereq Validation
+    include_role:
+      name: pre_check
+    vars:
+        path: "{{ localDirectory }}"
+
+  - name: Build Collection
+    include_role:
+      name: build_collection
+    vars:
+        path: "{{ localDirectory }}"
+
+  - name: Upload collection to manager pod
+    include_role:
+      name: upload_collection_to_manager
+    vars:
+        path: "{{ localDirectory }}"
+
+  - name: Get SubOperatorConfig
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: SubOperatorConfig
+      namespace: "{{ namespace }}"
+      label_selectors:
+        - "operator-name = {{ operatorName }}"
+    register: soc_results
+
+  - name: Validate SubOperatorConfig exists
+    fail:
+      msg: "SubOperatorConfig doesn't exist or multiple SubOperatorConfigs listed in namespace"
+    when: soc_results.resources | length == 0 or soc_results.resources | length > 1
+
+  - name: Get mapped OperatorCollection
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: OperatorCollection
+      name: "{{ soc_results.resources[0].spec.operatorCollection }}"
+      namespace: "{{ namespace }}"
+    register: oc_results
+
+  - name: Validate OperatorCollection exists
+    fail:
+      msg: "OperatorCollection doesn't exist"
+    when: oc_results.resources | length == 0 
+
+  - name: Remove OperatorCollection finalizer
+    kubernetes.core.k8s_json_patch:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: OperatorCollection
+      namespace: "{{ namespace }}"
+      name: "{{ oc_results.resources[0].metadata.name }}"
+      patch:
+        - op: replace
+          path: /metadata/finalizers
+          value: []
+
+  - name: Remove OperatorCollection
+    k8s:
+      state: absent
+      api_version: zoscb.ibm.com/v2beta2
+      kind: OperatorCollection
+      namespace: "{{ namespace }}"
+      name: "{{ oc_results.resources[0].metadata.name }}"
+
+  - name: Validate SubOperatorConfig has been removed
+    k8s:
+      state: absent
+      api_version: zoscb.ibm.com/v2beta2
+      kind: SubOperatorConfig
+      namespace: "{{ namespace }}"
+      name: "{{ soc_results.resources[0].metadata.name }}"
+      wait: yes
+      wait_sleep: 5
+      wait_timeout: 140
+
+  - name: Create OperatorCollection
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: OperatorCollection
+        metadata:
+          name: "{{ oc_results.resources[0].metadata.name }}"
+          namespace: "{{ namespace }}"
+          labels: "{{ oc_results.resources[0].metadata.labels }}"
+        spec: "{{ oc_results.resources[0].spec }}"
+
+  - name: Validate OperatorCollection installed successfully
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: OperatorCollection
+      name: "{{ oc_results.resources[0].metadata.name }}"
+      namespace: "{{ namespace }}"
+    register: updated_oc_results
+    until: "updated_oc_results.resources[0].status.phase is defined and updated_oc_results.resources[0].status.phase == 'Successful'"
+    retries: 5
+    delay: 5
+      
+  - name: Create SubOperatorConfig
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        metadata:
+          name: "{{ soc_results.resources[0].metadata.name }}"
+          namespace: "{{ namespace }}"
+          labels: "{{ soc_results.resources[0].metadata.labels }}"
+        spec: "{{ soc_results.resources[0].spec }}"
+
+  - name: Validate SubOperatorConfig installed successfully
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: SubOperatorConfig
+      name: "{{ soc_results.resources[0].metadata.name }}"
+      namespace: "{{ namespace }}"
+    register: updated_soc_results
+    until: "updated_soc_results.resources[0].status.phase is defined and updated_soc_results.resources[0].status.phase == 'Successful'"
+    retries: 30
+    delay: 5
+  
+
+
+  

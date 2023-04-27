@@ -1,0 +1,43 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Locate galaxy.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'galaxy.yml,galaxy.yaml'
+  register: galaxy_file_results
+
+- name: Validate galaxy.yml file exists in current working directory
+  fail:
+    msg: "Collection must be executed in same directory as galaxy.yml file"
+  when: galaxy_file_results.files | length == 0
+
+- name: Read galaxy.yml
+  set_fact:
+    galaxyYaml: "{{ lookup('template', '{{ galaxy_file_results.files[0].path }}')|from_yaml }}"
+
+- name: Set operator variables
+  set_fact:
+    oc_name: "{{ galaxyYaml.name | lower | replace('_','-') }}"
+    oc_domain: "{{ galaxyYaml.namespace | lower | replace('_','-') }}"
+    oc_version: "{{ galaxyYaml.version }}"
+    oc_description: "{{ galaxyYaml.description }}"
+
+- name: Generate operator-config.yml file
+  ansible.builtin.template:
+    src: templates/operator-config.j2
+    dest: "{{ path }}/operator-config.yml"
