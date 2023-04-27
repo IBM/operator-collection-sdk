@@ -1,0 +1,96 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Initialize Operator Collection
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: collectionName
+      prompt: Enter your Ansible Collection name
+      private: false
+    - name: collectionNamespace
+      prompt: Enter your Ansible Collection namespace
+      private: false
+    
+  tasks:
+  - name: Set local directory
+    set_fact: 
+        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+
+  - name: Validate ansible-galaxy CLI installation
+    command: ansible-galaxy --version
+    register: ansible_galaxy_output
+    ignore_errors: true
+  
+  - name: Fail if ansible-galaxy CLI isn't installed
+    fail:
+      msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
+    when: ansible_galaxy_output.rc != 0
+
+  - name: Initialize collection
+    command: ansible-galaxy collection init {{ collectionNamespace  | lower | replace('-','_') }}.{{ collectionName | lower | replace('-','_') }} --init-path {{ localDirectory }}
+    ignore_errors: true
+
+  - name: Create playbooks directory
+    ansible.builtin.file:
+      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/roles"
+      state: directory
+      mode: '0755'
+
+  - name: Create vars directory
+    ansible.builtin.file:
+      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/vars"
+      state: directory
+      mode: '0755'
+
+  - name: Create initial vars file
+    ansible.builtin.template:
+      src: templates/vars.j2
+      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/vars/my_vars.yml"
+
+  - name: Create initial playbook file
+    ansible.builtin.template:
+      src: templates/playbook.j2
+      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/playbook.yml"
+
+  - name: Remove roles directory
+    ansible.builtin.file:
+      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/roles"
+      state: absent
+
+  - name: Create collections directory
+    ansible.builtin.file:
+      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections"
+      state: directory
+      mode: '0755'
+
+  - name: Generate requirements.yml file
+    ansible.builtin.template:
+      src: templates/requirements-yml.j2
+      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections/requirements.yml"
+
+  - name: Generate requirements.txt file
+    ansible.builtin.template:
+      src: templates/requirements-txt.j2
+      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections/requirements.txt"
+
+  - name: Create operator-config.yml
+    include_role:
+      name: create_operator_config
+    vars:
+        path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}"
