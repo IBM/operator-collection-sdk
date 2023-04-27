@@ -1,0 +1,153 @@
+---
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+# tasks file for remove-zos-user
+- name: Delete generic profile
+  ibm.ibm_zos_core.zos_tso_command:
+    commands: "DELDSD '{{ userid | upper }}.*'"
+  ignore_errors: true
+
+- name: Remove the user
+  ibm.ibm_zos_core.zos_tso_command:
+    commands: "DELUSER ({{ userid | upper }})"
+  ignore_errors: true
+
+
+# - name: Set omvs_home_directory if not set
+#   ansible.builtin.set_fact:
+#     omvs_home_directory: "/u/{{ userid }}"
+#   when: omvs_home_directory is not defined or not omvs_home_directory
+
+# - name: Get information about the user
+#   ibm.ibm_zos_core.zos_tso_command:
+#     commands: LISTUSER ({{ userid | upper }})
+#   register: listuser_response
+#   failed_when: false
+
+# - when: '"UNABLE TO LOCATE USER" not in listuser_response.get("output", [{}])[0].get("content", [""])[0]'
+#   block:
+#     - name: Remove user from groups, assign new owner for group data sets
+#       ibm.ibm_zos_core.zos_tso_command:
+#         commands: "{{ lookup('template', '../templates/remove-from-group.j2') }}"
+#       with_items: '{{ listuser_response.get("output", [{}])[0].get("content", [""]) | user_groups }}'
+
+#     - name: Delete user data sets
+#       ansible.builtin.command: "drm {{ userid | upper }}.**"
+#       register: drm_response
+#       failed_when: drm_response.get("rc", 1) > 0 and "BGYSC1503E" not in drm_response.get("stderr", "")
+
+#     - name: Delete alias from catalog
+#       ibm.ibm_zos_core.zos_tso_command:
+#         commands: "DELETE '{{ userid | upper }}' ALIAS"
+#       ignore_errors: true
+
+#     - name: Delete generic profile
+#       ibm.ibm_zos_core.zos_tso_command:
+#         commands: "DELDSD '{{ userid | upper }}.**'"
+#       ignore_errors: true
+
+#     - name: Delete generic profile
+#       ibm.ibm_zos_core.zos_tso_command:
+#         commands: "DELDSD '{{ userid | upper }}.*'"
+#       ignore_errors: true
+
+#     - name: Remove the user
+#       ibm.ibm_zos_core.zos_tso_command:
+#         commands: "DELUSER ({{ userid | upper }})"
+
+# - name: Get information about user's home directory
+#   ansible.builtin.stat:
+#     path: "{{ omvs_home_directory }}"
+#   register: stat_response
+
+# - name: Unmount the user's ZFS data set
+#   ansible.builtin.command: /usr/sbin/unmount {{ omvs_home_directory }}
+#   when: stat_response.stat.isdir is defined and stat_response.stat.isdir
+
+# - name: Remove the user's ZFS data set
+#   ibm.ibm_zos_core.zos_data_set:
+#     name: "{{ omvs_zfs_data_set_name }}"
+#     state: absent
+
+# - name: Remove the user's omvs directory
+#   ansible.builtin.file:
+#     path: "{{ omvs_home_directory }}"
+#     state: absent
+
+# - name: Remove persistent mount
+#   when: bpxprm_member is defined and bpxprm_member
+#   block:
+#     - name: Generate tempfile to hold BPXPRMxx
+#       ansible.builtin.tempfile:
+#         state: file
+#       register: temp
+
+#     - name: Generate tempfile to hold backup
+#       ansible.builtin.tempfile:
+#         state: file
+#       register: backup
+
+#     - name: Copy BPXPRMxx member to file
+#       ansible.builtin.shell: cp "//'{{ bpxprm_data_set | upper }}(BPXPRM{{ bpxprm_member | upper }})'" {{ temp.path }}
+
+#     - name: Copy BPXPRMxx member to backup
+#       ansible.builtin.shell: cp "//'{{ bpxprm_data_set | upper }}(BPXPRM{{ bpxprm_member | upper }})'" {{ backup.path }}
+
+#     - name: Get file contents
+#       ansible.builtin.command: cat {{ temp.path }}
+#       register: cat_response
+
+#     - name: Remove mount from contents
+#       ansible.builtin.set_fact:
+#         updated_contents: "{{ cat_response.stdout | remove_mount(omvs_zfs_data_set_name, omvs_home_directory) }}"
+
+#     - name: Insert updated contents back into temp file
+#       ibm.ibm_zos_core.zos_copy:
+#         content: "{{ updated_contents }}"
+#         dest: "{{ temp.path }}"
+#         encoding:
+#           from: ISO8859-1
+#           to: "{{ target_charset }}"
+
+#     - name: Copy updated BPXPRMxx member back to data set
+#       ansible.builtin.shell: cp {{ temp.path }} "//'{{ bpxprm_data_set | upper }}(BPXPRM{{ bpxprm_member | upper }})'"
+
+#     - name: Verify updated contents are valid
+#       ibm.ibm_zos_core.zos_operator:
+#         cmd: "SETOMVS SYNTAXCHECK=({{ bpxprm_member | upper }})"
+#       register: syntaxcheck_response
+#       ignore_errors: true
+
+#     - name: Undo mount changes if bad syntaxcheck
+#       ansible.builtin.shell: cp {{ backup.path }} "//'{{ bpxprm_data_set | upper }}(BPXPRM{{ bpxprm_member | upper }})'"
+#       when: syntaxcheck_response.get("rc", 4) > 0
+
+#     - name: Assert persistent mount did not fail
+#       ansible.builtin.fail:
+#         msg: "Persistent mount updated did not pass syntax check."
+#       when: syntaxcheck_response.get("rc", 4) > 0
+#   always:
+#     - name: Remove temporary file
+#       ansible.builtin.file:
+#         path: "{{ temp.path }}"
+#         state: absent
+#       when: temp.path is defined and temp.path
+#     - name: Remove backup file
+#       ansible.builtin.file:
+#         path: "{{ backup.path }}"
+#         state: absent
+#       when: backup.path is defined and backup.path

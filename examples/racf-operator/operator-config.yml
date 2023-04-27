@@ -1,0 +1,50 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+domain: zosutils
+name: racf
+version: 0.1.0
+displayName: RACF Operator
+description: >-
+  # z/OS RACF Operator
+  
+  This operator allows users to create and delete user IDs on z/OS.
+resources:
+  - kind: ZosUserId
+    displayName: z/OS User Id
+    description: A User ID managed by the RACF security facility on z/OS.
+    playbook: playbooks/add-user.yml
+    finalizer: playbooks/remove-user.yml
+    vars:
+      - name: name
+        displayName: Real Name
+        description: Specifies the user name to be associated with the new user ID.
+        type: string
+        required: true
+      - name: userid
+        displayName: User ID
+        description: Specifies the user to be defined to RACF.
+        type: string
+        required: true
+      # - name: email_to
+      #   displayName: Email
+      #   description: Email address to send the new user credentials
+      #   type: string
+      #   required: true
+icon:
+  - base64data: >-
+      PHN2ZyBpZD0iaWNvbiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDpub25lO308L3N0eWxlPjwvZGVmcz48dGl0bGU+dXNlcjwvdGl0bGU+PHBhdGggZD0iTTE2LDRhNSw1LDAsMSwxLTUsNSw1LDUsMCwwLDEsNS01bTAtMmE3LDcsMCwxLDAsNyw3QTcsNywwLDAsMCwxNiwyWiIvPjxwYXRoIGQ9Ik0yNiwzMEgyNFYyNWE1LDUsMCwwLDAtNS01SDEzYTUsNSwwLDAsMC01LDV2NUg2VjI1YTcsNywwLDAsMSw3LTdoNmE3LDcsMCwwLDEsNyw3WiIvPjxyZWN0IGlkPSJfVHJhbnNwYXJlbnRfUmVjdGFuZ2xlXyIgZGF0YS1uYW1lPSImbHQ7VHJhbnNwYXJlbnQgUmVjdGFuZ2xlJmd0OyIgY2xhc3M9ImNscy0xIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiLz48L3N2Zz4=
+    mediatype: image/svg+xml

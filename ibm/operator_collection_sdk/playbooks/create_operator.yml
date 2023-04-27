@@ -1,0 +1,192 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Create Operator
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: zosendpointName
+      prompt: Enter your ZosEndpoint name
+      private: false
+    - name: zosendpointHost
+      prompt: Enter your ZosEndpoint host
+      private: false
+    - name: zosendpointPort
+      prompt: Enter your ZosEndpoint port
+      default: "22"
+      private: false
+    - name: username
+      prompt: Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      private: false
+    - name: ssh_key
+      prompt: Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      private: false
+    - name: passphrase
+      prompt: Enter the passphrase for the  SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      private: true
+    
+  tasks:
+  - name: Set local directory
+    set_fact: 
+        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+
+  - name: Prereq Validation
+    include_role:
+      name: pre_check
+    vars:
+        path: "{{ localDirectory }}"
+    
+  - name: Build Collection
+    include_role:
+      name: build_collection
+    vars:
+        path: "{{ localDirectory }}"
+
+  - name: Upload collection to manager pod
+    include_role:
+      name: upload_collection_to_manager
+    vars:
+        path: "{{ localDirectory }}"
+
+  - name: Set OperatorCollection name
+    set_fact:
+      operatorCollectionName: "{{ operatorName + '.' + operatorDomain + '.' + operatorVersion }}"
+
+  - name: Set Credential name
+    set_fact:
+      credentialName: "{{ zosendpointName }}-credential"
+    when: encrypt_cli_available is true
+
+  - name: Create ZosEndpoint
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: ZosEndpoint
+        metadata:
+          name: "{{ zosendpointName }}"
+          namespace: "{{ namespace }}"
+        spec:
+          host: "{{ zosendpointHost }}"
+          port: "{{ zosendpointPort|int }}"
+
+  - name: Create OperatorCollection
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: OperatorCollection
+        metadata:
+          name: "{{ operatorCollectionName }}"
+          namespace: "{{ namespace }}"
+          labels: 
+            managed-by: ibm-zos-cloud-broker
+            operator-domain: "{{ operatorDomain }}"
+            operator-name: "{{ operatorName }}"
+            operator-version: "{{ operatorVersion }}"
+        spec:
+          skipSignatureVerification: true
+
+  - name: Validate OperatorCollection installed successfully
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: OperatorCollection
+      name: "{{ operatorCollectionName }}"
+      namespace: "{{ namespace }}"
+    register: oc_results
+    until: "oc_results.resources[0].status.phase is defined and oc_results.resources[0].status.phase == 'Successful'"
+    retries: 5
+    delay: 5
+
+  - name: Create SSH Credential Secret
+    command: zoscb-encrypt credential-secret -n {{ credentialName }} -u {{ username }} -s {{ ssh_key }}
+    when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
+
+  - name: Create SSH Credential Secret with passphrase
+    shell: |
+      export PASSPHRASE={{ passphrase }}
+      zoscb-encrypt credential-secret -n {{ credentialName }} -u {{ username }} -s {{ ssh_key }} -p
+      unset PASSPHRASE
+    when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != "" 
+      
+  - name: Create SubOperatorConfig without mapped credential
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        metadata:
+          name: "{{ operatorCollectionName }}-soc"
+          namespace: "{{ namespace }}"
+          labels: 
+            managed-by: ibm-zos-cloud-broker
+            operator-domain: "{{ operatorDomain }}"
+            operator-name: "{{ operatorName }}"
+            operator-version: "{{ operatorVersion }}"
+            operatorcollection-name: "{{ operatorName }}.{{ operatorDomain }}.{{ operatorVersion }}"
+        spec:
+          credentialType: personal
+          mapping:
+            - namespace: "{{ namespace }}"
+              zosendpoints:
+                - name: "{{ zosendpointName }}"
+          operatorCollection: "{{ operatorCollectionName }}"
+    when: encrypt_cli_available is false or (username == "" and ssh_key == "")
+
+  - name: Create SubOperatorConfig with mapped credential
+    k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        metadata:
+          name: "{{ operatorCollectionName }}-soc"
+          namespace: "{{ namespace }}"
+          labels: 
+            managed-by: ibm-zos-cloud-broker
+            operator-domain: "{{ operatorDomain }}"
+            operator-name: "{{ operatorName }}"
+            operator-version: "{{ operatorVersion }}"
+            operatorcollection-name: "{{ operatorName }}.{{ operatorDomain }}.{{ operatorVersion }}"
+        spec:
+          credentialType: shared
+          mapping:
+            - namespace: "{{ namespace }}"
+              zosendpoints:
+                - name: "{{ zosendpointName }}"
+                  credentialName: "{{ credentialName }}"
+          operatorCollection: "{{ operatorCollectionName }}"
+    when: encrypt_cli_available is true and username != "" and ssh_key != "" 
+
+  - name: Validate SubOperatorConfig installed successfully
+    k8s_info:
+      api_version: zoscb.ibm.com/v2beta2
+      kind: SubOperatorConfig
+      name: "{{ operatorCollectionName }}-soc"
+      namespace: "{{ namespace }}"
+    register: soc_results
+    until: "soc_results.resources[0].status.phase is defined and soc_results.resources[0].status.phase == 'Successful'"
+    retries: 30
+    delay: 5
+    ignore_errors: true
+    no_log: true
+
+  - name: SubOperatorConfig installation status notification
+    debug:
+      msg: "Suboperator failed to install successfully after max retry attempts. Please check OCP for installation status"
+    when: "soc_results.resources[0].status.phase is not defined or soc_results.resources[0].status.phase != 'Successful'"
