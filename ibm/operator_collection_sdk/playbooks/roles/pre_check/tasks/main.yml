@@ -1,0 +1,80 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Validate OCP cluster authorization
+  command: oc project
+  register: oc_project_output
+  ignore_errors: true
+
+- name: Cluster login prompt 
+  fail:
+    msg: "Please log into an OCP cluster via the command line. (example: oc login --token=<token> --server=<server_url>)"
+  when: oc_project_output.rc != 0
+
+- name: Locate galaxy.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'galaxy.yml,galaxy.yaml'
+  register: galaxy_file_results
+
+- name: Validate galaxy.yml file exists in current working directory
+  fail:
+    msg: "Collection must be executed in same directory as galaxy.yml file"
+  when: galaxy_file_results.files | length == 0
+
+- name: Locate operator-config.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'operator-config.yml,operator-config.yaml'
+  register: oc_file_results
+
+- name: Validate operator-config.yml file exists in current working directory
+  fail:
+    msg: "operator-config.yml file must exist in current directory"
+  when: oc_file_results.files | length == 0 or oc_file_results.files | length > 1
+
+- name: Validate zoscb-encrypt CLI
+  command: zoscb-encrypt version
+  register: zoscb_encrypt_output
+  ignore_errors: true
+
+- name: Set encrypt_cli_available variable
+  set_fact: 
+    encrypt_cli_available: "{{ true if zoscb_encrypt_output.rc == 0 else false }}"  
+
+- name: Print CLI Warning
+  debug:
+    msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
+  when: encrypt_cli_available is false 
+
+- name: Read operator-config.yml
+  set_fact:
+    operatorConfig: "{{ lookup('template', '{{ oc_file_results.files[0].path }}')|from_yaml }}"
+
+- name: Set operator variables
+  set_fact:
+    operatorName: "{{ operatorConfig.name | lower }}"
+    operatorDomain: "{{ operatorConfig.domain | lower }}"
+    operatorVersion: "{{ operatorConfig.version }}"
+
+- name: Get namespace
+  command: oc config view --minify -o 'jsonpath={..namespace}'
+  register: namespace_output
+
+- name: Set namespace variable
+  set_fact:
+    namespace: "{{ namespace_output.stdout if ocpNamespace is undefined else ocpNamespace }}"

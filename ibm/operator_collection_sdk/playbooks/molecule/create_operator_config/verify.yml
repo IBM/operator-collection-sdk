@@ -1,0 +1,70 @@
+##############################################################################
+# Copyright 2023 IBM Corp. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##############################################################################
+
+---
+- name: Verify
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Find galaxy.yml file
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}"
+        patterns: galaxy.yml
+      register: galaxyyml
+
+    - name: Assert that the galaxy.yml file exists
+      ansible.builtin.assert:
+        that: 
+          -  galaxyyml.matched == 1
+
+    - name: Read galaxy.yml
+      set_fact:
+        galaxydata: "{{ lookup('template', '{{ galaxyyml.files[0].path }}') | from_yaml }}"
+
+    - name: Find operator-config.yml file
+      ansible.builtin.find:
+        paths: "{{ lookup('env', 'PWD') }}"
+        patterns: operator-config.yml
+      register: operatorconfig
+
+    - name: Assert that the operator-config.yml file exists
+      ansible.builtin.assert:
+        that: 
+          -  operatorconfig.matched == 1
+
+    - name: Read operator-config
+      set_fact:
+        operatorconfigdata: "{{ lookup('template', '{{ operatorconfig.files[0].path }}') | from_yaml }}"
+
+    - name: Assert that operator-config.yml contains correct values
+      ansible.builtin.assert:
+        that: 
+          -  operatorconfigdata.description == galaxydata.description
+          -  operatorconfigdata.version == galaxydata.version
+          -  operatorconfigdata.displayName is defined
+          -  operatorconfigdata.domain == "{{ collectionNamespace  | lower | replace('_','-') }}"
+          -  operatorconfigdata.name == "{{ collectionName  | lower | replace('_','-') }}"
+          -  operatorconfigdata.resources[0].description is defined
+          -  operatorconfigdata.resources[0].displayName is defined
+          -  operatorconfigdata.resources[0].kind is defined
+          -  operatorconfigdata.resources[0].playbook == 'playbooks/playbook.yml'
+          -  operatorconfigdata.resources[0].vars[0].description is defined
+          -  operatorconfigdata.resources[0].vars[0].displayName is defined
+          -  operatorconfigdata.resources[0].vars[0].name is defined
+          -  operatorconfigdata.resources[0].vars[0].type is defined
+
+    
