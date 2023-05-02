@@ -37,7 +37,7 @@
       prompt: Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
       private: false
     - name: passphrase
-      prompt: Enter the passphrase for the  SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      prompt: Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
       private: true
     
   tasks:
