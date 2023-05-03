@@ -21,5 +21,9 @@ This project also provides the documented Operator Collection specification, alo
 - [Lifecycle](docs/lifecycle.md)
   
 
+## How to contribute
+Check out the [contributor documentation](CONTRIBUTING.md).
+
+
 ## Copyright
 © Copyright IBM Corporation 2023.
