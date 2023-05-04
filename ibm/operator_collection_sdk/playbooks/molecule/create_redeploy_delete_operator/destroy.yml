@@ -13,6 +13,8 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
+  vars:
+    ocpNamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
     - name: Delete ZosEndpoint

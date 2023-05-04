@@ -2,11 +2,14 @@
 
 name: molecule-tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - name: Check-out repository
@@ -34,4 +37,6 @@ jobs:
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
       - name: Execute Molecule Tests
-        run: molecule test --all
+        run: |
+          cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks
+          OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
