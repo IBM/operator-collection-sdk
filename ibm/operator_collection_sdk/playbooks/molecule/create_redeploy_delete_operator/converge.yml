@@ -8,6 +8,8 @@
   hosts: all
   connection: local
   gather_facts: false
+  vars:
+    ocpNamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
     
   tasks:
     - name: Create Namespace
