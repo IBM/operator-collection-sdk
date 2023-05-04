@@ -1,0 +1,37 @@
+# Execute Molecule Tests
+
+name: molecule-tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Perform PIP installs
+        run: pip install molecule ansible molecule[docker] docker kubernetes
+      
+      - name: Install oc cli
+        uses: redhat-actions/oc-installer@v1
+        with:
+          oc_version: '4.10'
+
+      - name: Log into OCP
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+
+      - name: Execute Molecule Tests
+        run: molecule test --all
