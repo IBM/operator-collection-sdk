@@ -39,4 +39,4 @@ jobs:
       - name: Execute Molecule Tests
         run: |
           cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks
-          OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
+          ANSIBLE_PYTHON_INTERPRETER=/usr/bin/python3 OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
