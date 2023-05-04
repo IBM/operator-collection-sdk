@@ -14,7 +14,7 @@
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
   vars:
-    namespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
     - name: Delete ZosEndpoint
@@ -23,7 +23,7 @@
         api_version: zoscb.ibm.com/v2beta2
         kind: ZosEndpoint
         name: "{{ zosendpointName }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
         wait: yes
         wait_sleep: 5
         wait_timeout: 140
@@ -34,7 +34,7 @@
         api_version: zoscb.ibm.com/v2beta1
         kind: ZosCloudBroker
         name: "{{ zoscloudbrokerName }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
         wait: yes
         wait_sleep: 5
         wait_timeout: 140
@@ -45,7 +45,7 @@
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
         name: "{{ subscriptionName }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
         wait: yes
         wait_sleep: 5
         wait_timeout: 140
@@ -55,15 +55,15 @@
         state: absent
         api_version: operators.coreos.com/v1
         kind: OperatorGroup
-        name: "{{ namespace }}"
-        namespace: "{{ namespace }}"
+        name: "{{ ocpnamespace }}"
+        namespace: "{{ ocpnamespace }}"
 
 
     - name: Delete Namespace
       k8s:
         state: absent
         kind: Namespace
-        name: "{{ namespace }}"
+        name: "{{ ocpnamespace }}"
         wait: yes
         wait_sleep: 5
         wait_timeout: 140
