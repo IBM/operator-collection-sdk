@@ -1,4 +1,6 @@
 # Operator Collection SDK
+[![molecule-tests](https://github.com/IBM/operator-collection-sdk/actions/workflows/molecule-tests.yml/badge.svg)](https://github.com/IBM/operator-collection-sdk/actions/workflows/molecule-tests.yml)
+
 
 # Overview
 The Operator Collection SDK provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker which is part of the IBM Z® and Cloud Modernization Stack.

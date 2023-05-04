@@ -26,7 +26,7 @@ provisioner:
         collectionNamespace: ibm
         subscriptionName: ibm-zoscb
         zoscloudbrokerName: zoscloudbroker
-        ocpNamespace: molecule
+        ocpNamespace: ${OCP_NAMESPACE:-molecule}
         zosendpointName: ibmcloud-vm
 scenario:
   test_sequence:
