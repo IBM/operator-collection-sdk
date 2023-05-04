@@ -9,7 +9,7 @@
   connection: local
   gather_facts: false
   vars:
-    namespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
     - name: Validate ZosEndpoint
@@ -17,7 +17,7 @@
         api_version: zoscb.ibm.com/v2beta2
         kind: ZosEndpoint
         name: "{{ zosendpointName }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
       register: zosendpoint_results
       
     - name: Assert ZosEndpoint configuration
@@ -31,14 +31,14 @@
         api_version: zoscb.ibm.com/v2beta2
         kind: SubOperatorConfig
         name: "{{ zosendpoint_results.resources[0].status.suboperatorconfigs[0].name }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
       register: suboperatorconfig_results
 
     - name: Assert SubOperatorConfig configuration
       ansible.builtin.assert:
         that: 
           -  suboperatorconfig_results.resources[0].spec.credentialType == 'personal'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ namespace }}'
+          -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpointName }}'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
           -  suboperatorconfig_results.resources[0].spec.operatorCollection is defined
@@ -52,7 +52,7 @@
         api_version: zoscb.ibm.com/v2beta2
         kind: OperatorCollection
         name: "{{ suboperatorconfig_results.resources[0].spec.operatorCollection }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
       register: operatorcollection_results
 
     - name: Assert OperatorCollection configuration
@@ -68,7 +68,7 @@
         api_version: operators.coreos.com/v1alpha1
         kind: ClusterServiceVersion
         name: "{{ suboperatorconfig_results.resources[0].status.clusterserviceversion.metadata.name  }}"
-        namespace: "{{ namespace }}"
+        namespace: "{{ ocpnamespace }}"
       register: csv_results
 
     - name: Assert CSV configuration
