@@ -9,7 +9,7 @@
   connection: local
   gather_facts: false
   vars:
-    ocpNamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    namespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
     
   tasks:
     - name: Create Namespace
@@ -18,7 +18,7 @@
         definition:
           kind: Namespace
           metadata:
-            name: "{{ ocpNamespace }}"
+            name: "{{ namespace }}"
 
     - name: Create OperatorGroup
       k8s:
@@ -27,11 +27,11 @@
           apiVersion: operators.coreos.com/v1
           kind: OperatorGroup
           metadata:
-            name: "{{ ocpNamespace }}"
-            namespace: "{{ ocpNamespace }}"
+            name: "{{ namespace }}"
+            namespace: "{{ namespace }}"
           spec:
             targetNamespaces:
-              - "{{ ocpNamespace }}"
+              - "{{ namespace }}"
             upgradeStrategy: Default
 
 
@@ -43,7 +43,7 @@
           kind: Subscription
           metadata:
             name: "{{ subscriptionName }}"
-            namespace: "{{ ocpNamespace }}"
+            namespace: "{{ namespace }}"
           spec:
             channel: v2.2
             installPlanApproval: Automatic
@@ -57,7 +57,7 @@
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
         name: "{{ subscriptionName }}"
-        namespace: "{{ ocpNamespace }}"
+        namespace: "{{ namespace }}"
       register: subscription_results
       until: "subscription_results.resources[0].status.installedCSV is defined and subscription_results.resources[0].status.currentCSV"
       retries: 30
@@ -68,7 +68,7 @@
         api_version: operators.coreos.com/v1alpha1
         kind: ClusterServiceVersion
         name: "{{ subscription_results.resources[0].status.installedCSV }}"
-        namespace: "{{ ocpNamespace }}"
+        namespace: "{{ namespace }}"
       register: csv_results
       until: "csv_results.resources[0].status.phase is defined and csv_results.resources[0].status.phase == 'Succeeded'"
       retries: 30
@@ -82,7 +82,7 @@
           kind: ZosCloudBroker
           metadata:
             name: "{{ zoscloudbrokerName }}"
-            namespace: "{{ ocpNamespace }}"
+            namespace: "{{ namespace }}"
           spec:
             catalogResources: {}
             license:
@@ -101,7 +101,7 @@
         api_version: zoscb.ibm.com/v2beta1
         kind: ZosCloudBroker
         name: "{{ zoscloudbrokerName }}"
-        namespace: "{{ ocpNamespace }}"
+        namespace: "{{ namespace }}"
       register: zoscb_results
       until: "zoscb_results.resources[0].status.phase == 'Successful'"
       retries: 30
