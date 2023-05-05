@@ -12,6 +12,9 @@
       - component = manager
   register: pod_results
 
+- debug:
+    var: namespace
+    
 - name: Validate manager pod exists
   fail:
     msg: "Manager pod doesn't exist or multiple manager pods listed in namespace"
