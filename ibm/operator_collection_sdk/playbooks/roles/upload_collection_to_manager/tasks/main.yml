@@ -7,14 +7,14 @@
 - name: Get Manager Pod Name
   k8s_info:
     kind: Pod
-    namespace: "{{ namespace }}"
+    namespace: "{{ targetNamespace }}"
     label_selectors:
       - component = manager
   register: pod_results
 
 - debug:
     var: namespace
-    
+
 - name: Validate manager pod exists
   fail:
     msg: "Manager pod doesn't exist or multiple manager pods listed in namespace"
@@ -29,7 +29,7 @@
   k8s_info:
     api_version: zoscb.ibm.com/v2beta2
     kind: SubOperatorConfig
-    namespace: "{{ namespace }}"
+    namespace: "{{ targetNamespace }}"
     label_selectors:
       - "operator-name = {{ operatorName }}"
   register: soc_results
@@ -44,7 +44,7 @@
     api_version: zoscb.ibm.com/v2beta2
     kind: OperatorCollection
     name: "{{ soc_results.resources[0].spec.operatorCollection }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ targetNamespace }}"
   register: oc_results
   when: soc_results.resources | length > 0
 
