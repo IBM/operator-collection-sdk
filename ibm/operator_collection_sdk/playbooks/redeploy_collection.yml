@@ -31,6 +31,7 @@
       name: upload_collection_to_manager
     vars:
         path: "{{ localDirectory }}"
+        targetNamespace: "{{ targetNamespace }}"
 
   - name: Restart suboperator pod
     include_role:
