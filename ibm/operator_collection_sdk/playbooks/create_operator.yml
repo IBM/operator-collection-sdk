@@ -51,7 +51,7 @@
       name: upload_collection_to_manager
     vars:
         path: "{{ localDirectory }}"
-        targetNamespace: "{{ targetNamespace }}"
+        namespace: "{{ targetNamespace }}"
 
   - name: Set OperatorCollection name
     set_fact:
