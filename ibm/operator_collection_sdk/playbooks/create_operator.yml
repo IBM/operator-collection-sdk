@@ -69,7 +69,7 @@
         kind: ZosEndpoint
         metadata:
           name: "{{ zosendpointName }}"
-          namespace: "{{ namespace }}"
+          namespace: "{{ targetNamespace }}"
         spec:
           host: "{{ zosendpointHost }}"
           port: "{{ zosendpointPort|int }}"
@@ -82,7 +82,7 @@
         kind: OperatorCollection
         metadata:
           name: "{{ operatorCollectionName }}"
-          namespace: "{{ namespace }}"
+          namespace: "{{ targetNamespace }}"
           labels: 
             managed-by: ibm-zos-cloud-broker
             operator-domain: "{{ operatorDomain }}"
@@ -96,7 +96,7 @@
       api_version: zoscb.ibm.com/v2beta2
       kind: OperatorCollection
       name: "{{ operatorCollectionName }}"
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
     register: oc_results
     until: "oc_results.resources[0].status.phase is defined and oc_results.resources[0].status.phase == 'Successful'"
     retries: 5
@@ -121,7 +121,7 @@
         kind: SubOperatorConfig
         metadata:
           name: "{{ operatorCollectionName }}-soc"
-          namespace: "{{ namespace }}"
+          namespace: "{{ targetNamespace }}"
           labels: 
             managed-by: ibm-zos-cloud-broker
             operator-domain: "{{ operatorDomain }}"
@@ -131,7 +131,7 @@
         spec:
           credentialType: personal
           mapping:
-            - namespace: "{{ namespace }}"
+            - namespace: "{{ targetNamespace }}"
               zosendpoints:
                 - name: "{{ zosendpointName }}"
           operatorCollection: "{{ operatorCollectionName }}"
@@ -145,7 +145,7 @@
         kind: SubOperatorConfig
         metadata:
           name: "{{ operatorCollectionName }}-soc"
-          namespace: "{{ namespace }}"
+          namespace: "{{ targetNamespace }}"
           labels: 
             managed-by: ibm-zos-cloud-broker
             operator-domain: "{{ operatorDomain }}"
@@ -155,7 +155,7 @@
         spec:
           credentialType: shared
           mapping:
-            - namespace: "{{ namespace }}"
+            - namespace: "{{ targetNamespace }}"
               zosendpoints:
                 - name: "{{ zosendpointName }}"
                   credentialName: "{{ credentialName }}"
@@ -167,7 +167,7 @@
       api_version: zoscb.ibm.com/v2beta2
       kind: SubOperatorConfig
       name: "{{ operatorCollectionName }}-soc"
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
     register: soc_results
     until: "soc_results.resources[0].status.phase is defined and soc_results.resources[0].status.phase == 'Successful'"
     retries: 30
