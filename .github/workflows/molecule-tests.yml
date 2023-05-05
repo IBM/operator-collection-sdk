@@ -22,7 +22,7 @@ jobs:
           cache: 'pip'
 
       - name: Perform PIP installs
-        run: pip install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
+        run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
       
       - name: Install oc cli
         uses: redhat-actions/oc-installer@v1
