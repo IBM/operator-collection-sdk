@@ -12,8 +12,9 @@
       - component = manager
   register: pod_results
 
-- debug:
-    var: namespace
+- name: Debug namespace
+  debug:
+    var: targetNamespace
 
 - name: Validate manager pod exists
   fail:
