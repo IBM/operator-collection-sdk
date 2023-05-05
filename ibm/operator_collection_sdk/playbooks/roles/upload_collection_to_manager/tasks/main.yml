@@ -12,6 +12,10 @@
       - component = manager
   register: pod_results
 
+- name: Debug namespace
+  debug:
+    var: ns
+
 - name: Debug pod_results
   debug:
     var: pod_results
