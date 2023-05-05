@@ -31,10 +31,10 @@
       name: upload_collection_to_manager
     vars:
         path: "{{ localDirectory }}"
-        namespace: "{{ targetNamespace }}"
+        ns: "{{ targetNamespace }}"
 
   - name: Restart suboperator pod
     include_role:
       name: restart_suboperator_pod
     vars:
-      namespace: "{{ targetNamespace }}"
+      ns: "{{ targetNamespace }}"
