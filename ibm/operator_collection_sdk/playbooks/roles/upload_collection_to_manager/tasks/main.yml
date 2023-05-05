@@ -7,7 +7,7 @@
 - name: Get Manager Pod Name
   k8s_info:
     kind: Pod
-    namespace: "{{ ns }}"
+    namespace: "{{ namespace }}"
     label_selectors:
       - component = manager
   register: pod_results
@@ -34,7 +34,7 @@
   k8s_info:
     api_version: zoscb.ibm.com/v2beta2
     kind: SubOperatorConfig
-    namespace: "{{ ns }}"
+    namespace: "{{ namespace }}"
     label_selectors:
       - "operator-name = {{ operatorName }}"
   register: soc_results
@@ -49,7 +49,7 @@
     api_version: zoscb.ibm.com/v2beta2
     kind: OperatorCollection
     name: "{{ soc_results.resources[0].spec.operatorCollection }}"
-    namespace: "{{ ns }}"
+    namespace: "{{ namespace }}"
   register: oc_results
   when: soc_results.resources | length > 0
 
