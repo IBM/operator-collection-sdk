@@ -24,7 +24,7 @@
     k8s_info:
       api_version: zoscb.ibm.com/v2beta2
       kind: SubOperatorConfig
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
       label_selectors:
         - "operator-name = {{ operatorName }}"
     register: soc_results
@@ -43,7 +43,7 @@
       api_version: zoscb.ibm.com/v2beta2
       kind: OperatorCollection
       name: "{{ soc_results.resources[0].spec.operatorCollection }}"
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
     register: oc_results
     when: socExists is true
 
@@ -51,7 +51,7 @@
     kubernetes.core.k8s_json_patch:
       api_version: zoscb.ibm.com/v2beta2
       kind: OperatorCollection
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
       name: "{{ oc_results.resources[0].metadata.name }}"
       patch:
         - op: replace
@@ -64,7 +64,7 @@
       state: absent
       api_version: zoscb.ibm.com/v2beta2
       kind: OperatorCollection
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
       name: "{{ oc_results.resources[0].metadata.name }}"
     when: socExists is true
 
@@ -73,7 +73,7 @@
       state: absent
       api_version: zoscb.ibm.com/v2beta2
       kind: SubOperatorConfig
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
       name: "{{ soc_results.resources[0].metadata.name }}"
       wait: yes
       wait_sleep: 5
@@ -84,7 +84,7 @@
     k8s:
       state: absent
       kind: Secret
-      namespace: "{{ namespace }}"
+      namespace: "{{ targetNamespace }}"
       name: "{{ item.credentialName }}"
     with_items: "{{ soc_results.resources[0].spec.mapping[0].zosendpoints }}"
     when: socExists is true
