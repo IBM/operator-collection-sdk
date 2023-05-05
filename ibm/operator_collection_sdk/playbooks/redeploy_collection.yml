@@ -29,7 +29,6 @@
   - name: Upload collection to manager pod
     include_role:
       name: upload_collection_to_manager
-    static: no
     vars:
         path: "{{ localDirectory }}"
         ns: "{{ targetNamespace }}"
