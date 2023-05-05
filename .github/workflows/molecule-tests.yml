@@ -34,7 +34,6 @@ jobs:
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          namespace: default
 
       - name: Execute Molecule Tests
         run: |
