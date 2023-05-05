@@ -7,7 +7,8 @@
 - name: Get Manager Pod Name
   k8s_info:
     kind: Pod
-    namespace: "{{ namespace }}"
+    # namespace: "{{ namespace }}"
+    namespace: molecule-github-actions-linux
     label_selectors:
       - component = manager
   register: pod_results
