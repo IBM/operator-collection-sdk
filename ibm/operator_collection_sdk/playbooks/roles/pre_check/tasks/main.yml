@@ -66,4 +66,4 @@
 
 - name: Set namespace variable
   set_fact:
-    namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
+    targetNamespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"

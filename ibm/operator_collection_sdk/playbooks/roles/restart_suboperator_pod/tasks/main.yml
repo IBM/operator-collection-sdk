@@ -7,7 +7,7 @@
 - name: Get SubOperator Pod Name
   k8s_info:
     kind: Pod
-    namespace: "{{ namespace }}"
+    namespace: "{{ targetNamespace }}"
     label_selectors:
       - "operator-name = {{ operatorName }}"
   register: suboperator_pod_results
@@ -22,7 +22,7 @@
     state: absent
     kind: Pod
     name: "{{ suboperator_pod_results.resources[0].metadata.name }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ targetNamespace }}"
   with_items: "{{ suboperator_pod_results.resources }}"
   when: item.metadata.deletionTimestamp is not defined
   no_log: true
