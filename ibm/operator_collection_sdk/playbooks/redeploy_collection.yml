@@ -36,4 +36,5 @@
   - name: Restart suboperator pod
     include_role:
       name: restart_suboperator_pod
+    vars:
       namespace: "{{ targetNamespace }}"
