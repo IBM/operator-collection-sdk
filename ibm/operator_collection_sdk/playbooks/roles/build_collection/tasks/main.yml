@@ -5,4 +5,4 @@
 
 ---
 - name: Build Collection
-  command: ansible-galaxy collection build {{ path }} -f --output-path {{ path }}/local/builds/{{ operatorVersion }}
+  ansible.builtin.command: ansible-galaxy collection build {{ path }} -f --output-path {{ path }}/local/builds/{{ operator_version }}

@@ -13,6 +13,6 @@
   tasks:
     - name: Remove collection directory
       ansible.builtin.file:
-        path: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}"
+        path: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}"
         state: absent
 

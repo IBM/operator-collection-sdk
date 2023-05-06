@@ -8,84 +8,84 @@
   hosts: localhost
   connection: local
   gather_facts: false
-    
+
   tasks:
-  - name: Set local directory
-    set_fact: 
-        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-  - name: Prereq Validation
-    include_role:
-      name: pre_check
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Prereq Validation
+      ansible.builtin.include_role:
+        name: pre_check
+      vars:
+        path: "{{ local_directory }}"
 
-  - name: Get SubOperatorConfig
-    k8s_info:
-      api_version: zoscb.ibm.com/v2beta2
-      kind: SubOperatorConfig
-      namespace: "{{ targetNamespace }}"
-      label_selectors:
-        - "operator-name = {{ operatorName }}"
-    register: soc_results
+    - name: Get SubOperatorConfig
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ target_namespace }}"
+        label_selectors:
+          - "operator-name = {{ operator_name }}"
+      register: soc_results
 
-  - name: Validate SubOperatorConfig exists
-    debug:
-      msg: "SubOperatorConfig doesn't exist or multiple SubOperatorConfigs listed in namespace"
-    when: soc_results.resources | length == 0 or soc_results.resources | length > 1
+    - name: Validate SubOperatorConfig exists
+      ansible.builtin.debug:
+        msg: "SubOperatorConfig doesn't exist or multiple SubOperatorConfigs listed in namespace"
+      when: soc_results.resources | length == 0 or soc_results.resources | length > 1
 
-  - name: Set subOperatorConfig exists flag
-    set_fact:
-      socExists: "{{ true if soc_results.resources | length == 1 else false }}"
+    - name: Set subOperatorConfig exists flag
+      ansible.builtin.set_fact:
+        soc_exists: "{{ true if soc_results.resources | length == 1 else false }}"
 
-  - name: Get mapped OperatorCollection
-    k8s_info:
-      api_version: zoscb.ibm.com/v2beta2
-      kind: OperatorCollection
-      name: "{{ soc_results.resources[0].spec.operatorCollection }}"
-      namespace: "{{ targetNamespace }}"
-    register: oc_results
-    when: socExists is true
+    - name: Get mapped OperatorCollection
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: OperatorCollection
+        name: "{{ soc_results.resources[0].spec.operatorCollection }}"
+        namespace: "{{ target_namespace }}"
+      register: oc_results
+      when: soc_exists is true
 
-  - name: Remove OperatorCollection finalizer
-    kubernetes.core.k8s_json_patch:
-      api_version: zoscb.ibm.com/v2beta2
-      kind: OperatorCollection
-      namespace: "{{ targetNamespace }}"
-      name: "{{ oc_results.resources[0].metadata.name }}"
-      patch:
-        - op: replace
-          path: /metadata/finalizers
-          value: []
-    when: socExists is true
+    - name: Remove OperatorCollection finalizer
+      kubernetes.core.k8s_json_patch:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: OperatorCollection
+        namespace: "{{ target_namespace }}"
+        name: "{{ oc_results.resources[0].metadata.name }}"
+        patch:
+          - op: replace
+            path: /metadata/finalizers
+            value: []
+      when: soc_exists is true
 
-  - name: Remove OperatorCollection
-    k8s:
-      state: absent
-      api_version: zoscb.ibm.com/v2beta2
-      kind: OperatorCollection
-      namespace: "{{ targetNamespace }}"
-      name: "{{ oc_results.resources[0].metadata.name }}"
-    when: socExists is true
+    - name: Remove OperatorCollection
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta2
+        kind: OperatorCollection
+        namespace: "{{ target_namespace }}"
+        name: "{{ oc_results.resources[0].metadata.name }}"
+      when: soc_exists is true
 
-  - name: Validate SubOperatorConfig has been removed
-    k8s:
-      state: absent
-      api_version: zoscb.ibm.com/v2beta2
-      kind: SubOperatorConfig
-      namespace: "{{ targetNamespace }}"
-      name: "{{ soc_results.resources[0].metadata.name }}"
-      wait: yes
-      wait_sleep: 5
-      wait_timeout: 140
-    when: socExists is true
+    - name: Validate SubOperatorConfig has been removed
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ target_namespace }}"
+        name: "{{ soc_results.resources[0].metadata.name }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      when: soc_exists is true
 
-  - name: Remove Credential Secret
-    k8s:
-      state: absent
-      kind: Secret
-      namespace: "{{ targetNamespace }}"
-      name: "{{ item.credentialName }}"
-    with_items: "{{ soc_results.resources[0].spec.mapping[0].zosendpoints }}"
-    when: socExists is true
-    ignore_errors: true
+    - name: Remove Credential Secret
+      kubernetes.core.k8s:
+        state: absent
+        kind: Secret
+        namespace: "{{ target_namespace }}"
+        name: "{{ item.credential_name }}"
+      with_items: "{{ soc_results.resources[0].spec.mapping[0].zosendpoints }}"
+      when: soc_exists is true
+      ignore_errors: true

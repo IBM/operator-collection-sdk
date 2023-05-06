@@ -13,10 +13,10 @@
 
   tasks:
     - name: Validate ZosEndpoint
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
         kind: ZosEndpoint
-        name: "{{ zosendpointName }}"
+        name: "{{ zosendpoint_name }}"
         namespace: "{{ ocpnamespace }}"
       register: zosendpoint_results
       
@@ -27,7 +27,7 @@
           -  zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
 
     - name: Validate SubOperatorConfig
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
         kind: SubOperatorConfig
         name: "{{ zosendpoint_results.resources[0].status.suboperatorconfigs[0].name }}"
@@ -39,7 +39,7 @@
         that: 
           -  suboperatorconfig_results.resources[0].spec.credentialType == 'personal'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpointName }}'
+          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpoint_name }}'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
           -  suboperatorconfig_results.resources[0].spec.operatorCollection is defined
           -  suboperatorconfig_results.resources[0].status.phase == 'Successful'
@@ -48,7 +48,7 @@
           -  suboperatorconfig_results.resources[0].status.packages is defined
 
     - name: Validate OperatorCollection
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
         kind: OperatorCollection
         name: "{{ suboperatorconfig_results.resources[0].spec.operatorCollection }}"
@@ -64,7 +64,7 @@
           -  operatorcollection_results.resources[0].status.subOperatorConfigMappingStatus | length == 1
 
     - name: Validate CSV
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
         kind: ClusterServiceVersion
         name: "{{ suboperatorconfig_results.resources[0].status.clusterserviceversion.metadata.name  }}"

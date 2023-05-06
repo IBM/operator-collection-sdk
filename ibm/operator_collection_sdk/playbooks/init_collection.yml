@@ -9,77 +9,82 @@
   connection: local
   gather_facts: false
   vars_prompt:
-    - name: collectionName
+    - name: collection_name
       prompt: Enter your Ansible Collection name
       private: false
-    - name: collectionNamespace
+    - name: collection_namespace
       prompt: Enter your Ansible Collection namespace
       private: false
-    
+
   tasks:
-  - name: Set local directory
-    set_fact: 
-        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-  - name: Validate ansible-galaxy CLI installation
-    command: ansible-galaxy --version
-    register: ansible_galaxy_output
-    ignore_errors: true
-  
-  - name: Fail if ansible-galaxy CLI isn't installed
-    fail:
-      msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
-    when: ansible_galaxy_output.rc != 0
+    - name: Validate ansible-galaxy CLI installation
+      ansible.builtin.command: ansible-galaxy --version
+      register: ansible_galaxy_output
+      ignore_errors: true
 
-  - name: Initialize collection
-    command: ansible-galaxy collection init {{ collectionNamespace  | lower | replace('-','_') }}.{{ collectionName | lower | replace('-','_') }} --init-path {{ localDirectory }}
-    ignore_errors: true
+    - name: Fail if ansible-galaxy CLI isn't installed
+      ansible.builtin.fail:
+        msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
+      when: ansible_galaxy_output.rc != 0
 
-  - name: Create playbooks directory
-    ansible.builtin.file:
-      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/roles"
-      state: directory
-      mode: '0755'
+    - name: Initialize collection
+      ansible.builtin.command: ansible-galaxy collection init {{ collection_namespace | lower | replace('-', '_') }}.{{ collection_name | lower | replace('-', '_') }} --init-path {{ local_directory }}
+      ignore_errors: true
 
-  - name: Create vars directory
-    ansible.builtin.file:
-      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/vars"
-      state: directory
-      mode: '0755'
+    - name: Create playbooks directory
+      ansible.builtin.file:
+        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/roles"
+        state: directory
+        mode: '0755'
 
-  - name: Create initial vars file
-    ansible.builtin.template:
-      src: templates/vars.j2
-      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/vars/my_vars.yml"
+    - name: Create vars directory
+      ansible.builtin.file:
+        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/vars"
+        state: directory
+        mode: '0755'
 
-  - name: Create initial playbook file
-    ansible.builtin.template:
-      src: templates/playbook.j2
-      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/playbooks/playbook.yml"
+    - name: Create initial vars file
+      ansible.builtin.template:
+        src: templates/vars.j2
+        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/vars/my_vars.yml"
+        mode: '0644'
 
-  - name: Remove roles directory
-    ansible.builtin.file:
-      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/roles"
-      state: absent
+    - name: Create initial playbook file
+      ansible.builtin.template:
+        src: templates/playbook.j2
+        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/playbook.yml"
+        mode: '0644'
 
-  - name: Create collections directory
-    ansible.builtin.file:
-      path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections"
-      state: directory
-      mode: '0755'
+    - name: Remove roles directory
+      ansible.builtin.file:
+        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/roles"
+        state: absent
+        mode: '0755'
 
-  - name: Generate requirements.yml file
-    ansible.builtin.template:
-      src: templates/requirements-yml.j2
-      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections/requirements.yml"
+    - name: Create collections directory
+      ansible.builtin.file:
+        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections"
+        state: directory
+        mode: '0755'
 
-  - name: Generate requirements.txt file
-    ansible.builtin.template:
-      src: templates/requirements-txt.j2
-      dest: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}/collections/requirements.txt"
+    - name: Generate requirements.yml file
+      ansible.builtin.template:
+        src: templates/requirements-yml.j2
+        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections/requirements.yml"
+        mode: '0644'
 
-  - name: Create operator-config.yml
-    include_role:
-      name: create_operator_config
-    vars:
-        path: "{{ localDirectory }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName | lower | replace('-','_') }}"
+    - name: Generate requirements.txt file
+      ansible.builtin.template:
+        src: templates/requirements-txt.j2
+        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections/requirements.txt"
+        mode: '0644'
+
+    - name: Create operator-config.yml
+      ansible.builtin.include_role:
+        name: create_operator_config
+      vars:
+        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}"
