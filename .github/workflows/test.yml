@@ -1,12 +1,15 @@
 # Execute Molecule Tests
 
-name: molecule-tests
+name: Test
 
 on: [push, pull_request]
 
 jobs:
   test:
+    name: Test
+    
     runs-on: ${{matrix.os}}
+
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
