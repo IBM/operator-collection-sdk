@@ -71,6 +71,10 @@
         namespace: "{{ ocpnamespace }}"
       register: csv_results
 
+    - name: Print csv_results
+      debug:
+        var: csv_results
+
     - name: Assert CSV configuration
       ansible.builtin.assert:
         that: 
