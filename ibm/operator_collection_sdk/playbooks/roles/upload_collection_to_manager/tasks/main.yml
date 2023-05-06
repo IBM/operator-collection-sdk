@@ -12,14 +12,6 @@
       - component = manager
   register: pod_results
 
-- name: Debug namespace
-  debug:
-    var: ns
-
-- name: Debug pod_results
-  debug:
-    var: pod_results
-
 - name: Validate manager pod exists
   fail:
     msg: "Manager pod doesn't exist or multiple manager pods listed in namespace"

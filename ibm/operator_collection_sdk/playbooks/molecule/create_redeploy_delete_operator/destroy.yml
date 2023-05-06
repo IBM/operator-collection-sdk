@@ -8,6 +8,7 @@
   import_playbook: ../../delete_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 - name: Destroy
   hosts: localhost
   connection: local
