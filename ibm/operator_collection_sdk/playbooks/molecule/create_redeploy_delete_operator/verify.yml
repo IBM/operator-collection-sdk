@@ -73,10 +73,7 @@
       until: "csv_results.resources[0].status.phase == 'Succeeded'"
       retries: 30
       delay: 5
-
-    - name: Print csv_results
-      debug:
-        var: csv_results
+      no_log: true
 
     - name: Assert CSV configuration
       ansible.builtin.assert:
