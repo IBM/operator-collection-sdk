@@ -63,7 +63,7 @@
     - name: Assert that playbooks directory contains playbook.yml
       ansible.builtin.assert:
         that: 
-          - "'playbook.yml' in playbooks_path.files"
+          - "'playbook.yml' in item.path"
       with_items: "{{ playbooks_path.files }}"
       when:  "'playbook.yml' in item.path"
 
