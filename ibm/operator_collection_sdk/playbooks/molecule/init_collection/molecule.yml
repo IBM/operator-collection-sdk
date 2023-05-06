@@ -18,8 +18,8 @@ provisioner:
   inventory:
     group_vars:
       all:
-        collectionName: test_collection
-        collectionNamespace: ibm
+        collection_name: test_collection
+        collection_namespace: ibm
 scenario:
   test_sequence:
     - destroy

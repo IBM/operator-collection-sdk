@@ -22,12 +22,12 @@ provisioner:
   inventory:
     group_vars:
       all:
-        collectionName: test_collection
-        collectionNamespace: ibm
-        subscriptionName: ibm-zoscb
-        zoscloudbrokerName: zoscloudbroker
+        collection_name: test_collection
+        collection_namespace: ibm
+        subscription_name: ibm-zoscb
+        zoscloudbroker_name: zoscloudbroker
         ocpNamespace: ${OCP_NAMESPACE:-molecule}
-        zosendpointName: ibmcloud-vm
+        zosendpoint_name: ibmcloud-vm
 scenario:
   test_sequence:
     - destroy
