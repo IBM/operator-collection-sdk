@@ -24,6 +24,7 @@
           - "'requirements.txt' in item.path"
       with_items: "{{ collections_path.files }}"
       when:  "'requirements.txt' in item.path"
+      no_log: true
 
     - name: Assert that collections directory contains requirement.yml file
       ansible.builtin.assert:
@@ -31,12 +32,14 @@
           - "'requirements.yml' in item.path"
       with_items: "{{ collections_path.files }}"
       when:  "'requirements.yml' in item.path"
+      no_log: true
 
     - name: Read requirements.txt
       set_fact:
         requirementstxt: "{{ lookup('file', '{{ item.path }}') }}"
       with_items: "{{ collections_path.files }}"
       when:  "'requirements.txt' in item.path"
+      no_log: true
 
     - name: Assert that requirements.txt contains kubernetes module
       ansible.builtin.assert:
@@ -48,6 +51,7 @@
         requirementsyml: "{{ lookup('template', '{{ item.path }}') | from_yaml }}"
       with_items: "{{ collections_path.files }}"
       when:  "'requirements.yml' in item.path"
+      no_log: true
 
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
@@ -64,12 +68,16 @@
       ansible.builtin.assert:
         that: 
           - "'playbook.yml' in playbooks_path.files"
+      with_items: "{{ playbooks_path.files }}"
+      when:  "'playbook.yml' in item.path"
+      no_log: true
 
     - name: Read playbook
       set_fact:
         playbookyml: "{{ lookup('template', '{{ item.path }}') | from_yaml }}"
       with_items: "{{ playbooks_path.files }}"
-      when:  "'playbook.yml' in item.path"    
+      when:  "'playbook.yml' in item.path"
+      no_log: true  
 
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
