@@ -18,11 +18,19 @@
       debug: 
         var: collections_path
 
-    - name: Assert that collections directory contains requirement files
+    - name: Assert that collections directory contains requirement.txt file
       ansible.builtin.assert:
         that: 
-          - "'requirements.txt' in collections_path.files"
-          - "'requirements.yml' in collections_path.files"
+          - "'requirements.txt' in item.path"
+      with_items: "{{ collections_path.files }}"
+      when:  "'requirements.txt' in item.path"
+
+    - name: Assert that collections directory contains requirement.yml file
+      ansible.builtin.assert:
+        that: 
+          - "'requirements.yml' in item.path"
+      with_items: "{{ collections_path.files }}"
+      when:  "'requirements.yml' in item.path"
 
     - name: Read requirements.txt
       set_fact:
