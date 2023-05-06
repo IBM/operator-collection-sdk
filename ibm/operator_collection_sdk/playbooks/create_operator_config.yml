@@ -8,25 +8,25 @@
   hosts: localhost
   connection: local
   gather_facts: false
-    
+
   tasks:
-  - name: Set local directory
-    set_fact: 
-        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-  - name: Locate existing operator-config.yml
-    ansible.builtin.find:
-      paths: "{{ localDirectory }}"
-      patterns: 'operator-config.yml,operator-config.yaml'
-    register: oc_file_results
+    - name: Locate existing operator-config.yml
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'operator-config.yml,operator-config.yaml'
+      register: oc_file_results
 
-  - name: Validate if operator-config already exists
-    fail:
-      msg: "operator-config.yml already exists in current directory"
-    when: oc_file_results.files | length > 0
+    - name: Validate if operator-config already exists
+      ansible.builtin.fail:
+        msg: "operator-config.yml already exists in current directory"
+      when: oc_file_results.files | length > 0
 
-  - name: Create operator-config.yml
-    include_role:
-      name: create_operator_config
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Create operator-config.yml
+      ansible.builtin.include_role:
+        name: create_operator_config
+      vars:
+        path: "{{ local_directory }}"

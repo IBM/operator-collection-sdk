@@ -19,40 +19,40 @@
 
   tasks:
     - name: Delete ZosEndpoint
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         api_version: zoscb.ibm.com/v2beta2
         kind: ZosEndpoint
-        name: "{{ zosendpointName }}"
+        name: "{{ zosendpoint_name }}"
         namespace: "{{ ocpnamespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 5
         wait_timeout: 140
 
     - name: Delete ZosCloudBoker
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         api_version: zoscb.ibm.com/v2beta1
         kind: ZosCloudBroker
-        name: "{{ zoscloudbrokerName }}"
+        name: "{{ zoscloudbroker_name }}"
         namespace: "{{ ocpnamespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 5
         wait_timeout: 140
 
     - name: Delete Subscripton
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
-        name: "{{ subscriptionName }}"
+        name: "{{ subscription_name }}"
         namespace: "{{ ocpnamespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 5
         wait_timeout: 140
 
     - name: Delete OperatorGroup
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         api_version: operators.coreos.com/v1
         kind: OperatorGroup
@@ -61,11 +61,11 @@
 
 
     - name: Delete Namespace
-      k8s:
+      kubernetes.core.k8s:
         state: absent
         kind: Namespace
         name: "{{ ocpnamespace }}"
-        wait: yes
+        wait: true
         wait_sleep: 5
         wait_timeout: 140
 
