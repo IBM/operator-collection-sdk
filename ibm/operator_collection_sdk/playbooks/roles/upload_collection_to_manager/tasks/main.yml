@@ -5,7 +5,7 @@
 
 ---
 - name: Get Manager Pod Name
-  k8s_info:
+  kubernetes.core.k8s_info:
     kind: Pod
     namespace: "{{ namespace }}"
     label_selectors:
@@ -13,31 +13,31 @@
   register: pod_results
 
 - name: Validate manager pod exists
-  fail:
+  ansible.builtin.fail:
     msg: "Manager pod doesn't exist or multiple manager pods listed in namespace"
   when: pod_results.resources | length == 0 or pod_results.resources | length > 1
 
 - name: Get collection filepath
-  find:
-    paths: "{{ path }}/local/builds/{{ operatorVersion }}"
+  ansible.builtin.find:
+    paths: "{{ path }}/local/builds/{{ operator_version }}"
   register: find_result
 
 - name: Get SubOperatorConfig
-  k8s_info:
+  kubernetes.core.k8s_info:
     api_version: zoscb.ibm.com/v2beta2
     kind: SubOperatorConfig
     namespace: "{{ namespace }}"
     label_selectors:
-      - "operator-name = {{ operatorName }}"
+      - "operator-name = {{ operator_name }}"
   register: soc_results
 
 - name: Validate SubOperatorConfig exists
-  debug:
+  ansible.builtin.debug:
     msg: "SubOperatorConfig doesn't exist or multiple SubOperatorConfigs listed in namespace"
   when: soc_results.resources | length == 0 or soc_results.resources | length > 1
 
 - name: Get collection file path in manager Pod
-  k8s_info:
+  kubernetes.core.k8s_info:
     api_version: zoscb.ibm.com/v2beta2
     kind: OperatorCollection
     name: "{{ soc_results.resources[0].spec.operatorCollection }}"
@@ -46,18 +46,18 @@
   when: soc_results.resources | length > 0
 
 - name: Validate OperatorCollection exists
-  fail:
+  ansible.builtin.fail:
     msg: "OperatorCollection doesn't exist"
-  when:  soc_results.resources | length > 0 and oc_results.resources | length == 0 
+  when: soc_results.resources | length > 0 and oc_results.resources | length == 0
 
 - name: Copy local build to manager pod
-  command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":"{{ oc_results.resources[0].status.config.collectionPath }}"
-  when:  soc_results.resources | length > 0 and oc_results.resources | length > 0 
+  ansible.builtin.command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":"{{ oc_results.resources[0].status.config.collectionPath }}"
+  when: soc_results.resources | length > 0 and oc_results.resources | length > 0
 
 - name: Create directory on pod if doesn't exist
-  command: oc exec -i -n "{{ pod_results.resources[0].metadata.namespace }}" "{{ pod_results.resources[0].metadata.name }}" -- mkdir -p /opt/collections/suboperator/{{ operatorName }}/{{ operatorVersion }}
-  when:  soc_results.resources | length == 0
+  ansible.builtin.command: oc exec -i -n "{{ pod_results.resources[0].metadata.namespace }}" "{{ pod_results.resources[0].metadata.name }}" -- mkdir -p /opt/collections/suboperator/{{ operator_name }}/{{ operator_version }}
+  when: soc_results.resources | length == 0
 
 - name: Copy local build to manager pod during initial operator creation
-  command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":/opt/collections/suboperator/{{ operatorName }}/{{ operatorVersion }}/{{ find_result.files[0].path | basename }}
-  when:  soc_results.resources | length == 0
+  ansible.builtin.command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":/opt/collections/suboperator/{{ operator_name }}/{{ operator_version }}/{{ find_result.files[0].path | basename }}
+  when: soc_results.resources | length == 0

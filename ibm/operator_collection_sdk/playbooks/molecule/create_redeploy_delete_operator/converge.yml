@@ -13,7 +13,7 @@
     
   tasks:
     - name: Create Namespace
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           kind: Namespace
@@ -21,7 +21,7 @@
             name: "{{ ocpnamespace }}"
 
     - name: Create OperatorGroup
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: operators.coreos.com/v1
@@ -36,13 +36,13 @@
 
 
     - name: Create Subscripton
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
           metadata:
-            name: "{{ subscriptionName }}"
+            name: "{{ subscription_name }}"
             namespace: "{{ ocpnamespace }}"
           spec:
             channel: v2.2
@@ -53,10 +53,10 @@
             startingCSV: ibm-zoscb.v2.2.0
 
     - name: Validate Subscription installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
-        name: "{{ subscriptionName }}"
+        name: "{{ subscription_name }}"
         namespace: "{{ ocpnamespace }}"
       register: subscription_results
       until: "subscription_results.resources[0].status.installedCSV is defined and subscription_results.resources[0].status.currentCSV"
@@ -64,7 +64,7 @@
       delay: 5
 
     - name: Validate CSV installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
         kind: ClusterServiceVersion
         name: "{{ subscription_results.resources[0].status.installedCSV }}"
@@ -75,13 +75,13 @@
       delay: 5
 
     - name: Create ZosCloudBoker
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: zoscb.ibm.com/v2beta1
           kind: ZosCloudBroker
           metadata:
-            name: "{{ zoscloudbrokerName }}"
+            name: "{{ zoscloudbroker_name }}"
             namespace: "{{ ocpnamespace }}"
           spec:
             catalogResources: {}
@@ -97,10 +97,10 @@
             uiResources: {}
 
     - name: Validate ZosCloudBroker installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta1
         kind: ZosCloudBroker
-        name: "{{ zoscloudbrokerName }}"
+        name: "{{ zoscloudbroker_name }}"
         namespace: "{{ ocpnamespace }}"
       register: zoscb_results
       until: "zoscb_results.resources[0].status.phase == 'Successful'"
