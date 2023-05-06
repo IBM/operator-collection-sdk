@@ -17,8 +17,24 @@ on: [push, pull_request]
 #       - v1.*
 
 jobs:
+  lint:
+    name: Lint
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint-action@v6
+        with:
+          path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/"
+
   test:
     name: Test
+
+    needs: lint
 
     runs-on: ${{matrix.os}}
 
@@ -29,11 +45,6 @@ jobs:
     steps:
       - name: Check-out repository
         uses: actions/checkout@v3
-
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint-action@v6
-        with:
-          path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/"
 
       - name: Install Python Requirements
         uses: actions/setup-python@v4
