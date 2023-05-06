@@ -14,6 +14,10 @@
         paths: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}/collections"
       register: collections_path
 
+    - name: Print collections_path
+      debug: 
+        var: collections_path
+
     - name: Assert that collections directory contains requirement files
       ansible.builtin.assert:
         that: 
