@@ -70,6 +70,9 @@
         name: "{{ suboperatorconfig_results.resources[0].status.clusterserviceversion.metadata.name  }}"
         namespace: "{{ ocpnamespace }}"
       register: csv_results
+      until: "csv_results.resources[0].status.phase == 'Succeeded'"
+      retries: 30
+      delay: 5
 
     - name: Print csv_results
       debug:
