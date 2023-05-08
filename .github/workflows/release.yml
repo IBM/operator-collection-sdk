@@ -39,7 +39,7 @@ jobs:
   
   publish:
       name: Publish
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/github-actions'
       needs: release
 
       runs-on: ubuntu-latest
