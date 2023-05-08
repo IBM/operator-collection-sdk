@@ -2,19 +2,20 @@
 
 name: Test
 
-on: [push, pull_request]
-# on:
-#   push:
-#     paths-ignore:
-#       - 'docs/**'
-#       - '*.md'
-#     tags-ignore:
-#       - '**'
-#   pull_request:
-#     branches:    
-#       - main
-#       - v0.*
-#       - v1.*
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+    tags-ignore:
+      - '**'
+  pull_request:
+    branches:    
+      - main
+      - v0.*
+      - v1.*
 
 jobs:
   lint:
