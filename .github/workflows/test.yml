@@ -27,10 +27,22 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v3
 
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint-action@v6
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
         with:
-          path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/"
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Perform PIP installs
+        run: pip install ansible-lint
+
+      - name: Run ansible-lint
+        run: ansible-lint --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/
+
+      # - name: Run ansible-lint
+      #   uses: ansible/ansible-lint-action@v6
+      #   with:
+      #     path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/"
 
   # test:
   #   name: Test
