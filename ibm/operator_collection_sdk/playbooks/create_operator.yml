@@ -9,13 +9,13 @@
   connection: local
   gather_facts: false
   vars_prompt:
-    - name: zosendpointName
+    - name: zosendpoint_name
       prompt: Enter your ZosEndpoint name
       private: false
-    - name: zosendpointHost
+    - name: zosendpoint_host
       prompt: Enter your ZosEndpoint host
       private: false
-    - name: zosendpointPort
+    - name: zosendpoint_port
       prompt: Enter your ZosEndpoint port
       default: "22"
       private: false
@@ -59,7 +59,7 @@
 
     - name: Set Credential name
       ansible.builtin.set_fact:
-        credential_name: "{{ zosendpointName }}-credential"
+        credential_name: "{{ zosendpoint_name }}-credential"
       when: encrypt_cli_available is true
 
     - name: Create ZosEndpoint
@@ -69,11 +69,11 @@
           apiVersion: zoscb.ibm.com/v2beta2
           kind: ZosEndpoint
           metadata:
-            name: "{{ zosendpointName }}"
+            name: "{{ zosendpoint_name }}"
             namespace: "{{ target_namespace }}"
           spec:
-            host: "{{ zosendpointHost }}"
-            port: "{{ zosendpointPort | int }}"
+            host: "{{ zosendpoint_host }}"
+            port: "{{ zosendpoint_port | int }}"
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
@@ -134,7 +134,7 @@
             mapping:
               - namespace: "{{ target_namespace }}"
                 zosendpoints:
-                  - name: "{{ zosendpointName }}"
+                  - name: "{{ zosendpoint_name }}"
             operatorCollection: "{{ operatorcollection_name }}"
       when: encrypt_cli_available is false or (username == "" and ssh_key == "")
 
@@ -158,7 +158,7 @@
             mapping:
               - namespace: "{{ target_namespace }}"
                 zosendpoints:
-                  - name: "{{ zosendpointName }}"
+                  - name: "{{ zosendpoint_name }}"
                     credentialName: "{{ credential_name }}"
             operatorCollection: "{{ operatorcollection_name }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != ""
