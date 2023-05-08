@@ -56,14 +56,7 @@ jobs:
       - name: Perform PIP installs
         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
       
-      - name: Install oc cli on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        uses: redhat-actions/oc-installer@v1
-        with:
-          oc_version: '4.6'
-      
-      - name: Install oc cli on macOS
-        if: matrix.os == 'macOS-latest'
+      - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
         with:
           oc: latest
