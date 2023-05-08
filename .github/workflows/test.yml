@@ -29,8 +29,8 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint-action@v6
-        # with:
-        #   path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/"
+        with:
+          path: "${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/"
 
   # test:
   #   name: Test
