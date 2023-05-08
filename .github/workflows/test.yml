@@ -41,7 +41,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        # Temporarily disabling until oc login issue is resolved on macOS
+        # os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Check-out repository
