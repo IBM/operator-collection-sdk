@@ -41,9 +41,7 @@ jobs:
 
     strategy:
       matrix:
-        # Temporarily disabling until oc login issue is resolved on macOS
-        # os: [ubuntu-latest, macOS-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macOS-latest]
 
     steps:
       - name: Check-out repository
@@ -74,3 +72,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
+        env:
+            OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+            OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}

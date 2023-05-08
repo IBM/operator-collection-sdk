@@ -28,8 +28,11 @@ provisioner:
         zoscloudbroker_name: zoscloudbroker
         ocpNamespace: ${OCP_NAMESPACE:-molecule}
         zosendpoint_name: ibmcloud-vm
+        openshift_token: ${OPENSHIFT_TOKEN}
+        openshift_server: ${OPENSHIFT_SERVER}
 scenario:
   test_sequence:
+    - prepare
     - destroy
     - converge
     - verify
