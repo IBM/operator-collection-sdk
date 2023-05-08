@@ -39,7 +39,7 @@ jobs:
   
   publish:
       name: Publish
-
+      if: github.ref == 'refs/heads/main'
       needs: release
 
       runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ jobs:
         - name: Build Collection
           run: |
             ansible-galaxy collection build ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk -f --output-path ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds
-            echo "COLLECTION_BUILD=$(ls local/builds)" >> $GITHUB_ENV
+            echo "COLLECTION_BUILD=$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
 
         - name: Publish Collection
           run: ansible-galaxy collection publish -c -s '${GALAXY_URL}' --token='${GALAXY_API_KEY}' '${COLLECTION_BUILD}'
