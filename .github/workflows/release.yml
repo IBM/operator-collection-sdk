@@ -36,3 +36,41 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
+  
+  publish:
+      name: Publish
+
+      needs: release
+
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Determine tag
+          run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
+
+        - name: Check-out repository
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+            ref: ${RELEASE_TAG}
+
+        - name: Install Python Requirements
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.10'
+            cache: 'pip'
+
+        - name: Install Ansible
+          run: pip install ansible
+
+        - name: Build Collection
+          run: |
+            ansible-galaxy collection build ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk -f --output-path ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds
+            echo "COLLECTION_BUILD=$(ls local/builds)" >> $GITHUB_ENV
+
+        - name: Publish Collection
+          run: ansible-galaxy collection publish -c -s '${GALAXY_URL}' --token='${GALAXY_API_KEY}' '${COLLECTION_BUILD}'
+          env:
+            GALAXY_URL: ${{ secrets.GALAXY_URL }}
+            GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
+
