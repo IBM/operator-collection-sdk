@@ -61,7 +61,7 @@ ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_o
 
 **Note:** You can also pass the required variable as extra vars to bypass input prompts:
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpointName=<endpoint-name> zosendpointHost=<host> zosendpointPort=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications
