@@ -63,11 +63,13 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           script: |
             try {
+              const assetLocation = '@' + process.env.GITHUB_WORKSPACE + '/ibm/operator_collection_sdk/local/builds/' + process.env.COLLECTION_BUILD
+              console.log(assetLocation)
               const response = await github.rest.repos.uploadReleaseAsset({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 release_id: process.env.RELEASE_ID
-                data: '@' + process.env.GITHUB_WORKSPACE + '/ibm/operator_collection_sdk/local/builds/' + process.env.COLLECTION_BUILD,
+                data: assetLocation,
               });
             } catch (error) {
               core.setFailed(error.message);
