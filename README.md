@@ -1,6 +1,7 @@
 # Operator Collection SDK
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Test](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml)
+[![Test](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml/badge.svg)](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml)
+[![Release](https://github.com/IBM/operator-collection-sdk/actions/workflows/release.yml/badge.svg)](https://github.com/IBM/operator-collection-sdk/actions/workflows/release.yml)
 
 # Overview
 The Operator Collection SDK provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker which is part of the IBM Z® and Cloud Modernization Stack.
