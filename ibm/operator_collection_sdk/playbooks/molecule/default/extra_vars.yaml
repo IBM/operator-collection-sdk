@@ -1,8 +1,8 @@
-collectionName: test_collection
-collectionNamespace: ibm
-zosendpointName: ibmcloud-vm
-zosendpointHost: ***IP_REMOVED***
-zosendpointPort: 22
+collection_name: test_collection
+collection_namespace: ibm
+zosendpoint_name: ibmcloud-vm
+zosendpoint_host: ***IP_REMOVED***
+zosendpoint_port: 22
 username: ""
 ssh_key: ""
 passphrase: ""

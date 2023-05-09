@@ -1,0 +1,43 @@
+---
+# .ansible-lint
+
+exclude_paths:
+  - .cache/  # implicit unless exclude_paths is defined in config
+  - ./playbooks/molecule
+
+use_default_rules: true
+
+skip_list:
+  - no-changed-when
+  - ignore-errors
+  - line-length
+  - jinja[spacing]
+  - yaml[line-length]
+
+enable_list:
+  - no-log-password  # opt-in
+  - no-same-owner  # opt-in
+  - yaml
+
+# This makes the linter display but not fail for rules/tags listed below:
+warn_list:
+  - skip_this_tag
+  - git-latest
+  - experimental  # experimental is included in the implicit list
+
+
+# Offline mode disables installation of requirements.yml
+offline: false
+
+# Define required Ansible's variables to satisfy syntax check
+extra_vars:
+  foo: bar
+  multiline_string_variable: |
+    line1
+    line2
+  complex_variable: ":{;\t$()"
+  
+# List of additional kind:pattern to be added at the top of the default
+# match list, first match determines the file kind.
+kinds:
+  - yaml: "**/*.yaml-too"

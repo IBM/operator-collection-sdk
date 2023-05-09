@@ -1,7 +1,9 @@
 ## Contributing
 Our project welcomes external contributions.
 
-To contribute code or documentation, please submit a [pull request](https://github.com/IBM/operator-collection-sdk/pulls).
+
+To contribute code or documentation, you should first create a fork of this repo, and once the feature is complete, 
+submit a [pull request](https://github.com/IBM/operator-collection-sdk/pulls) to the `main` branch.
 
 
 ### Proposing new features
@@ -10,6 +12,8 @@ If you would like to implement a new feature, please [raise an issue](https://gi
 before sending a pull request so the feature can be discussed. This is to avoid
 you wasting your valuable time working on a feature that the project developers
 are not interested in accepting into the code base.
+
+
 
 ### Fixing bugs
 
