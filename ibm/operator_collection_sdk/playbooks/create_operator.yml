@@ -9,13 +9,13 @@
   connection: local
   gather_facts: false
   vars_prompt:
-    - name: zosendpointName
+    - name: zosendpoint_name
       prompt: Enter your ZosEndpoint name
       private: false
-    - name: zosendpointHost
+    - name: zosendpoint_host
       prompt: Enter your ZosEndpoint host
       private: false
-    - name: zosendpointPort
+    - name: zosendpoint_port
       prompt: Enter your ZosEndpoint port
       default: "22"
       private: false
@@ -28,154 +28,155 @@
     - name: passphrase
       prompt: Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
       private: true
-    
+
   tasks:
-  - name: Set local directory
-    set_fact: 
-        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-  - name: Prereq Validation
-    include_role:
-      name: pre_check
-    vars:
-        path: "{{ localDirectory }}"
-    
-  - name: Build Collection
-    include_role:
-      name: build_collection
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Prereq Validation
+      ansible.builtin.include_role:
+        name: pre_check
+      vars:
+        path: "{{ local_directory }}"
 
-  - name: Upload collection to manager pod
-    include_role:
-      name: upload_collection_to_manager
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Build Collection
+      ansible.builtin.include_role:
+        name: build_collection
+      vars:
+        path: "{{ local_directory }}"
 
-  - name: Set OperatorCollection name
-    set_fact:
-      operatorCollectionName: "{{ operatorName + '.' + operatorDomain + '.' + operatorVersion }}"
+    - name: Upload collection to manager pod
+      ansible.builtin.include_role:
+        name: upload_collection_to_manager
+      vars:
+        path: "{{ local_directory }}"
+        namespace: "{{ target_namespace }}"
 
-  - name: Set Credential name
-    set_fact:
-      credentialName: "{{ zosendpointName }}-credential"
-    when: encrypt_cli_available is true
+    - name: Set OperatorCollection name
+      ansible.builtin.set_fact:
+        operatorcollection_name: "{{ operator_name + '.' + operator_domain + '.' + operator_version }}"
 
-  - name: Create ZosEndpoint
-    k8s:
-      state: present
-      definition:
-        apiVersion: zoscb.ibm.com/v2beta2
-        kind: ZosEndpoint
-        metadata:
-          name: "{{ zosendpointName }}"
-          namespace: "{{ namespace }}"
-        spec:
-          host: "{{ zosendpointHost }}"
-          port: "{{ zosendpointPort|int }}"
+    - name: Set Credential name
+      ansible.builtin.set_fact:
+        credential_name: "{{ zosendpoint_name }}-credential"
+      when: encrypt_cli_available is true
 
-  - name: Create OperatorCollection
-    k8s:
-      state: present
-      definition:
-        apiVersion: zoscb.ibm.com/v2beta2
+    - name: Create ZosEndpoint
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: zoscb.ibm.com/v2beta2
+          kind: ZosEndpoint
+          metadata:
+            name: "{{ zosendpoint_name }}"
+            namespace: "{{ target_namespace }}"
+          spec:
+            host: "{{ zosendpoint_host }}"
+            port: "{{ zosendpoint_port | int }}"
+
+    - name: Create OperatorCollection
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: zoscb.ibm.com/v2beta2
+          kind: OperatorCollection
+          metadata:
+            name: "{{ operatorcollection_name }}"
+            namespace: "{{ target_namespace }}"
+            labels:
+              managed-by: ibm-zos-cloud-broker
+              operator-domain: "{{ operator_domain }}"
+              operator-name: "{{ operator_name }}"
+              operator-version: "{{ operator_version }}"
+          spec:
+            skipSignatureVerification: true
+
+    - name: Validate OperatorCollection installed successfully
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
         kind: OperatorCollection
-        metadata:
-          name: "{{ operatorCollectionName }}"
-          namespace: "{{ namespace }}"
-          labels: 
-            managed-by: ibm-zos-cloud-broker
-            operator-domain: "{{ operatorDomain }}"
-            operator-name: "{{ operatorName }}"
-            operator-version: "{{ operatorVersion }}"
-        spec:
-          skipSignatureVerification: true
+        name: "{{ operatorcollection_name }}"
+        namespace: "{{ target_namespace }}"
+      register: oc_results
+      until: "oc_results.resources[0].status.phase is defined and oc_results.resources[0].status.phase == 'Successful'"
+      retries: 5
+      delay: 5
 
-  - name: Validate OperatorCollection installed successfully
-    k8s_info:
-      api_version: zoscb.ibm.com/v2beta2
-      kind: OperatorCollection
-      name: "{{ operatorCollectionName }}"
-      namespace: "{{ namespace }}"
-    register: oc_results
-    until: "oc_results.resources[0].status.phase is defined and oc_results.resources[0].status.phase == 'Successful'"
-    retries: 5
-    delay: 5
+    - name: Create SSH Credential Secret
+      ansible.builtin.command: zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }}
+      when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
 
-  - name: Create SSH Credential Secret
-    command: zoscb-encrypt credential-secret -n {{ credentialName }} -u {{ username }} -s {{ ssh_key }}
-    when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
+    - name: Create SSH Credential Secret with passphrase
+      ansible.builtin.shell: |
+        export PASSPHRASE={{ passphrase }}
+        zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }} -p
+        unset PASSPHRASE
+      when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != ""
 
-  - name: Create SSH Credential Secret with passphrase
-    shell: |
-      export PASSPHRASE={{ passphrase }}
-      zoscb-encrypt credential-secret -n {{ credentialName }} -u {{ username }} -s {{ ssh_key }} -p
-      unset PASSPHRASE
-    when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != "" 
-      
-  - name: Create SubOperatorConfig without mapped credential
-    k8s:
-      state: present
-      definition:
-        apiVersion: zoscb.ibm.com/v2beta2
+    - name: Create SubOperatorConfig without mapped credential
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: zoscb.ibm.com/v2beta2
+          kind: SubOperatorConfig
+          metadata:
+            name: "{{ operatorcollection_name }}-soc"
+            namespace: "{{ target_namespace }}"
+            labels:
+              managed-by: ibm-zos-cloud-broker
+              operator-domain: "{{ operator_domain }}"
+              operator-name: "{{ operator_name }}"
+              operator-version: "{{ operator_version }}"
+              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
+          spec:
+            credentialType: personal
+            mapping:
+              - namespace: "{{ target_namespace }}"
+                zosendpoints:
+                  - name: "{{ zosendpoint_name }}"
+            operatorCollection: "{{ operatorcollection_name }}"
+      when: encrypt_cli_available is false or (username == "" and ssh_key == "")
+
+    - name: Create SubOperatorConfig with mapped credential
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: zoscb.ibm.com/v2beta2
+          kind: SubOperatorConfig
+          metadata:
+            name: "{{ operatorcollection_name }}-soc"
+            namespace: "{{ target_namespace }}"
+            labels:
+              managed-by: ibm-zos-cloud-broker
+              operator-domain: "{{ operator_domain }}"
+              operator-name: "{{ operator_name }}"
+              operator-version: "{{ operator_version }}"
+              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
+          spec:
+            credentialType: shared
+            mapping:
+              - namespace: "{{ target_namespace }}"
+                zosendpoints:
+                  - name: "{{ zosendpoint_name }}"
+                    credentialName: "{{ credential_name }}"
+            operatorCollection: "{{ operatorcollection_name }}"
+      when: encrypt_cli_available is true and username != "" and ssh_key != ""
+
+    - name: Validate SubOperatorConfig installed successfully
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
         kind: SubOperatorConfig
-        metadata:
-          name: "{{ operatorCollectionName }}-soc"
-          namespace: "{{ namespace }}"
-          labels: 
-            managed-by: ibm-zos-cloud-broker
-            operator-domain: "{{ operatorDomain }}"
-            operator-name: "{{ operatorName }}"
-            operator-version: "{{ operatorVersion }}"
-            operatorcollection-name: "{{ operatorName }}.{{ operatorDomain }}.{{ operatorVersion }}"
-        spec:
-          credentialType: personal
-          mapping:
-            - namespace: "{{ namespace }}"
-              zosendpoints:
-                - name: "{{ zosendpointName }}"
-          operatorCollection: "{{ operatorCollectionName }}"
-    when: encrypt_cli_available is false or (username == "" and ssh_key == "")
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+      register: soc_results
+      until: "soc_results.resources[0].status.phase is defined and soc_results.resources[0].status.phase == 'Successful'"
+      retries: 30
+      delay: 5
+      ignore_errors: true
+      no_log: true
 
-  - name: Create SubOperatorConfig with mapped credential
-    k8s:
-      state: present
-      definition:
-        apiVersion: zoscb.ibm.com/v2beta2
-        kind: SubOperatorConfig
-        metadata:
-          name: "{{ operatorCollectionName }}-soc"
-          namespace: "{{ namespace }}"
-          labels: 
-            managed-by: ibm-zos-cloud-broker
-            operator-domain: "{{ operatorDomain }}"
-            operator-name: "{{ operatorName }}"
-            operator-version: "{{ operatorVersion }}"
-            operatorcollection-name: "{{ operatorName }}.{{ operatorDomain }}.{{ operatorVersion }}"
-        spec:
-          credentialType: shared
-          mapping:
-            - namespace: "{{ namespace }}"
-              zosendpoints:
-                - name: "{{ zosendpointName }}"
-                  credentialName: "{{ credentialName }}"
-          operatorCollection: "{{ operatorCollectionName }}"
-    when: encrypt_cli_available is true and username != "" and ssh_key != "" 
-
-  - name: Validate SubOperatorConfig installed successfully
-    k8s_info:
-      api_version: zoscb.ibm.com/v2beta2
-      kind: SubOperatorConfig
-      name: "{{ operatorCollectionName }}-soc"
-      namespace: "{{ namespace }}"
-    register: soc_results
-    until: "soc_results.resources[0].status.phase is defined and soc_results.resources[0].status.phase == 'Successful'"
-    retries: 30
-    delay: 5
-    ignore_errors: true
-    no_log: true
-
-  - name: SubOperatorConfig installation status notification
-    debug:
-      msg: "Suboperator failed to install successfully after max retry attempts. Please check OCP for installation status"
-    when: "soc_results.resources[0].status.phase is not defined or soc_results.resources[0].status.phase != 'Successful'"
+    - name: SubOperatorConfig installation status notification
+      ansible.builtin.debug:
+        msg: "Suboperator failed to install successfully after max retry attempts. Please check OCP for installation status"
+      when: "soc_results.resources[0].status.phase is not defined or soc_results.resources[0].status.phase != 'Successful'"

@@ -11,22 +11,23 @@
   register: galaxy_file_results
 
 - name: Validate galaxy.yml file exists in current working directory
-  fail:
+  ansible.builtin.fail:
     msg: "Collection must be executed in same directory as galaxy.yml file"
   when: galaxy_file_results.files | length == 0
 
 - name: Read galaxy.yml
-  set_fact:
-    galaxyYaml: "{{ lookup('template', '{{ galaxy_file_results.files[0].path }}')|from_yaml }}"
+  ansible.builtin.set_fact:
+    galaxy_yaml: "{{ lookup('template', '{{ galaxy_file_results.files[0].path }}')|from_yaml }}"
 
 - name: Set operator variables
-  set_fact:
-    oc_name: "{{ galaxyYaml.name | lower | replace('_','-') }}"
-    oc_domain: "{{ galaxyYaml.namespace | lower | replace('_','-') }}"
-    oc_version: "{{ galaxyYaml.version }}"
-    oc_description: "{{ galaxyYaml.description }}"
+  ansible.builtin.set_fact:
+    oc_name: "{{ galaxy_yaml.name | lower | replace('_','-') }}"
+    oc_domain: "{{ galaxy_yaml.namespace | lower | replace('_','-') }}"
+    oc_version: "{{ galaxy_yaml.version }}"
+    oc_description: "{{ galaxy_yaml.description }}"
 
 - name: Generate operator-config.yml file
   ansible.builtin.template:
     src: templates/operator-config.j2
     dest: "{{ path }}/operator-config.yml"
+    mode: '0644'

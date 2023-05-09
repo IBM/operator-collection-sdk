@@ -8,30 +8,33 @@
   hosts: localhost
   connection: local
   gather_facts: false
-    
+
   tasks:
-  - name: Set local directory
-    set_fact: 
-        localDirectory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"  
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-  - name: Prereq Validation
-    include_role:
-      name: pre_check
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Prereq Validation
+      ansible.builtin.include_role:
+        name: pre_check
+      vars:
+        path: "{{ local_directory }}"
 
-  - name: Build Collection
-    include_role:
-      name: build_collection
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Build Collection
+      ansible.builtin.include_role:
+        name: build_collection
+      vars:
+        path: "{{ local_directory }}"
 
-  - name: Upload collection to manager pod
-    include_role:
-      name: upload_collection_to_manager
-    vars:
-        path: "{{ localDirectory }}"
+    - name: Upload collection to manager pod
+      ansible.builtin.include_role:
+        name: upload_collection_to_manager
+      vars:
+        path: "{{ local_directory }}"
+        namespace: "{{ target_namespace }}"
 
-  - name: Restart suboperator pod
-    include_role:
-      name: restart_suboperator_pod
+    - name: Restart suboperator pod
+      ansible.builtin.include_role:
+        name: restart_suboperator_pod
+      vars:
+        namespace: "{{ target_namespace }}"

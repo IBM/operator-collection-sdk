@@ -8,40 +8,42 @@
   hosts: all
   connection: local
   gather_facts: false
+  vars:
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
     
   tasks:
     - name: Create Namespace
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           kind: Namespace
           metadata:
-            name: "{{ ocpNamespace }}"
+            name: "{{ ocpnamespace }}"
 
     - name: Create OperatorGroup
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: operators.coreos.com/v1
           kind: OperatorGroup
           metadata:
-            name: "{{ ocpNamespace }}"
-            namespace: "{{ ocpNamespace }}"
+            name: "{{ ocpnamespace }}"
+            namespace: "{{ ocpnamespace }}"
           spec:
             targetNamespaces:
-              - "{{ ocpNamespace }}"
+              - "{{ ocpnamespace }}"
             upgradeStrategy: Default
 
 
     - name: Create Subscripton
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: operators.coreos.com/v1alpha1
           kind: Subscription
           metadata:
-            name: "{{ subscriptionName }}"
-            namespace: "{{ ocpNamespace }}"
+            name: "{{ subscription_name }}"
+            namespace: "{{ ocpnamespace }}"
           spec:
             channel: v2.2
             installPlanApproval: Automatic
@@ -51,36 +53,36 @@
             startingCSV: ibm-zoscb.v2.2.0
 
     - name: Validate Subscription installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
-        name: "{{ subscriptionName }}"
-        namespace: "{{ ocpNamespace }}"
+        name: "{{ subscription_name }}"
+        namespace: "{{ ocpnamespace }}"
       register: subscription_results
       until: "subscription_results.resources[0].status.installedCSV is defined and subscription_results.resources[0].status.currentCSV"
       retries: 30
       delay: 5
 
     - name: Validate CSV installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
         kind: ClusterServiceVersion
         name: "{{ subscription_results.resources[0].status.installedCSV }}"
-        namespace: "{{ ocpNamespace }}"
+        namespace: "{{ ocpnamespace }}"
       register: csv_results
       until: "csv_results.resources[0].status.phase is defined and csv_results.resources[0].status.phase == 'Succeeded'"
       retries: 30
       delay: 5
 
     - name: Create ZosCloudBoker
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: zoscb.ibm.com/v2beta1
           kind: ZosCloudBroker
           metadata:
-            name: "{{ zoscloudbrokerName }}"
-            namespace: "{{ ocpNamespace }}"
+            name: "{{ zoscloudbroker_name }}"
+            namespace: "{{ ocpnamespace }}"
           spec:
             catalogResources: {}
             license:
@@ -95,11 +97,11 @@
             uiResources: {}
 
     - name: Validate ZosCloudBroker installed successfully
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta1
         kind: ZosCloudBroker
-        name: "{{ zoscloudbrokerName }}"
-        namespace: "{{ ocpNamespace }}"
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
       register: zoscb_results
       until: "zoscb_results.resources[0].status.phase == 'Successful'"
       retries: 30
@@ -109,11 +111,14 @@
 - import_playbook: ../../create_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
 - import_playbook: ../../redeploy_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
 - import_playbook: ../../redeploy_collection.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"

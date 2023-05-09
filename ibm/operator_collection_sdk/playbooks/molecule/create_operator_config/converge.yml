@@ -9,17 +9,17 @@
   gather_facts: false
   tasks:
       - name: Initialize collection
-        command: ansible-galaxy collection init {{ collectionNamespace  | lower | replace('-','_') }}.{{ collectionName | lower | replace('-','_') }} --init-path {{ lookup('env', 'PWD') }}
+        ansible.builtin.command: ansible-galaxy collection init {{ collection_namespace  | lower | replace('-','_') }}.{{ collection_name | lower | replace('-','_') }} --init-path {{ lookup('env', 'PWD') }}
         ignore_errors: true
 
       - name: Copy galaxy.yml to current directory
         ansible.builtin.copy:
-          src: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}/{{ collectionName  | lower | replace('-','_') }}/galaxy.yml"
+          src: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}/{{ collection_name  | lower | replace('-','_') }}/galaxy.yml"
           dest: "{{ lookup('env', 'PWD') }}/galaxy.yml"
 
       - name: Remove collection directory
         ansible.builtin.file:
-          path: "{{ lookup('env', 'PWD') }}/{{ collectionNamespace  | lower | replace('-','_') }}"
+          path: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}"
           state: absent
 
 - import_playbook: ../../create_operator_config.yml
