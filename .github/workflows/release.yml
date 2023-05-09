@@ -36,7 +36,42 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
-  
+
+      - name: Check-out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Build Collection
+        run: |
+          ansible-galaxy collection build ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk -f --output-path ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds
+          echo "COLLECTION_BUILD=$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
+
+      - name: Upload Asset
+        uses: actions/github-script@v6
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            try {
+              const response = await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: process.env.RELEASE_ID
+                data: '@' + process.env.GITHUB_WORKSPACE + '/ibm/operator_collection_sdk/local/builds/' + process.env.COLLECTION_BUILD,
+              });
+            } catch (error) {
+              core.setFailed(error.message);
+            }
   publish:
       name: Publish
       needs: release
