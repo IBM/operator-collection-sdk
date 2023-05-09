@@ -4,6 +4,7 @@ The Operator Collection SDK is used to assist in the end to end deployment of yo
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Setup](#setup)
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
 - [Usage Examples](#usage-examples)
 - [Tips](#tips)
@@ -17,14 +18,29 @@ The Operator Collection SDK is used to assist in the end to end deployment of yo
 - [z/OC Cloud Broker Encryption CLI][cli] (optional)
   
 # Installation
-1. Run the following command to install the collection.
+The Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
+
+## Github Installation
+Run the following command to install the collection.
 
 ```bash
 ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
 ```
 
-2. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
-3. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.
+## IBM Cloud Container Registry
+Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the Opeator Collection SDK collection into your default collection path:
+
+```bash
+mkdir -vp operator-collection-sdk/
+oc image extract icr.io/zmodstk-open/operator-collection-sdk:latest --path /:operator-collection-sdk/ --confirm
+ansible-galaxy collection install ./operator-collection-sdk/ibm/operator_collection_sdk -f
+```
+
+# Setup
+The following steps are required prior to deploying your operator in OpenShift using the Operator Collection SDK playbooks:
+
+1. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
+2. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.
 
 # Initializing your Operator Collection
 Below are the steps to initialize a new operator collection, or to configure an operator collection from an existing Ansible collection.
@@ -61,7 +77,7 @@ ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_o
 
 **Note:** You can also pass the required variable as extra vars to bypass input prompts:
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpointName=<endpoint-name> zosendpointHost=<host> zosendpointPort=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications

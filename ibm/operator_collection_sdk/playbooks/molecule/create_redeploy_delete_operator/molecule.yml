@@ -22,14 +22,17 @@ provisioner:
   inventory:
     group_vars:
       all:
-        collectionName: test_collection
-        collectionNamespace: ibm
-        subscriptionName: ibm-zoscb
-        zoscloudbrokerName: zoscloudbroker
-        ocpNamespace: molecule
-        zosendpointName: ibmcloud-vm
+        collection_name: test_collection
+        collection_namespace: ibm
+        subscription_name: ibm-zoscb
+        zoscloudbroker_name: zoscloudbroker
+        ocpNamespace: ${OCP_NAMESPACE:-molecule}
+        zosendpoint_name: ibmcloud-vm
+        openshift_token: ${OPENSHIFT_TOKEN}
+        openshift_server: ${OPENSHIFT_SERVER}
 scenario:
   test_sequence:
+    - prepare
     - destroy
     - converge
     - verify
