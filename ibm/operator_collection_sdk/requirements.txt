@@ -1,0 +1,8 @@
+ansible
+docker
+molecule
+molecule-docker 
+kubernetes
+pyyaml
+openshift
+yamllint
