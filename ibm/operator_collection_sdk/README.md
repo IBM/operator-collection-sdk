@@ -24,7 +24,7 @@ The Operator Collection SDK can be installed directly from Github, or via docker
 Run the following command to install the collection.
 
 ```bash
-ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
+ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk,v0.x -f
 ```
 
 ## IBM Cloud Container Registry
@@ -124,7 +124,7 @@ vi ~/.zshrc
 ```bash
 alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection.yml"
 alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml"
-alias ocsdk-install="ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
+alias ocsdk-install="ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk,v0.x -f"
 alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml"
 alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml"
 alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml"
