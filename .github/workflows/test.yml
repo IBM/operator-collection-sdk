@@ -8,14 +8,14 @@ on:
       - '**'
     paths-ignore:
       - 'docs/**'
-      - '*.md'
+      - '**.md'
     tags-ignore:
       - '**'
   pull_request:
     branches:    
       - main
-      - v0.*
-      - v1.*
+      - v0.x
+      - v1.x
 
 jobs:
   lint:
