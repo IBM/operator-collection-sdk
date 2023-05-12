@@ -1,0 +1,22 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Prepare
+  hosts: all
+  connection: local
+  gather_facts: false
+  vars:
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    
+  tasks:
+    - name: Validate OCP cluster authorization
+      ansible.builtin.command: oc project
+      register: oc_project_output
+      ignore_errors: true
+
+    - name: Cluster login
+      ansible.builtin.command: oc login --token={{ openshift_token }} --server={{ openshift_server }}
+      when: oc_project_output.rc != 0 and openshift_token is defined and openshift_server is defined
