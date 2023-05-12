@@ -5,7 +5,7 @@
 
 #########################################################################
 # This role is the bare minimum for running playbooks against a clister.
-# Ensure that the user is logged into the cluster, and store namespace 
+# Ensure that the user is logged into the cluster, and store namespace
 # for future tasks
 #########################################################################
 
