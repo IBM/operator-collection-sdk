@@ -1,0 +1,41 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+platforms:
+- name: instance
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      jinja2_native: true
+      
+  ## extra-vars needed to bypass vars_prompts
+  ansible_args:
+    - --extra-vars=@molecule/default/extra_vars.yaml
+  inventory:
+    group_vars:
+      all:
+        collection_name: test_collection
+        collection_namespace: ibm
+        subscription_name: ibm-zoscb
+        zoscloudbroker_name: zoscloudbroker
+        ocpNamespace: ${OCP_NAMESPACE:-molecule}
+        zosendpoint_name: ibmcloud-vm
+        openshift_token: ${OPENSHIFT_TOKEN}
+        openshift_server: ${OPENSHIFT_SERVER}
+scenario:
+  test_sequence:
+    - prepare
+    - destroy
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible
