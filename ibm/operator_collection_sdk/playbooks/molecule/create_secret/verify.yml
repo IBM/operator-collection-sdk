@@ -79,3 +79,21 @@
       ansible.builtin.assert:
         that: 
           -  csv_results.resources[0].status.phase == 'Succeeded'
+
+    - name: Validate secret 
+      kubernetes.core.k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: Secret
+        name: "{{ secret_name }}"
+        namespace: "{{ ocpnamespace }}"
+      register: secret_results
+      until: "secret.resources[0].status.phase == 'Succeeded'"
+      retries: 30
+      delay: 5
+      no_log: true
+
+    - name: Assert secret
+      ansible.builtin.assert:
+        that: 
+          -  secret.data != ""
+          -  secret.type == ""
