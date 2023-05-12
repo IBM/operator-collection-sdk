@@ -4,6 +4,16 @@
 #
 
 ---
+- name: Delete secret
+  kubernetes.core.k8s:
+    state: absent
+    kind: secret
+    name: "{{ secret_name }}"
+    namespace: "{{ ocpnamespace }}"
+    wait: true
+    wait_sleep: 5
+    wait_timeout: 140
+
 - name: Delete Operator
   import_playbook: ../../delete_operator.yml
   vars:
@@ -40,7 +50,7 @@
         wait_sleep: 5
         wait_timeout: 140
 
-    - name: Delete Subscripton
+    - name: Delete Subscription
       kubernetes.core.k8s:
         state: absent
         api_version: operators.coreos.com/v1alpha1

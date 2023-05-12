@@ -1,0 +1,14 @@
+Use this file if you find yourself inputting vars_prompts frequently.
+
+Simply format this JSON file, and append `--extra-vars dev-vars.json` to your playbook command/alias
+
+example:
+
+{
+    "zosendpoint_name" : "zos-ep",
+    "zosendpoint_host" : "127.0.0.1",
+    "zosendpoint_port" : "22",
+    "username" : "admin",
+    "ssh_key" : "~/.ssh/id_rsa",
+    "passphrase" : "",
+}
