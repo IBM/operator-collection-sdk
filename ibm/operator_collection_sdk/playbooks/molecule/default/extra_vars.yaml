@@ -5,6 +5,3 @@ zosendpoint_host: 52.117.98.131
 zosendpoint_port: 22
 username: ""
 ssh_key: ""
-passphrase: ""
-github_token: ""
-secret_name: ""
