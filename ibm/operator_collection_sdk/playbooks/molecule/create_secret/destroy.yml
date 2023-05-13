@@ -4,11 +4,31 @@
 #
 
 ---
-- name: Delete secret
+- name: Delete default secret
   kubernetes.core.k8s:
     state: absent
     kind: secret
-    name: "{{ secret_name }}"
+    name: "default_secret"
+    namespace: "{{ ocpnamespace }}"
+    wait: true
+    wait_sleep: 5
+    wait_timeout: 140
+
+- name: Delete github secret
+  kubernetes.core.k8s:
+    state: absent
+    kind: secret
+    name: "github_secret"
+    namespace: "{{ ocpnamespace }}"
+    wait: true
+    wait_sleep: 5
+    wait_timeout: 140
+
+- name: Delete passphrase secret
+  kubernetes.core.k8s:
+    state: absent
+    kind: secret
+    name: "passphrase_secret"
     namespace: "{{ ocpnamespace }}"
     wait: true
     wait_sleep: 5

@@ -116,3 +116,18 @@
 - import_playbook: ../../create_secret.yml
   vars:
     operator-name: "racf"
+    username: "testuser"
+    secret_name: "default-secret"
+  
+- import_playbook: ../../create_secret.yml
+  vars:
+    operator-name: "racf"
+    github_token: "1234566789abcdef"
+    secret_name: "github_secret"
+
+- import_playbook: ../../create_secret.yml
+  vars:
+    operator-name: "racf"
+    username: "testuser"
+    passphrase: "testpass"
+    secret_name: "passphrase_secret"
