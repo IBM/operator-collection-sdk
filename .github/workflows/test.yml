@@ -30,7 +30,7 @@ jobs:
           cache: 'pip'
 
       - name: Perform PIP installs
-        run: pip install ansible-lint
+        run: pip install ansible-lint==6.16.0
 
       - name: Run ansible-lint
         run: |
