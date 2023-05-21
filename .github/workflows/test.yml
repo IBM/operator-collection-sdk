@@ -14,8 +14,6 @@ on:
   pull_request:
     branches:    
       - main
-      - v0.x
-      - v1.x
 
 jobs:
   lint:
@@ -32,7 +30,7 @@ jobs:
           cache: 'pip'
 
       - name: Perform PIP installs
-        run: pip install ansible-lint
+        run: pip install ansible-lint==6.16.0
 
       - name: Run ansible-lint
         run: |
