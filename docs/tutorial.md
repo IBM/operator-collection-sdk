@@ -16,7 +16,7 @@ This tutorial is a walkthrough of building an operator collection that performs 
 To install the latest version of Operator Collection SDK, run the following command:
 
 ```bash
-ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk,v0.x -f
+ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
 ```
 
 Alternatively, you can run the following alias:
