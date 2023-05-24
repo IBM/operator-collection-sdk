@@ -15,7 +15,7 @@ The Operator Collection SDK is used to assist in the end to end deployment of yo
 - [Ansible CLI Tools (version 2.7 or later)][ansible]
 - [Kubernetes Python Client][kubernetes]
 - [z/OS Cloud Broker v2.2.0+][broker]
-- [z/OC Cloud Broker Encryption CLI][cli] (optional)
+- [z/OS Cloud Broker Encryption CLI][cli] (optional)
   
 # Installation
 The Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
@@ -24,7 +24,7 @@ The Operator Collection SDK can be installed directly from Github, or via docker
 Run the following command to install the collection.
 
 ```bash
-ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk,v0.x -f
+ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
 ```
 
 ## IBM Cloud Container Registry
@@ -124,7 +124,7 @@ vi ~/.zshrc
 ```bash
 alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection.yml"
 alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml"
-alias ocsdk-install="ansible-galaxy collection install git@github.com:IBM/operator-collection-sdk.git#ibm/operator_collection_sdk,v0.x -f"
+alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
 alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml"
 alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml"
 alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml"
