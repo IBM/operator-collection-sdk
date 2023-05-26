@@ -34,12 +34,8 @@ jobs:
     steps:
       - name: Masking inputs
         run: |
-          secret1=${{ github.event.inputs.openshift_token }}
-          echo "::add-mask::$secret1"
-          echo "OPENSHIFT_TOKEN=$secret1" >> "$GITHUB_OUTPUT"
-          secret2=${{ github.event.inputs.openshift_server_url }}
-          echo "::add-mask::$secret2"
-          echo "OPENSHIFT_SERVER=$secret2" >> "$GITHUB_OUTPUT"
+          echo "OPENSHIFT_TOKEN=::add-mask::${{ github.event.inputs.openshift_token }}" >> "$GITHUB_OUTPUT"
+          echo "OPENSHIFT_SERVER=::add-mask::${{ github.event.inputs.openshift_server_url }}" >> "$GITHUB_OUTPUT"
 
       - name: Check-out repository
         uses: actions/checkout@v3
@@ -70,12 +66,8 @@ jobs:
       - name: Masking inputs
         id: set-secrets
         run: |
-          secret1=${{ github.event.inputs.openshift_token }}
-          echo "::add-mask::$secret1"
-          echo "OPENSHIFT_TOKEN=$secret1" >> "$GITHUB_OUTPUT"
-          secret2=${{ github.event.inputs.openshift_server_url }}
-          echo "::add-mask::$secret2"
-          echo "OPENSHIFT_SERVER=$secret2" >> "$GITHUB_OUTPUT"
+          echo "OPENSHIFT_TOKEN=::add-mask::${{ github.event.inputs.openshift_token }}" >> "$GITHUB_OUTPUT"
+          echo "OPENSHIFT_SERVER=::add-mask::${{ github.event.inputs.openshift_server_url }}" >> "$GITHUB_OUTPUT"
 
       - name: Check-out repository
         uses: actions/checkout@v3
