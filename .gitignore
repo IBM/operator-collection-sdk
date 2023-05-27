@@ -1,3 +1,4 @@
 ibm/operator_collection_sdk/local/*
 examples/racf-operator/local/*
 .DS_Store
+.vscode/*
