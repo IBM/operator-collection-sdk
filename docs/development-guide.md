@@ -4,7 +4,7 @@
 - [Testing changes in a forked repo](#testing-changes-in-a-forked-repo)
   - [Installing local collection](#installing-local-collection)
   - [Installing from forked Github repo](#installing-from-forked-github-repo)
-- [Executing Github Workflows in PRs from a forked Github repo](#executing-github-workflows-in-prs-from-a-forked-github-repo)
+- [Executing Github Workflows in a forked Github repo](#executing-github-workflows-in-a-forked-github-repo)
 - [Ansible Molecule Setup](#ansible-molecule-setup)
 - [Writing Molecule Tests](#writing-molecule-tests)
 
@@ -24,10 +24,8 @@ REPO_URL=$(git config --get remote.origin.url)
 ansible-galaxy collection install git+${REPO_URL}#ibm/operator_collection_sdk,${BRANCH_NAME} -f
 ```
 
-# Executing Github Workflows in PRs from a forked Github repo
-Github doesn't allow Github workflow Secrets to be passed to forked repositories, and also doesn't allow PR's from a forked repo to access these Secrets. Since the current Ansible Molecule tests require access to an Openshift cluster, you are responsible for setting the following two variables in your workspace before successfully executing an end to end test of your changes.
-
-**Note:** The assumption is that all users should have access to an Openshift cluster if you are currently using this tool. Changes should not be made to the SDK if you aren't able to validate these changes against an Openshift cluster.
+# Executing Github Workflows in a forked Github repo
+Github doesn't allow Github workflow Secrets to be passed to forked repositories. Since the current Ansible Molecule tests require access to an Openshift cluster, you are required to configure the following two variables in your workspace before successfully executing an end to end test of your changes.
 
 - Navigate to `Setting > Secrets and variables > Actions` and click the "New repository secret" button
 ![Github Settings](images/Github%20Settings.png)
