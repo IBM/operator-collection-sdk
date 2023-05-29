@@ -3,40 +3,28 @@
 name: Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      openshift_server_url:
-        type: string
-        required: true
-        description: Enter the Openshift URL
-      openshift_token:
-        type: string
-        required: true
-        description: Enter your Openshift Login Token
-# on:
-#   push:
-#     branches:
-#       - '**'
-#     paths-ignore:
-#       - 'docs/**'
-#       - '**.md'
-#     tags-ignore:
-#       - '**'
-#   pull_request:
-#     branches:    
-#       - main
-#       - develop
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+    tags-ignore:
+      - '**'
+  pull_request_target:
 
 jobs:
-  lint:
-    name: Lint
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Masking inputs
-        run: |
-          echo "OPENSHIFT_TOKEN=::add-mask::${{ github.event.inputs.openshift_token }}" >> "$GITHUB_OUTPUT"
-          echo "OPENSHIFT_SERVER=::add-mask::${{ github.event.inputs.openshift_server_url }}" >> "$GITHUB_OUTPUT"
+      - run: true
 
+  lint:
+    name: Lint
+    needs: authorize
+    runs-on: ubuntu-latest
+    steps:
       - name: Check-out repository
         uses: actions/checkout@v3
 
@@ -56,19 +44,13 @@ jobs:
 
   test:
     name: Test
-    needs: lint
+    needs: [lint, authorize]
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
 
     steps:
-      - name: Masking inputs
-        id: set-secrets
-        run: |
-          echo "OPENSHIFT_TOKEN=::add-mask::${{ github.event.inputs.openshift_token }}" >> "$GITHUB_OUTPUT"
-          echo "OPENSHIFT_SERVER=::add-mask::${{ github.event.inputs.openshift_server_url }}" >> "$GITHUB_OUTPUT"
-
       - name: Check-out repository
         uses: actions/checkout@v3
 
@@ -89,8 +71,8 @@ jobs:
       - name: Log into OCP
         uses: redhat-actions/oc-login@v1
         with:
-          openshift_server_url: ${{ steps.set-secrets.outputs.OPENSHIFT_SERVER }}
-          openshift_token: ${{ steps.set-secrets.outputs.OPENSHIFT_TOKEN }}
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
       - name: Execute Molecule Tests
         run: |
@@ -98,5 +80,5 @@ jobs:
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
         env:
-            OPENSHIFT_SERVER: ${{ steps.set-secrets.outputs.OPENSHIFT_SERVER }}
-            OPENSHIFT_TOKEN: ${{ steps.set-secrets.outputs.OPENSHIFT_TOKEN }}
+            OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+            OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
