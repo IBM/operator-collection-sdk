@@ -70,3 +70,8 @@ The steps below describe how to setup Ansible Molecule in a vitrual environment 
 - When you are ready to exit the virtual environment, simply execute the `deactivate` command to exit.
 
 # Writing Molecule Tests
+Below are a few links I'd recommend to review to get started with Ansible Molecule: 
+
+Ansible Molecule Overview: https://www.toptechskills.com/ansible-tutorials-courses/rapidly-build-test-ansible-roles-molecule-docker/
+
+Video Tutorial on Molecule playbook testing: https://www.youtube.com/watch?v=CYghlf-6Opc
