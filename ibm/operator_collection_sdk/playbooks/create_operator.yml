@@ -123,12 +123,6 @@
           metadata:
             name: "{{ operatorcollection_name }}-soc"
             namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
           spec:
             credentialType: personal
             mapping:
@@ -147,12 +141,6 @@
           metadata:
             name: "{{ operatorcollection_name }}-soc"
             namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
           spec:
             credentialType: shared
             mapping:

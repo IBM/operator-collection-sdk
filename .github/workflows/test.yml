@@ -11,13 +11,19 @@ on:
       - '**.md'
     tags-ignore:
       - '**'
-  pull_request:
-    branches:    
-      - main
+  pull_request_target:
 
 jobs:
+  authorize:
+    name: Authorize
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
+
   lint:
     name: Lint
+    needs: authorize
     runs-on: ubuntu-latest
     steps:
       - name: Check-out repository
@@ -39,7 +45,7 @@ jobs:
 
   test:
     name: Test
-    needs: lint
+    needs: [lint, authorize]
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
