@@ -26,8 +26,15 @@ jobs:
     needs: authorize
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out repository
+      - name: Check-out repository for Branch builds
         uses: actions/checkout@v3
+        if: github.event_name != 'pull_request_target'
+
+      - name: Check-out repository for PR builds
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+        if: github.event_name == 'pull_request_target'
 
       - name: Install Python Requirements
         uses: actions/setup-python@v4
@@ -52,8 +59,15 @@ jobs:
         os: [ubuntu-latest, macOS-latest]
 
     steps:
-      - name: Check-out repository
+      - name: Check-out repository for Branch builds
         uses: actions/checkout@v3
+        if: github.event_name != 'pull_request_target'
+
+      - name: Check-out repository for PR builds
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+        if: github.event_name == 'pull_request_target'
 
       - name: Install Python Requirements
         uses: actions/setup-python@v4
