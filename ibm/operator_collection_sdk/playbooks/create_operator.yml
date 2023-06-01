@@ -20,7 +20,7 @@
       default: "22"
       private: false
     - name: username
-      prompt: Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      prompt: Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
       private: false
     - name: ssh_key
       prompt: Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)

@@ -2,8 +2,8 @@
 
 - [Prerequisites](#prerequisites)
 - [Overview](#overview)
-- [(Optional) Configure the Operator Collection SDK Alias Commands](#optional-configure-the-operator-collection-sdk-alias-commands)
-- [Install the Operator Collection SDK](#install-the-operator-collection-sdk)
+- [(Optional) Configure the IBM Operator Collection SDK Alias Commands](#optional-configure-the-ibm-operator-collection-sdk-alias-commands)
+- [Install the IBM Operator Collection SDK](#install-the-ibm-operator-collection-sdk)
 - [Initialize a new Operator Collection](#initialize-a-new-operator-collection)
 - [Apply collection modifications](#apply-collection-modifications)
   - [Update collection requirements](#update-collection-requirements)
@@ -28,8 +28,8 @@
 This tutorial is a walkthrough of building a new operator collection that performs RACF user management against a z/OS environment. This operator will allow you to create a new user ID by creating instances in Openshift, and removing this ID once this instance is deleted.
 
 
-# (Optional) Configure the Operator Collection SDK Alias Commands
-Alternatively, you can configure alias commands to simplify the Operator Collection SDK `ansible-playbook` commands:
+# (Optional) Configure the IBM Operator Collection SDK Alias Commands
+Alternatively, you can configure alias commands to simplify the IBM Operator Collection SDK `ansible-playbook` commands:
 
 1. Open your bash profile using the following command:
 
@@ -66,8 +66,8 @@ or
 source ~/.zshrc
 ```
 
-# Install the Operator Collection SDK
-To install the latest version of Operator Collection SDK, run the following command:
+# Install the IBM Operator Collection SDK
+To install the latest version of IBM Operator Collection SDK, run the following command:
 
 ```bash
 ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
@@ -184,7 +184,7 @@ Now that we've applied our playbooks and updated our `operator-config`, we can b
 
 To do this, you should first install the latest release in the `v2.2` channel of the IBM® z/OS Cloud Broker in your namespace and create an instance of the `ZosCloudBroker` resource. Once the installation is successful, log in to the cluster from your command line by using the `oc login` command and validate that you are in the correct project by using the `oc project` command.
 
-Now, you should be able to run the following command by using the Operator Collection SDK to build your collection and create an operator:
+Now, you should be able to run the following command by using the IBM Operator Collection SDK to build your collection and create an operator:
 
 ```bash
 ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml
@@ -202,7 +202,7 @@ This command should now prompt you for the z/OS endpoint you would like to execu
 Enter your ZosEndpoint name: wazi-sandbox
 Enter your ZosEndpoint host: api.z-stack-int.cp.fyre.ibm.com
 Enter your ZosEndpoint port [22]: 32281
-Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed): ibmuser
+Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed): ibmuser
 Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed): ~/.ssh/id_rsa
 Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed):
 ```
