@@ -20,7 +20,6 @@ This project also provides the documented Operator Collection specification, alo
 - [Operator Collection SDK](ibm/operator_collection_sdk/README.md)
 - [Specification](docs/spec.md)
 - [Tutorial](docs/tutorial.md)
-- [Example Operator](examples/racf-operator/)
 - [Lifecycle](docs/lifecycle.md)
   
 
