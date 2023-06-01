@@ -1,5 +1,5 @@
 # Overview <!-- omit from toc -->
-The Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy your local modifications in seconds, and delete the operator once development is complete.
+The IBM Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy your local modifications in seconds, and delete the operator once development is complete.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -26,7 +26,7 @@ The Operator Collection SDK is used to assist in the end to end deployment of yo
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
   
 # Installation
-The Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
+The IBM Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
 
 ## Github Installation
 Run the following command to install the collection.
@@ -45,7 +45,7 @@ ansible-galaxy collection install ./operator-collection-sdk/ibm/operator_collect
 ```
 
 # Setup
-The following steps are required prior to deploying your operator in OpenShift using the Operator Collection SDK playbooks:
+The following steps are required prior to deploying your operator in OpenShift using the IBM Operator Collection SDK playbooks:
 
 1. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
 2. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.
