@@ -74,6 +74,7 @@
           spec:
             host: "{{ zosendpoint_host }}"
             port: "{{ zosendpoint_port | int }}"
+        validate_certs: false
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
@@ -91,6 +92,7 @@
               operator-version: "{{ operator_version }}"
           spec:
             skipSignatureVerification: true
+        validate_certs: false
 
     - name: Validate OperatorCollection installed successfully
       kubernetes.core.k8s_info:
@@ -98,6 +100,7 @@
         kind: OperatorCollection
         name: "{{ operatorcollection_name }}"
         namespace: "{{ target_namespace }}"
+        validate_certs: false
       register: oc_results
       until: "oc_results.resources[0].status.phase is defined and oc_results.resources[0].status.phase == 'Successful'"
       retries: 5
@@ -130,6 +133,7 @@
                 zosendpoints:
                   - name: "{{ zosendpoint_name }}"
             operatorCollection: "{{ operatorcollection_name }}"
+        validate_certs: false
       when: encrypt_cli_available is false or (username == "" and ssh_key == "")
 
     - name: Create SubOperatorConfig with mapped credential
@@ -149,6 +153,7 @@
                   - name: "{{ zosendpoint_name }}"
                     credentialName: "{{ credential_name }}"
             operatorCollection: "{{ operatorcollection_name }}"
+        validate_certs: false
       when: encrypt_cli_available is true and username != "" and ssh_key != ""
 
     - name: Validate SubOperatorConfig installed successfully
@@ -157,6 +162,7 @@
         kind: SubOperatorConfig
         name: "{{ operatorcollection_name }}-soc"
         namespace: "{{ target_namespace }}"
+        validate_certs: false
       register: soc_results
       until: "soc_results.resources[0].status.phase is defined and soc_results.resources[0].status.phase == 'Successful'"
       retries: 30

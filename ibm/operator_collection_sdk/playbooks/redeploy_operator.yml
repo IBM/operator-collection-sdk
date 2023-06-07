@@ -40,6 +40,7 @@
         namespace: "{{ target_namespace }}"
         label_selectors:
           - "operator-name = {{ operator_name }}"
+        validate_certs: false
       register: soc_results
 
     - name: Validate SubOperatorConfig exists
@@ -53,6 +54,7 @@
         kind: OperatorCollection
         name: "{{ soc_results.resources[0].spec.operatorCollection }}"
         namespace: "{{ target_namespace }}"
+        validate_certs: false
       register: oc_results
 
     - name: Validate OperatorCollection exists
@@ -78,6 +80,7 @@
         kind: OperatorCollection
         namespace: "{{ target_namespace }}"
         name: "{{ oc_results.resources[0].metadata.name }}"
+        validate_certs: false
 
     - name: Validate SubOperatorConfig has been removed
       kubernetes.core.k8s:
@@ -89,6 +92,7 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
+        validate_certs: false
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
@@ -101,6 +105,7 @@
             namespace: "{{ target_namespace }}"
             labels: "{{ oc_results.resources[0].metadata.labels }}"
           spec: "{{ oc_results.resources[0].spec }}"
+        validate_certs: false
 
     - name: Validate OperatorCollection installed successfully
       kubernetes.core.k8s_info:
@@ -108,6 +113,7 @@
         kind: OperatorCollection
         name: "{{ oc_results.resources[0].metadata.name }}"
         namespace: "{{ target_namespace }}"
+        validate_certs: false
       register: updated_oc_results
       until: "updated_oc_results.resources[0].status.phase is defined and updated_oc_results.resources[0].status.phase == 'Successful'"
       retries: 5
@@ -124,6 +130,7 @@
             namespace: "{{ target_namespace }}"
             labels: "{{ soc_results.resources[0].metadata.labels }}"
           spec: "{{ soc_results.resources[0].spec }}"
+        validate_certs: false
 
     - name: Validate SubOperatorConfig installed successfully
       kubernetes.core.k8s_info:
@@ -131,6 +138,7 @@
         kind: SubOperatorConfig
         name: "{{ soc_results.resources[0].metadata.name }}"
         namespace: "{{ target_namespace }}"
+        validate_certs: false
       register: updated_soc_results
       until: "updated_soc_results.resources[0].status.phase is defined and updated_soc_results.resources[0].status.phase == 'Successful'"
       retries: 30
