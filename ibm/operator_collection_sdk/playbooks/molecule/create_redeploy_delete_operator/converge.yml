@@ -19,6 +19,7 @@
           kind: Namespace
           metadata:
             name: "{{ ocpnamespace }}"
+        validate_certs: false
 
     - name: Create OperatorGroup
       kubernetes.core.k8s:
@@ -33,6 +34,7 @@
             targetNamespaces:
               - "{{ ocpnamespace }}"
             upgradeStrategy: Default
+        validate_certs: false
 
 
     - name: Create Subscripton
@@ -51,6 +53,7 @@
             source: ibm-operator-catalog
             sourceNamespace: openshift-marketplace
             startingCSV: ibm-zoscb.v2.2.0
+        validate_certs: false
 
     - name: Validate Subscription installed successfully
       kubernetes.core.k8s_info:
@@ -58,6 +61,7 @@
         kind: Subscription
         name: "{{ subscription_name }}"
         namespace: "{{ ocpnamespace }}"
+        validate_certs: false
       register: subscription_results
       until: "subscription_results.resources[0].status.installedCSV is defined and subscription_results.resources[0].status.currentCSV"
       retries: 30
@@ -69,6 +73,7 @@
         kind: ClusterServiceVersion
         name: "{{ subscription_results.resources[0].status.installedCSV }}"
         namespace: "{{ ocpnamespace }}"
+        validate_certs: false
       register: csv_results
       until: "csv_results.resources[0].status.phase is defined and csv_results.resources[0].status.phase == 'Succeeded'"
       retries: 30
@@ -95,6 +100,7 @@
               size: 5Gi
               volumeMode: Filesystem
             uiResources: {}
+        validate_certs: false
 
     - name: Validate ZosCloudBroker installed successfully
       kubernetes.core.k8s_info:
@@ -102,6 +108,7 @@
         kind: ZosCloudBroker
         name: "{{ zoscloudbroker_name }}"
         namespace: "{{ ocpnamespace }}"
+        validate_certs: false
       register: zoscb_results
       until: "zoscb_results.resources[0].status.phase == 'Successful'"
       retries: 30
