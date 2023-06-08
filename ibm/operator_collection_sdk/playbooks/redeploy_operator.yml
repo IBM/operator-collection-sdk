@@ -72,6 +72,7 @@
           - op: replace
             path: /metadata/finalizers
             value: []
+        validate_certs: false
 
     - name: Remove OperatorCollection
       kubernetes.core.k8s:

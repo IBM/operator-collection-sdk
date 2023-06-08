@@ -59,6 +59,7 @@
           - op: replace
             path: /metadata/finalizers
             value: []
+        validate_certs: false
       when: soc_exists is true
 
     - name: Remove OperatorCollection
