@@ -107,13 +107,13 @@
       delay: 5
 
     - name: Create SSH Credential Secret
-      ansible.builtin.command: zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }}
+      ansible.builtin.command: zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
 
     - name: Create SSH Credential Secret with passphrase
       ansible.builtin.shell: |
-        export PASSPHRASE={{ passphrase }}
-        zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }} -p
+        export PASSPHRASE="{{ passphrase }}"
+        zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}" -p
         unset PASSPHRASE
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != ""
 
