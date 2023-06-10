@@ -28,7 +28,6 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
-        validate_certs: false
 
     - name: Delete ZosCloudBoker
       kubernetes.core.k8s:
@@ -40,7 +39,6 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
-        validate_certs: false
 
     - name: Delete Subscripton
       kubernetes.core.k8s:
@@ -52,7 +50,6 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
-        validate_certs: false
 
     - name: Delete OperatorGroup
       kubernetes.core.k8s:
@@ -61,8 +58,6 @@
         kind: OperatorGroup
         name: "{{ ocpnamespace }}"
         namespace: "{{ ocpnamespace }}"
-        validate_certs: false
-
 
     - name: Delete Namespace
       kubernetes.core.k8s:
@@ -72,7 +67,6 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
-        validate_certs: false
 
     - name: Remove local build
       ansible.builtin.file:
