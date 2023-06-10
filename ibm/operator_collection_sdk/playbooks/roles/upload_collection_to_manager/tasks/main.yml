@@ -10,7 +10,6 @@
     namespace: "{{ namespace }}"
     label_selectors:
       - component = manager
-    validate_certs: false
   register: pod_results
 
 - name: Validate manager pod exists
@@ -30,7 +29,6 @@
     namespace: "{{ namespace }}"
     label_selectors:
       - "operator-name = {{ operator_name }}"
-    validate_certs: false
   register: soc_results
 
 - name: Validate SubOperatorConfig exists
@@ -44,7 +42,6 @@
     kind: OperatorCollection
     name: "{{ soc_results.resources[0].spec.operatorCollection }}"
     namespace: "{{ namespace }}"
-    validate_certs: false
   register: oc_results
   when: soc_results.resources | length > 0
 

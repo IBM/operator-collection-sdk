@@ -27,7 +27,6 @@
         namespace: "{{ target_namespace }}"
         label_selectors:
           - "operator-name = {{ operator_name }}"
-        validate_certs: false
       register: soc_results
 
     - name: Validate SubOperatorConfig exists
@@ -45,7 +44,6 @@
         kind: OperatorCollection
         name: "{{ soc_results.resources[0].spec.operatorCollection }}"
         namespace: "{{ target_namespace }}"
-        validate_certs: false
       register: oc_results
       when: soc_exists is true
 
@@ -59,7 +57,6 @@
           - op: replace
             path: /metadata/finalizers
             value: []
-        validate_certs: false
       when: soc_exists is true
 
     - name: Remove OperatorCollection
@@ -69,7 +66,6 @@
         kind: OperatorCollection
         namespace: "{{ target_namespace }}"
         name: "{{ oc_results.resources[0].metadata.name }}"
-        validate_certs: false
       when: soc_exists is true
 
     - name: Validate SubOperatorConfig has been removed
@@ -82,7 +78,6 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
-        validate_certs: false
       when: soc_exists is true
 
     - name: Remove Credential Secret
@@ -91,7 +86,6 @@
         kind: Secret
         namespace: "{{ target_namespace }}"
         name: "{{ item.credential_name }}"
-        validate_certs: false
       with_items: "{{ soc_results.resources[0].spec.mapping[0].zosendpoints }}"
       when: soc_exists is true
       ignore_errors: true
