@@ -3,8 +3,8 @@
 ## Table of Contents
 - [Testing changes in a forked repo](#testing-changes-in-a-forked-repo)
   - [Installing local collection](#installing-local-collection)
-  - [Installing from forked Github repo](#installing-from-forked-github-repo)
-- [Executing Github Workflows in a forked Github repo](#executing-github-workflows-in-a-forked-github-repo)
+  - [Installing from forked GitHub repo](#installing-from-forked-github-repo)
+- [Executing GitHub Workflows in a forked GitHub repo](#executing-github-workflows-in-a-forked-github-repo)
 - [Ansible Molecule Setup](#ansible-molecule-setup)
 - [Writing Molecule Tests](#writing-molecule-tests)
 
@@ -17,23 +17,23 @@ From the `operator-collection-sdk/ibm` directory issue the following command:
 ansible-galaxy collection install ./operator_collection_sdk -f
 ```
 
-## Installing from forked Github repo
+## Installing from forked GitHub repo
 ```bash
 BRANCH_NAME=$(git branch | grep -F '*' | cut -d ' ' -f2)
 REPO_URL=$(git config --get remote.origin.url)
 ansible-galaxy collection install git+${REPO_URL}#ibm/operator_collection_sdk,${BRANCH_NAME} -f
 ```
 
-# Executing Github Workflows in a forked Github repo
-Github doesn't allow Github workflow Secrets to be passed to forked repositories. Since the current Ansible Molecule tests require access to an Openshift cluster, you are required to configure the following two variables in your workspace before successfully executing an end to end test of your changes.
+# Executing GitHub Workflows in a forked GitHub repo
+GitHub doesn't allow GitHub workflow Secrets to be passed to forked repositories. Since the current Ansible Molecule tests require access to an Openshift cluster, you are required to configure the following two variables in your workspace before successfully executing an end to end test of your changes.
 
 - Navigate to `Setting > Secrets and variables > Actions` and click the "New repository secret" button
-![Github Settings](images/Github%20Settings.png)
+![GitHub Settings](images/GitHub%20Settings.png)
 - Configure the `OPENSHIFT_SERVER` secret. This value can be retrieved using the following command:
     ```bash
     oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'
     ```
-- Generate a new Service Account token in Openshift and configure the `OPENSHIFT_TOKEN` secret in Github. Follow the steps below to generate a token with the proper access in the cluster
+- Generate a new Service Account token in Openshift and configure the `OPENSHIFT_TOKEN` secret in GitHub. Follow the steps below to generate a token with the proper access in the cluster
     ```bash
     oc create sa github -n default
     oc adm policy add-cluster-role-to-user cluster-admin -z github -n default

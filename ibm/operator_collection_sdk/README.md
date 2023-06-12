@@ -4,7 +4,7 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [Github Installation](#github-installation)
+  - [GitHub Installation](#github-installation)
   - [IBM Cloud Container Registry](#ibm-cloud-container-registry)
 - [Setup](#setup)
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
@@ -26,9 +26,9 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
   
 # Installation
-The IBM Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
+The IBM Operator Collection SDK can be installed directly from GitHub, or via docker image stored in the IBM Cloud Container Registry
 
-## Github Installation
+## GitHub Installation
 Run the following command to install the collection.
 
 ```bash
@@ -36,11 +36,11 @@ ansible-galaxy collection install git+https://github.com/IBM/operator-collection
 ```
 
 ## IBM Cloud Container Registry
-Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the Opeator Collection SDK collection into your default collection path:
+Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the IBM Operator Collection SDK collection into your default collection path:
 
 ```bash
 mkdir -vp operator-collection-sdk/
-oc image extract icr.io/zmodstk-open/operator-collection-sdk:latest --path /:operator-collection-sdk/ --confirm
+oc image extract icr.io/zmodstack/operator-collection-sdk:latest --path /:operator-collection-sdk/ --confirm
 ansible-galaxy collection install ./operator-collection-sdk/ibm/operator_collection_sdk -f
 ```
 
