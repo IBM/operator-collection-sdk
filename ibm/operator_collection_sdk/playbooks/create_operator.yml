@@ -20,7 +20,7 @@
       default: "22"
       private: false
     - name: username
-      prompt: Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
+      prompt: Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
       private: false
     - name: ssh_key
       prompt: Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
@@ -104,13 +104,13 @@
       delay: 5
 
     - name: Create SSH Credential Secret
-      ansible.builtin.command: zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }}
+      ansible.builtin.command: zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
 
     - name: Create SSH Credential Secret with passphrase
       ansible.builtin.shell: |
-        export PASSPHRASE={{ passphrase }}
-        zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }} -p
+        export PASSPHRASE="{{ passphrase }}"
+        zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}" -p
         unset PASSPHRASE
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != ""
 
@@ -123,12 +123,6 @@
           metadata:
             name: "{{ operatorcollection_name }}-soc"
             namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
           spec:
             credentialType: personal
             mapping:
@@ -147,12 +141,6 @@
           metadata:
             name: "{{ operatorcollection_name }}-soc"
             namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-              operatorcollection-name: "{{ operator_name }}.{{ operator_domain }}.{{ operator_version }}"
           spec:
             credentialType: shared
             mapping:
