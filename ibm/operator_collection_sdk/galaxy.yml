@@ -8,7 +8,7 @@ namespace: ibm
 name: operator_collection_sdk
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.0-beta.1
+version: 1.0.0-alpha.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
