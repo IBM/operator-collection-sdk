@@ -8,7 +8,7 @@ namespace: ibm
 name: operator_collection_sdk
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.2.0
+version: 1.0.0-alpha.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -21,7 +21,7 @@ authors:
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
-description: The Operator Collection SDK provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker as part of the IBM Z® and Cloud Modernization Stack.
+description: The IBM Operator Collection SDK provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker as part of the IBM Z® and Cloud Modernization Stack.
 
 
 # Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
