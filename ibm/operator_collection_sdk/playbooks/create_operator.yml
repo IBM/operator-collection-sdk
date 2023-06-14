@@ -25,7 +25,7 @@
         prompt: "Enter your ZosEndpoint name "
       when: zosendpoint_name is not defined
       register: zosendpoint_name_input
-      
+
     - name: Set endpoint name value 
       when: zosendpoint_name is not defined
       ansible.builtin.set_fact:
@@ -36,23 +36,23 @@
         prompt: "Enter your ZosEndpoint host "
       when: zosendpoint_type == "remote" and zosendpoint_host is not defined
       register: zosendpoint_host_input
-      
+
     - name: Set endpoint host value 
       when: zosendpoint_type == "remote" and zosendpoint_host is not defined
       ansible.builtin.set_fact:
         zosendpoint_host: "{{ zosendpoint_host_input.user_input }}"
-      
+
     - name: Set Remote ZosEndpoint Port information
       ansible.builtin.pause:
         prompt: "Enter your ZosEndpoint port "
       when: zosendpoint_type == "remote" and zosendpoint_port is not defined
       register: zosendpoint_port_input
-      
+
     - name: Set endpoint port value 
       when: zosendpoint_type == "remote" and zosendpoint_port is not defined
       ansible.builtin.set_fact:
         zosendpoint_port: "{{ zosendpoint_port_input.user_input | int }}"
-      
+
     - name: Init facts
       ansible.builtin.set_fact:
         username:
@@ -65,34 +65,29 @@
         prompt: "Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
       when: zosendpoint_type == "remote" and username is not defined
       register: zosendpoint_username
-      
 
     - name: Set username
       when: zosendpoint_type == "remote" and username is not defined
       ansible.builtin.set_fact:
         username: "{{ zosendpoint_username.user_input }}"
-      
 
     - name: Set Remote ZosEndpoint SSH information
       ansible.builtin.pause:
         prompt: "Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
       when: zosendpoint_type == "remote" and ssh_key is not defined
       register: zosendpoint_ssh_key
-      
 
     - name: Set ssh key
       when: zosendpoint_type == "remote" and ssh_key is not defined
       ansible.builtin.set_fact:
         ssh_key: "{{ zosendpoint_ssh_key.user_input }}"
         private: false
-      
 
     - name: Set Remote ZosEndpoint Passphrase information
       ansible.builtin.pause:
         prompt: "Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
       when: zosendpoint_type == "remote" and passphrase is not defined
       register: zosendpoint_passphrase
-      
 
     - name: Set passphrase
       when: zosendpoint_type == "remote" and passphrase is not defined
