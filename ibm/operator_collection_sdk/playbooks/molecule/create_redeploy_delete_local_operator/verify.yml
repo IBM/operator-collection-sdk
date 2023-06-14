@@ -25,7 +25,7 @@
         that: 
           -  zosendpoint_results.resources[0].status.phase == 'Successful'
           -  zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
-          -  zosendpoint_results.resources[0].spec.endpointType == "remote"
+          -  zosendpoint_results.resources[0].spec.endpointType == "local"
 
     - name: Validate SubOperatorConfig
       kubernetes.core.k8s_info:

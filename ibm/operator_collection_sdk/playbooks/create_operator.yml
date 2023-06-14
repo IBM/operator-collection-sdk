@@ -8,28 +8,98 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  vars_prompt:
-    - name: zosendpoint_name
-      prompt: Enter your ZosEndpoint name
-      private: false
-    - name: zosendpoint_host
-      prompt: Enter your ZosEndpoint host
-      private: false
-    - name: zosendpoint_port
-      prompt: Enter your ZosEndpoint port
-      default: "22"
-      private: false
-    - name: username
-      prompt: Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
-      private: false
-    - name: ssh_key
-      prompt: Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
-      private: false
-    - name: passphrase
-      prompt: Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed)
-      private: true
-
   tasks:
+    - name: Set Remote ZosEndpoint Type information
+      pause:
+        prompt: "Enter what type (local/remote) of ZosEndpoint you want to create "
+      when: zosendpoint_type is not defined
+      register: zosendpoint_type_input
+      
+    - name: Set endpoint type value 
+      when: zosendpoint_type is not defined
+      set_fact:
+        zosendpoint_type: "{{ zosendpoint_type_input.user_input }}"
+
+    - name: Set ZosEndpoint Name information
+      pause:
+        prompt: "Enter your ZosEndpoint name "
+      when: zosendpoint_name is not defined
+      register: zosendpoint_name_input
+      
+    - name: Set endpoint name value 
+      when: zosendpoint_name is not defined
+      set_fact:
+        zosendpoint_name: "{{ zosendpoint_name_input.user_input }}"
+
+    - name: Set Remote ZosEndpoint Host information
+      pause:
+        prompt: "Enter your ZosEndpoint host "
+      when: zosendpoint_type == "remote" and zosendpoint_host is not defined
+      register: zosendpoint_host_input
+      
+    - name: Set endpoint host value 
+      when: zosendpoint_type == "remote" and zosendpoint_host is not defined
+      set_fact:
+        zosendpoint_host: "{{ zosendpoint_host_input.user_input }}"
+      
+    - name: Set Remote ZosEndpoint Port information
+      pause:
+        prompt: "Enter your ZosEndpoint port "
+      when: zosendpoint_type == "remote" and zosendpoint_port is not defined
+      register: zosendpoint_port_input
+      
+    - name: Set endpoint port value 
+      when: zosendpoint_type == "remote" and zosendpoint_port is not defined
+      set_fact:
+        zosendpoint_port: "{{ zosendpoint_port_input.user_input | int }}"
+      
+    - name: Init facts
+      ansible.builtin.set_fact:
+        username:
+        ssh_key:
+        passphrase:
+      when: zosendpoint_type == "local"
+
+    - name: Set Remote ZosEndpoint Username information
+      pause:
+        prompt: "Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
+      when: zosendpoint_type == "remote" and username is not defined
+      register: zosendpoint_username
+      
+
+    - name: Set username
+      when: zosendpoint_type == "remote" and username is not defined
+      set_fact:
+        username: "{{ zosendpoint_username.user_input }}"
+      
+
+    - name: Set Remote ZosEndpoint SSH information
+      pause:
+        prompt: "Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
+      when: zosendpoint_type == "remote" and ssh_key is not defined
+      register: zosendpoint_ssh_key
+      
+
+    - name: Set ssh key
+      when: zosendpoint_type == "remote" and ssh_key is not defined
+      set_fact:
+        ssh_key: "{{ zosendpoint_ssh_key.user_input }}"
+        private: false
+      
+
+    - name: Set Remote ZosEndpoint Passphrase information
+      pause:
+        prompt: "Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
+      when: zosendpoint_type == "remote" and passphrase is not defined
+      register: zosendpoint_passphrase
+      
+
+    - name: Set passphrase
+      when: zosendpoint_type == "remote" and passphrase is not defined
+      set_fact:
+        passphrase: "{{ zosendpoint_passphrase.user_input }}"
+        private: true
+
     - name: Set local directory
       ansible.builtin.set_fact:
         local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
@@ -61,6 +131,17 @@
       ansible.builtin.set_fact:
         credential_name: "{{ zosendpoint_name }}-credential"
       when: encrypt_cli_available is true
+    
+    - name: Set Endpoint spec
+      ansible.builtin.set_fact:
+        spec: |
+          {% if zosendpoint_type == "local" %}
+          endpointType: "{{ zosendpoint_type}}"
+          {% else %}
+          endpointType: "{{ zosendpoint_type}}"
+          host: "{{ zosendpoint_host }}"
+          port: {{zosendpoint_port | int }}
+          {% endif %}
 
     - name: Create ZosEndpoint
       kubernetes.core.k8s:
@@ -71,9 +152,7 @@
           metadata:
             name: "{{ zosendpoint_name }}"
             namespace: "{{ target_namespace }}"
-          spec:
-            host: "{{ zosendpoint_host }}"
-            port: "{{ zosendpoint_port | int }}"
+          spec: "{{spec | from_yaml}}"
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
@@ -104,15 +183,16 @@
       delay: 5
 
     - name: Create SSH Credential Secret
-      ansible.builtin.command: zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}"
-      when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase == ""
+      ansible.builtin.command: zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }}
+      # when: encrypt_cli_available is true and username is defined and username != "" and  ssh_key is defined and ssh_key != "" and passphrase is defined and passphrase == ""
+      when: encrypt_cli_available is true and username != None and  ssh_key != None and passphrase == None
 
     - name: Create SSH Credential Secret with passphrase
       ansible.builtin.shell: |
-        export PASSPHRASE="{{ passphrase }}"
-        zoscb-encrypt credential-secret -n "{{ credential_name }}" -u "{{ username }}" -s "{{ ssh_key }}" -p
+        export PASSPHRASE={{ passphrase }}
+        zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }} -p
         unset PASSPHRASE
-      when: encrypt_cli_available is true and username != "" and ssh_key != "" and passphrase != ""
+      when: encrypt_cli_available is true and username != None and ssh_key != None and passphrase != None
 
     - name: Create SubOperatorConfig without mapped credential
       kubernetes.core.k8s:
