@@ -126,7 +126,7 @@
       ansible.builtin.set_fact:
         credential_name: "{{ zosendpoint_name }}-credential"
       when: encrypt_cli_available is true
-    
+
     - name: Set Endpoint spec
       ansible.builtin.set_fact:
         spec: |
