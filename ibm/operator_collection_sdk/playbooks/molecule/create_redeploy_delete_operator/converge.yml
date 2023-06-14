@@ -34,7 +34,6 @@
               - "{{ ocpnamespace }}"
             upgradeStrategy: Default
 
-
     - name: Create Subscripton
       kubernetes.core.k8s:
         state: present
