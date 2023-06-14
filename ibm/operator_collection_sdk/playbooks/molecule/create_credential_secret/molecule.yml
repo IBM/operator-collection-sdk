@@ -30,6 +30,8 @@ provisioner:
         zosendpoint_name: ibmcloud-vm
         openshift_token: ${OPENSHIFT_TOKEN}
         openshift_server: ${OPENSHIFT_SERVER}
+        default_secret: molecule-secret
+        passphrase_secret: molecule-secret-passphrase
 scenario:
   test_sequence:
     - prepare
