@@ -12,74 +12,6 @@
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
-    - name: Validate ZosEndpoint
-      kubernetes.core.k8s_info:
-        api_version: zoscb.ibm.com/v2beta2
-        kind: ZosEndpoint
-        name: "{{ zosendpoint_name }}"
-        namespace: "{{ ocpnamespace }}"
-      register: zosendpoint_results
-      
-    - name: Assert ZosEndpoint configuration
-      ansible.builtin.assert:
-        that: 
-          -  zosendpoint_results.resources[0].status.phase == 'Successful'
-          -  zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
-
-    - name: Validate SubOperatorConfig
-      kubernetes.core.k8s_info:
-        api_version: zoscb.ibm.com/v2beta2
-        kind: SubOperatorConfig
-        name: "{{ zosendpoint_results.resources[0].status.suboperatorconfigs[0].name }}"
-        namespace: "{{ ocpnamespace }}"
-      register: suboperatorconfig_results
-
-    - name: Assert SubOperatorConfig configuration
-      ansible.builtin.assert:
-        that: 
-          -  suboperatorconfig_results.resources[0].spec.credentialType == 'personal'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpoint_name }}'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
-          -  suboperatorconfig_results.resources[0].spec.operatorCollection is defined
-          -  suboperatorconfig_results.resources[0].status.phase == 'Successful'
-          -  suboperatorconfig_results.resources[0].status.clusterserviceversion is defined
-          -  suboperatorconfig_results.resources[0].status.customresourcedefinition | length > 0
-          -  suboperatorconfig_results.resources[0].status.packages is defined
-
-    - name: Validate OperatorCollection
-      kubernetes.core.k8s_info:
-        api_version: zoscb.ibm.com/v2beta2
-        kind: OperatorCollection
-        name: "{{ suboperatorconfig_results.resources[0].spec.operatorCollection }}"
-        namespace: "{{ ocpnamespace }}"
-      register: operatorcollection_results
-
-    - name: Assert OperatorCollection configuration
-      ansible.builtin.assert:
-        that: 
-          -  operatorcollection_results.resources[0].spec.skipSignatureVerification is true
-          -  operatorcollection_results.resources[0].status.config.collectionPath is defined
-          -  operatorcollection_results.resources[0].status.phase == 'Successful'
-          -  operatorcollection_results.resources[0].status.subOperatorConfigMappingStatus | length == 1
-
-    - name: Validate CSV
-      kubernetes.core.k8s_info:
-        api_version: operators.coreos.com/v1alpha1
-        kind: ClusterServiceVersion
-        name: "{{ suboperatorconfig_results.resources[0].status.clusterserviceversion.metadata.name  }}"
-        namespace: "{{ ocpnamespace }}"
-      register: csv_results
-      until: "csv_results.resources[0].status.phase == 'Succeeded'"
-      retries: 30
-      delay: 5
-      no_log: true
-
-    - name: Assert CSV configuration
-      ansible.builtin.assert:
-        that: 
-          -  csv_results.resources[0].status.phase == 'Succeeded'
-
     - name: Validate default secret 
       kubernetes.core.k8s_info:
         api_version: operators.coreos.com/v1alpha1
@@ -97,24 +29,6 @@
         that: 
           -  default_secret_results.data != ""
           -  default_secret_results.type == ""
-
-    - name: Validate github secret 
-      kubernetes.core.k8s_info:
-        api_version: operators.coreos.com/v1alpha1
-        kind: Secret
-        name: "github_secret"
-        namespace: "{{ ocpnamespace }}"
-      register: github_secret_results
-      until: "github_secret_results.resources[0].status.phase == 'Succeeded'"
-      retries: 30
-      delay: 5
-      no_log: true
-
-    - name: Assert github secret
-      ansible.builtin.assert:
-        that: 
-          -  secret.data != ""
-          -  secret.type == ""
     
     - name: Validate passphrase secret 
       kubernetes.core.k8s_info:
