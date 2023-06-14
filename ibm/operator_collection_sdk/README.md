@@ -1,12 +1,20 @@
-# Overview
-The Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy your local modifications in seconds, and delete the operator once development is complete.
+# Overview <!-- omit from toc -->
+The IBM Operator Collection SDK is used to assist in the end to end deployment of your Ansible collection during the development lifecycle using IBM® z/OS® Cloud Broker Kubernetes API's. This collection provides the automation to deploy an operator in your namespace that contains your latest Ansible collection modifications, quickly redeploy your local modifications in seconds, and delete the operator once development is complete.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+  - [GitHub Installation](#github-installation)
+  - [IBM Cloud Container Registry](#ibm-cloud-container-registry)
 - [Setup](#setup)
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
+  - [Initializing a new Operator Collection](#initializing-a-new-operator-collection)
+  - [Generating an operator-config.yml in an existing Ansible Collection](#generating-an-operator-configyml-in-an-existing-ansible-collection)
 - [Usage Examples](#usage-examples)
+  - [Creating the initial operator on the OpenShift cluster](#creating-the-initial-operator-on-the-openshift-cluster)
+  - [Re-deploying your Ansible Collection after making local playbook/role modifications](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications)
+  - [Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications-and-modifications-to-your-operator-config-file)
+  - [Deleting the Operator](#deleting-the-operator)
 - [Tips](#tips)
 
 # Prerequisites
@@ -18,9 +26,9 @@ The Operator Collection SDK is used to assist in the end to end deployment of yo
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
   
 # Installation
-The Operator Collection SDK can be installed directly from Github, or via docker image stored in the IBM Cloud Container Registry
+The IBM Operator Collection SDK can be installed directly from GitHub, or via docker image stored in the IBM Cloud Container Registry
 
-## Github Installation
+## GitHub Installation
 Run the following command to install the collection.
 
 ```bash
@@ -28,16 +36,16 @@ ansible-galaxy collection install git+https://github.com/IBM/operator-collection
 ```
 
 ## IBM Cloud Container Registry
-Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the Opeator Collection SDK collection into your default collection path:
+Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the IBM Operator Collection SDK collection into your default collection path:
 
 ```bash
 mkdir -vp operator-collection-sdk/
-oc image extract icr.io/zmodstk-open/operator-collection-sdk:latest --path /:operator-collection-sdk/ --confirm
+oc image extract icr.io/zmodstack/operator-collection-sdk:latest --path /:operator-collection-sdk/ --confirm
 ansible-galaxy collection install ./operator-collection-sdk/ibm/operator_collection_sdk -f
 ```
 
 # Setup
-The following steps are required prior to deploying your operator in OpenShift using the Operator Collection SDK playbooks:
+The following steps are required prior to deploying your operator in OpenShift using the IBM Operator Collection SDK playbooks:
 
 1. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
 2. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.
@@ -58,7 +66,7 @@ ansible-playbook -e "collectionName=<collection-name> collectionNamespace=<colle
 ```
 
 ## Generating an operator-config.yml in an existing Ansible Collection
-Run the following command in the root directory of the Ansible collection to generate the `operator-config.yaml` template
+If you are planning to convert an existing Ansible Collection to an Operator Collection, then you should run the following command in the root directory of the Ansible collection to generate the `operator-config.yml` template
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml
@@ -150,7 +158,7 @@ Enter your ZosEndpoint name:
 ```
 
 [openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
-[openshift-cli]:https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html
+[openshift-cli]:https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands
 [ansible]:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#pip-install
 [cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
 [kubernetes]:https://github.com/kubernetes-client/python#installation

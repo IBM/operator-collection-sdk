@@ -59,7 +59,6 @@
         name: "{{ ocpnamespace }}"
         namespace: "{{ ocpnamespace }}"
 
-
     - name: Delete Namespace
       kubernetes.core.k8s:
         state: absent
