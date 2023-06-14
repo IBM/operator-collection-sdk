@@ -184,7 +184,6 @@
 
     - name: Create SSH Credential Secret
       ansible.builtin.command: zoscb-encrypt credential-secret -n {{ credential_name }} -u {{ username }} -s {{ ssh_key }}
-      # when: encrypt_cli_available is true and username is defined and username != "" and  ssh_key is defined and ssh_key != "" and passphrase is defined and passphrase == ""
       when: encrypt_cli_available is true and username != None and  ssh_key != None and passphrase == None
 
     - name: Create SSH Credential Secret with passphrase
