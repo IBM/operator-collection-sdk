@@ -4,5 +4,6 @@ zosendpoint_name: ibmcloud-vm
 zosendpoint_host: 52.117.98.131
 zosendpoint_port: 22
 secret_name: molecule-secret
-username: ""
-ssh_key: ""
+username: "testuser"
+passphrase: "fakepassphrase"
+ssh_key: "test_rsa"
