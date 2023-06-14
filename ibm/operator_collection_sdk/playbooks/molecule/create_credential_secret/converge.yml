@@ -117,7 +117,8 @@
   vars:
     operator_name: "racf"
     username: "testuser"
-    secret_name: "default-secret"
+    passphrase: ""
+    secret_name: "{{ default-secret }}"
   
 
 - import_playbook: ../../create_credential_secret.yml
@@ -125,4 +126,4 @@
     operator_name: "racf"
     username: "testuser"
     passphrase: "fakepass"
-    secret_name: "passphrase_secret"
+    secret_name: "{{ passphrase-secret }}"
