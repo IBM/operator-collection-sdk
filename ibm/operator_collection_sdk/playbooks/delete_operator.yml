@@ -85,7 +85,6 @@
         state: absent
         kind: Secret
         namespace: "{{ target_namespace }}"
-        name: "{{ item.credential_name }}"
+        name: "{{ item.credentialName }}"
       with_items: "{{ soc_results.resources[0].spec.mapping[0].zosendpoints }}"
-      when: soc_exists is true
-      ignore_errors: true
+      when: soc_exists is true and item.credentialName is defined
