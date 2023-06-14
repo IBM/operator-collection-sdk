@@ -14,7 +14,7 @@
         prompt: "Enter what type (local/remote) of ZosEndpoint you want to create "
       when: zosendpoint_type is not defined
       register: zosendpoint_type_input
-      
+
     - name: Set endpoint type value 
       when: zosendpoint_type is not defined
       ansible.builtin.set_fact:
