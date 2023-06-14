@@ -113,21 +113,16 @@
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
-- import_playbook: ../../create_secret.yml
+- import_playbook: ../../create_credential_secret.yml
   vars:
-    operator-name: "racf"
+    operator_name: "racf"
     username: "testuser"
     secret_name: "default-secret"
   
-- import_playbook: ../../create_secret.yml
-  vars:
-    operator-name: "racf"
-    github_token: "1234566789abcdef"
-    secret_name: "github_secret"
 
-- import_playbook: ../../create_secret.yml
+- import_playbook: ../../create_credential_secret.yml
   vars:
-    operator-name: "racf"
+    operator_name: "racf"
     username: "testuser"
-    passphrase: "testpass"
+    passphrase: "fakepass"
     secret_name: "passphrase_secret"

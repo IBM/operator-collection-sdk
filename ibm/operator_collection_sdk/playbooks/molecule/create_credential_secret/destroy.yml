@@ -4,41 +4,12 @@
 #
 
 ---
-- name: Delete default secret
-  kubernetes.core.k8s:
-    state: absent
-    kind: secret
-    name: "default_secret"
-    namespace: "{{ ocpnamespace }}"
-    wait: true
-    wait_sleep: 5
-    wait_timeout: 140
-
-- name: Delete github secret
-  kubernetes.core.k8s:
-    state: absent
-    kind: secret
-    name: "github_secret"
-    namespace: "{{ ocpnamespace }}"
-    wait: true
-    wait_sleep: 5
-    wait_timeout: 140
-
-- name: Delete passphrase secret
-  kubernetes.core.k8s:
-    state: absent
-    kind: secret
-    name: "passphrase_secret"
-    namespace: "{{ ocpnamespace }}"
-    wait: true
-    wait_sleep: 5
-    wait_timeout: 140
-
 - name: Delete Operator
   import_playbook: ../../delete_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+
 - name: Destroy
   hosts: localhost
   connection: local
@@ -48,6 +19,26 @@
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
+    - name: Delete default secret
+      kubernetes.core.k8s:
+        state: absent
+        kind: secret
+        name: "{{ default_secret }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+
+    - name: Delete passphrase secret
+      kubernetes.core.k8s:
+        state: absent
+        kind: secret
+        name: "{{ passphrase_secret }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+
     - name: Delete ZosEndpoint
       kubernetes.core.k8s:
         state: absent
