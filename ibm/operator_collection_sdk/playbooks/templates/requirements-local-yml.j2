@@ -1,0 +1,5 @@
+collections:
+{% for collection in collection_tarball_results.files %}
+  - name: {{ collection.path | basename }}
+    version: {{ collection.path | basename | splitext | first | splitext | first | split('-') | last }}
+{% endfor %}
