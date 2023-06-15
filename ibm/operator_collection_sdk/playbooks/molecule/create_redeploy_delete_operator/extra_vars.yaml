@@ -1,0 +1,11 @@
+collection_name: test_collection
+collection_namespace: ibm
+zosendpoint_name: ibmcloud-vm
+zosendpoint_host: ***IP_REMOVED***
+zosendpoint_port: 22
+username: "testuser"
+passphrase: "testpassword"
+operator_name: "zos-ims-operator"
+ssh_key: "./molecule/create_redeploy_delete_operator/testfiles/fakekey"
+secret_name: "test-secret"
+molecule_test: true
