@@ -15,7 +15,7 @@
       when: zosendpoint_type is not defined
       register: zosendpoint_type_input
 
-    - name: Set endpoint type value 
+    - name: Set endpoint type value
       when: zosendpoint_type is not defined
       ansible.builtin.set_fact:
         zosendpoint_type: "{{ zosendpoint_type_input.user_input }}"
@@ -26,7 +26,7 @@
       when: zosendpoint_name is not defined
       register: zosendpoint_name_input
 
-    - name: Set endpoint name value 
+    - name: Set endpoint name value
       when: zosendpoint_name is not defined
       ansible.builtin.set_fact:
         zosendpoint_name: "{{ zosendpoint_name_input.user_input }}"
@@ -37,7 +37,7 @@
       when: zosendpoint_type == "remote" and zosendpoint_host is not defined
       register: zosendpoint_host_input
 
-    - name: Set endpoint host value 
+    - name: Set endpoint host value
       when: zosendpoint_type == "remote" and zosendpoint_host is not defined
       ansible.builtin.set_fact:
         zosendpoint_host: "{{ zosendpoint_host_input.user_input }}"
@@ -48,7 +48,7 @@
       when: zosendpoint_type == "remote" and zosendpoint_port is not defined
       register: zosendpoint_port_input
 
-    - name: Set endpoint port value 
+    - name: Set endpoint port value
       when: zosendpoint_type == "remote" and zosendpoint_port is not defined
       ansible.builtin.set_fact:
         zosendpoint_port: "{{ zosendpoint_port_input.user_input | int }}"
