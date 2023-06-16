@@ -47,9 +47,9 @@
             channel: v2.2
             installPlanApproval: Automatic
             name: ibm-zoscb
-            source: ibm-operator-catalog
+            source: ibm-zoscb-internal-catalog
             sourceNamespace: openshift-marketplace
-            startingCSV: ibm-zoscb.v2.2.0
+            startingCSV: ibm-zoscb.v2.2.1
 
     - name: Validate Subscription installed successfully
       kubernetes.core.k8s_info:
@@ -110,6 +110,10 @@
 - import_playbook: ../../create_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+
+- import_playbook: ../../create_credential_secret.yml
+  vars:
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
 - import_playbook: ../../redeploy_operator.yml
