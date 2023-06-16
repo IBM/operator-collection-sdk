@@ -47,7 +47,7 @@
             channel: v2.2
             installPlanApproval: Automatic
             name: ibm-zoscb
-            source: ibm-zoscb-internal-catalog
+            source: ibm-operator-catalog
             sourceNamespace: openshift-marketplace
             startingCSV: ibm-zoscb.v2.2.1
 
