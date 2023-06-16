@@ -3,7 +3,9 @@ collection_namespace: ibm
 zosendpoint_name: ibmcloud-vm
 zosendpoint_host: ***IP_REMOVED***
 zosendpoint_port: 22
-secret_name: molecule-secret
 username: "testuser"
-passphrase: "fakepassphrase"
-ssh_key: "test_rsa"
+passphrase: ""
+operator_name: "racf"
+ssh_key: "./molecule/create_redeploy_delete_operator/testfiles/fakekey"
+secret_name: "test-secret"
+molecule_test: true

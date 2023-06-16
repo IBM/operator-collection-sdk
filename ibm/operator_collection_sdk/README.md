@@ -163,3 +163,20 @@ Enter your ZosEndpoint name:
 [cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
 [kubernetes]:https://github.com/kubernetes-client/python#installation
 [broker]:https://ibm.biz/ibm-zoscb-install
+
+5. if you find yourself inputting vars_prompts frequently, append `--extra-vars <vars>.json` to your playbook command/alias
+
+```
+ansible-playbook create_credential_secret.yml --extra-vars dev.json
+```
+
+example dev.json file:
+
+{
+    "zosendpoint_name" : "zos-ep",
+    "zosendpoint_host" : "127.0.0.1",
+    "zosendpoint_port" : "22",
+    "username" : "admin",
+    "ssh_key" : "~/.ssh/id_rsa",
+    "passphrase" : "",
+}
