@@ -4,6 +4,9 @@ zosendpoint_name: ibmcloud-vm
 zosendpoint_host: 52.117.98.131
 zosendpoint_port: 22
 zosendpoint_type: remote
-username: ""
-ssh_key: ""
+username: "testuser"
 passphrase: ""
+operator_name: "racf"
+ssh_key: "./molecule/create_redeploy_delete_operator/testfiles/fakekey"
+secret_name: "test-secret"
+molecule_test: true
