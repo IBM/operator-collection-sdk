@@ -31,6 +31,7 @@ provisioner:
         secret_name: "test-secret"
         openshift_token: ${OPENSHIFT_TOKEN}
         openshift_server: ${OPENSHIFT_SERVER}
+        skip_credential_check: true
 scenario:
   test_sequence:
     - prepare
