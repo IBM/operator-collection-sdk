@@ -43,7 +43,7 @@
 
 - name: Set encrypt_cli_available variable
   ansible.builtin.set_fact:
-    encrypt_cli_available: "{{ true if zoscb_encrypt_output.rc == 0 else false }}"
+    encrypt_cli_available: "{{ true if zoscb_encrypt_output.rc == 0 and skip_credential_check is undefined else false }}"
 
 - name: Print CLI Warning
   ansible.builtin.debug:
