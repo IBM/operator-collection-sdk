@@ -25,7 +25,7 @@
         that: 
           -  zosendpoint_results.resources[0].status.phase == 'Successful'
           -  zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
-          -  zosendpoint_results.resources[0].spec.endpointType == "remote"
+          -  zosendpoint_results.resources[0].spec.endpointType == "local"
 
     - name: Validate SubOperatorConfig
       kubernetes.core.k8s_info:
@@ -80,23 +80,3 @@
       ansible.builtin.assert:
         that: 
           -  csv_results.resources[0].status.phase == 'Succeeded'
-
-    - name: Validate default secret 
-      kubernetes.core.k8s_info:
-        api_version: v1
-        kind: Secret
-        name: "{{ secret_name }}"
-        namespace: "{{ ocpnamespace }}"
-      register: default_secret_results
-      until: "default_secret_results.api_found == true"
-      retries: 30
-      delay: 5
-      no_log: true
-
-    - name: Assert default secret
-      ansible.builtin.assert:
-        that: 
-          -  default_secret_results.resources[0].data is defined
-          -  default_secret_results.resources[0].type == "Opaque"
-          -  default_secret_results.resources[0].data.ssh_key != ""
-          -  default_secret_results.resources[0].data.username != ""
