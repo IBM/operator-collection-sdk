@@ -3,6 +3,7 @@ collection_namespace: ibm
 zosendpoint_name: ibmcloud-vm
 zosendpoint_host: ***IP_REMOVED***
 zosendpoint_port: 22
-username: ""
-ssh_key: ""
-passphrase: ""
+secret_name: molecule-secret
+username: "testuser"
+passphrase: "fakepassphrase"
+ssh_key: "test_rsa"

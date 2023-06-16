@@ -112,6 +112,10 @@
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
+- import_playbook: ../../create_credential_secret.yml
+  vars:
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+
 - import_playbook: ../../redeploy_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"

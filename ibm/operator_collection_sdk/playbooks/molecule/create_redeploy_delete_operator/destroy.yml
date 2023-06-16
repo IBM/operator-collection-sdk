@@ -18,6 +18,16 @@
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
+    - name: Delete test secret
+      kubernetes.core.k8s:
+        state: absent
+        kind: secret
+        name: "{{ secret_name }}" 
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+
     - name: Delete ZosEndpoint
       kubernetes.core.k8s:
         state: absent
@@ -72,4 +82,3 @@
       ansible.builtin.file:
         path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/local"
         state: absent
-
