@@ -12,14 +12,6 @@ platforms:
 - name: instance
 provisioner:
   name: ansible
-  ## extra-vars needed to bypass vars_prompts
-  ansible_args:
-    - --extra-vars=@molecule/create_operator_config/extra_vars.yaml
-  inventory:
-    group_vars:
-      all:
-        collection_name: test_collection
-        collection_namespace: ibm
 scenario:
   test_sequence:
     - destroy
