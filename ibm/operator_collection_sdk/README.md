@@ -16,6 +16,7 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
   - [Creating the initial operator on the OpenShift cluster](#creating-the-initial-operator-on-the-openshift-cluster)
   - [Re-deploying your Ansible Collection after making local playbook/role modifications](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications)
   - [Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications-and-modifications-to-your-operator-config-file)
+  - [Creating a credential Secret from within the Operator container](#creating-a-credential-secret-from-within-the-operator-container)
   - [Deleting the Operator](#deleting-the-operator)
 - [Tips](#tips)
   - [Configure alias commands to simplify playbook execution](#configure-alias-commands-to-simplify-playbook-execution)
@@ -128,8 +129,18 @@ In the event where modifications are needed to your collection AND your `operato
 ansible-playbook ibm.operator_collection_sdk.redeploy_operator
 ```
 
+## Creating a credential Secret from within the Operator container
+
+If you're currently unable to install the [z/OS Cloud Broker Encryption CLI][cli], you also have the option to generate these encrypted credentials using the `zoscb-encrypt` CLI within the operator container. 
+
+Run the following command to generate encrypted credentials in the current Namespace.
+
+```bash
+ansible-playbook ibm.operator_collection_sdk.create_credential_secret
+```
+
 ## Deleting the Operator
-Run the following command to uninstall the operator
+Run the following command to uninstall the operator.
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.delete_operator
@@ -163,6 +174,7 @@ alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.ope
 alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
 alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
 alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
+alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
 ```
 
 3. Source your bash profile to pick up the latest changes:
