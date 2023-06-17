@@ -14,7 +14,7 @@ provisioner:
   name: ansible
   ## extra-vars needed to bypass vars_prompts
   ansible_args:
-    - --extra-vars=@molecule/init_collection/extra_vars.yml
+    - --extra-vars=@molecule/init_collection_offline/extra_vars.yml
   inventory:
     group_vars:
       all:
