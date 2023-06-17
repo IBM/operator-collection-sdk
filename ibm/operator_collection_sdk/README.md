@@ -4,8 +4,9 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+  - [Ansible Galaxy Installation](#ansible-galaxy-installation)
   - [GitHub Installation](#github-installation)
-  - [IBM Cloud Container Registry](#ibm-cloud-container-registry)
+  - [IBM Cloud Container Registry Installation](#ibm-cloud-container-registry-installation)
 - [Setup](#setup)
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
   - [Initializing a new Operator Collection](#initializing-a-new-operator-collection)
@@ -17,6 +18,9 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
   - [Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications-and-modifications-to-your-operator-config-file)
   - [Deleting the Operator](#deleting-the-operator)
 - [Tips](#tips)
+  - [Configure alias commands to simplify playbook execution](#configure-alias-commands-to-simplify-playbook-execution)
+  - [Configure extra-vars file to bypass prompts](#configure-extra-vars-file-to-bypass-prompts)
+  - [Suppress playbook warning messages](#suppress-playbook-warning-messages)
 
 # Prerequisites
 - [Openshift Cluster (version 4.10 or later)][openshift]
@@ -29,14 +33,21 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 # Installation
 The IBM Operator Collection SDK can be installed directly from GitHub, or via docker image stored in the IBM Cloud Container Registry
 
+## Ansible Galaxy Installation
+Run the following command to install the collection from Ansible Galaxy
+
+```bash
+ansible-galaxy collection install ibm.operator_collection_sdk
+```
+
 ## GitHub Installation
-Run the following command to install the collection.
+Run the following command to install the collection from GitHub.
 
 ```bash
 ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
 ```
 
-## IBM Cloud Container Registry
+## IBM Cloud Container Registry Installation
 Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the IBM Operator Collection SDK collection into your default collection path:
 
 ```bash
@@ -126,6 +137,7 @@ ansible-playbook ibm.operator_collection_sdk.delete_operator
 
 
 # Tips
+## Configure alias commands to simplify playbook execution 
 To simplify the commands needed to be executed, linux/mac users should consider creating an alias for each command in your bash profile.
 
 1. Open your bash profile using the following command:
@@ -178,19 +190,33 @@ Enter your ZosEndpoint name:
 [kubernetes]:https://github.com/kubernetes-client/python#installation
 [broker]:https://ibm.biz/ibm-zoscb-install
 
-5. if you find yourself inputting vars_prompts frequently, append `--extra-vars <vars>.json` to your playbook command/alias
+## Configure extra-vars file to bypass prompts
+If you find yourself inputting vars_prompts frequently, append `--extra-vars <vars>.json` to your playbook command/alias
+
+```bash
+ansible-playbook create_credential_secret.yml --extra-vars vars.json
+```
+
+Example `vars.json` file:
 
 ```
-ansible-playbook create_credential_secret.yml --extra-vars dev.json
-```
-
-example dev.json file:
-
 {
-    "zosendpoint_name" : "zos-ep",
-    "zosendpoint_host" : "127.0.0.1",
-    "zosendpoint_port" : "22",
-    "username" : "admin",
-    "ssh_key" : "~/.ssh/id_rsa",
-    "passphrase" : "",
+    username: "testuser",
+    operator_name: "racf",
+    ssh_key: "~/.ssh/id_rsa",
+    secret_name: "test-secret"
 }
+```
+
+## Suppress playbook warning messages
+Set the following environment variables to suppress the WARNING messages listed below when executing playbooks within the IBM Operator Collection SDK collection.
+
+```console
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+```
+
+```bash
+export ANSIBLE_LOCALHOST_WARNING=false
+export ANSIBLE_INVENTORY_UNPARSED_WARNING=false
+```
