@@ -1,0 +1,25 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Converge
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Copy example Racf operator directory
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test"
+
+    - name: Copy manually downloaded zos-core collection to collections directory
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/create_offline_requirements_manual_downloads/testfiles/ibm-ibm_zos_core-1.6.0-beta.1.tar.gz"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/racf-operator/collections/ibm-ibm_zos_core-1.6.0-beta.1.tar.gz"
+
+
+- import_playbook: ../../create_offline_requirements.yml
+  vars:
+    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/racf-operator"

@@ -1,0 +1,11 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+
+- import_playbook: ../../init_collection.yml

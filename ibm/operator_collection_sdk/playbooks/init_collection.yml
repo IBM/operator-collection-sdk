@@ -15,6 +15,10 @@
     - name: collection_namespace
       prompt: Enter your Ansible Collection namespace
       private: false
+    - name: offline_install
+      prompt: Will this collection be executed in an offline environment [y/n]
+      default: "n"
+      private: false
 
   tasks:
     - name: Set local directory
@@ -31,60 +35,90 @@
         msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
       when: ansible_galaxy_output.rc != 0
 
+    - name: Set base directory
+      ansible.builtin.set_fact:
+        base_dir: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}"
+
+    - name: Set facts
+      ansible.builtin.set_fact:
+        collections_dir: "{{ base_dir }}/collections/"
+        requirements_yml: "{{ base_dir }}/collections/requirements.yml"
+        requirements_yaml: "{{ base_dir }}/collections/requirements.yml"
+        requirements_txt: "{{ base_dir }}/collections/requirements.txt"
+
     - name: Initialize collection
       ansible.builtin.command: ansible-galaxy collection init {{ collection_namespace | lower | replace('-', '_') }}.{{ collection_name | lower | replace('-', '_') }} --init-path {{ local_directory }}
       ignore_errors: true
 
     - name: Create playbooks directory
       ansible.builtin.file:
-        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/roles"
+        path: "{{ base_dir }}/playbooks/roles"
         state: directory
         mode: '0755'
 
     - name: Create vars directory
       ansible.builtin.file:
-        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/vars"
+        path: "{{ base_dir }}/playbooks/vars"
         state: directory
         mode: '0755'
 
     - name: Create initial vars file
       ansible.builtin.template:
         src: templates/vars.j2
-        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/vars/my_vars.yml"
+        dest: "{{ base_dir }}/playbooks/vars/my_vars.yml"
         mode: '0644'
 
     - name: Create initial playbook file
       ansible.builtin.template:
         src: templates/playbook.j2
-        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/playbooks/playbook.yml"
+        dest: "{{ base_dir }}/playbooks/playbook.yml"
         mode: '0644'
 
     - name: Remove roles directory
       ansible.builtin.file:
-        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/roles"
+        path: "{{ base_dir }}/roles"
         state: absent
         mode: '0755'
 
     - name: Create collections directory
       ansible.builtin.file:
-        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections"
+        path: "{{ base_dir }}/collections"
         state: directory
         mode: '0755'
 
     - name: Generate requirements.yml file
       ansible.builtin.template:
         src: templates/requirements-yml.j2
-        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections/requirements.yml"
+        dest: "{{ requirements_yml }}"
         mode: '0644'
 
     - name: Generate requirements.txt file
       ansible.builtin.template:
         src: templates/requirements-txt.j2
-        dest: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}/collections/requirements.txt"
+        dest: "{{ requirements_txt }}"
         mode: '0644'
 
     - name: Create operator-config.yml
       ansible.builtin.include_role:
         name: create_operator_config
       vars:
-        path: "{{ local_directory }}/{{ collection_namespace  | lower | replace('-', '_') }}/{{ collection_name | lower | replace('-', '_') }}"
+        path: "{{ base_dir }}"
+
+    - name: Download local dependencies
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ base_dir }}/collections/requirements.yml" -p "{{ base_dir}}"
+      register: ansible_galaxy_download_output
+      when: offline_install == "y"
+      ignore_errors: true
+
+    - name: Ansible Galaxy dependency download status
+      ansible.builtin.fail:
+        msg: |
+          Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ base_dir }}/collections/requirements.yml file and store in the {{ collections_dir }} directory.
+          After the collections are downloaded, execute the "create_offline_requirements.yml" playbook to complete the setup
+      when: offline_install == "y" and ansible_galaxy_download_output.rc != 0
+
+    - name: Remove collections directory
+      ansible.builtin.file:
+        path: "{{ collections_dir }}"
+        state: absent
+      when: offline_install == "y"

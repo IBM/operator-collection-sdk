@@ -1,0 +1,60 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Verify
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Set base directory
+      ansible.builtin.set_fact:
+        base_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/racf-operator"
+
+    - name: Find collections directory
+      ansible.builtin.find:
+        paths: "{{ base_dir }}/collections"
+      register: collections_path
+
+    - name: Assert that collections directory is empty
+      ansible.builtin.assert:
+        that: 
+          - collections_path.files | length == 0
+
+    - name: Find 'ibm-ibm_zos_core' file
+      ansible.builtin.find:
+        paths: "{{ base_dir }}"
+        patterns: 'ibm-ibm_zos_core*'
+      register: zos_core_file
+
+    - name: Print zos_core_file
+      ansible.builtin.debug:
+        var: zos_core_file
+
+    - name: Assert that 'ibm-ibm_zos_core' file exists
+      ansible.builtin.assert:
+        that: 
+          - zos_core_file.files | length == 1
+
+    - name: Set ibm_zos_core filename
+      ansible.builtin.set_fact:
+        zos_core_filename: "{{ zos_core_file.files[0].path | basename }}"
+
+    - name: Find requirements.yml file
+      ansible.builtin.find:
+        paths: "{{ base_dir }}"
+        patterns: requirements.yml
+      register: requirements_yml_file
+
+    - name: Read requirements.yml
+      ansible.builtin.set_fact:
+        requirementsyml: "{{ lookup('template', '{{ requirements_yml_file.files[0].path }}') | from_yaml }}"
+
+    - name: Assert that requirements.yml contains correct ansible requirements
+      ansible.builtin.assert:
+        that: 
+          -  "zos_core_filename in requirementsyml.collections[0].name"
+
+    
