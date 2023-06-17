@@ -1,0 +1,18 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+
+  tasks:
+    - name: Remove collection directory
+      ansible.builtin.file:
+        path: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}"
+        state: absent
+
