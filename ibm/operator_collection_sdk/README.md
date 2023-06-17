@@ -10,6 +10,7 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
   - [Initializing a new Operator Collection](#initializing-a-new-operator-collection)
   - [Generating an operator-config.yml in an existing Ansible Collection](#generating-an-operator-configyml-in-an-existing-ansible-collection)
+  - [Converting an existing Operator Collection to execute in an offline OpenShift environment](#converting-an-existing-operator-collection-to-execute-in-an-offline-openshift-environment)
 - [Usage Examples](#usage-examples)
   - [Creating the initial operator on the OpenShift cluster](#creating-the-initial-operator-on-the-openshift-cluster)
   - [Re-deploying your Ansible Collection after making local playbook/role modifications](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications)
@@ -57,20 +58,32 @@ Below are the steps to initialize a new operator collection, or to configure an 
 Run the following command to initialize your operator collection for development.
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.init_collection.yml 
+ansible-playbook ibm.operator_collection_sdk.init_collection
 ```
 
 To bypass input prompts:
 ```bash
-ansible-playbook -e "collectionName=<collection-name> collectionNamespace=<collection-namespace>" ibm.operator_collection_sdk.init_collection.yml
+ansible-playbook -e "collectionName=<collection-name> collectionNamespace=<collection-namespace> offline_install=<y/n>" ibm.operator_collection_sdk.init_collection
 ```
 
 ## Generating an operator-config.yml in an existing Ansible Collection
-If you are planning to convert an existing Ansible Collection to an Operator Collection, then you should run the following command in the root directory of the Ansible collection to generate the `operator-config.yml` template
+If you are planning to convert an existing Ansible Collection to an Operator Collection, then you should run the following command in the root directory of the Ansible Collection to generate the `operator-config.yml` template.
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml
+ansible-playbook ibm.operator_collection_sdk.create_operator_config
 ```
+
+## Converting an existing Operator Collection to execute in an offline OpenShift environment
+If this Operator Collection will be executed in an offline OpenShift environment, then you should run the command below to download the Ansible dependencies before deploying this operator to OpenShift. 
+
+If your local environment is also offline, then you must download the required Ansible dependencies from an internet-enabled computer. Once those collections are downloaded, you should then transfer those files to the offline computer, and store them in the `./collections` directory before executing the following command.
+
+```bash
+ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
+```
+
+**Note:** Offline Python dependencies are currently not supported in the v2.2.1 release of the IBM z/OS Cloud Broker, so the `requirements.txt` file will be removed in the Operator Collection once it has been converted to execute offline. 
+
 
 # Usage Examples
 **Note:** To execute this playbook, it is required that your are in the root directory of the collection that you are developing, with a valid `galaxy.yml` and `operator-config.yml` file in the same directory
@@ -79,13 +92,13 @@ ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml
 1. Run the following command to create the operator on the cluster
 
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
 ```
 2. Once prompted, enter the name, host, and port of the `ZosEndpoint` to execute your collection against
 
 **Note:** You can also pass the required variable as extra vars to bypass input prompts:
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications
@@ -93,7 +106,7 @@ ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name>
 In the event where modifications are needed to your collection, you can run the following command to quickly apply those modifications to your operator
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_collection
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file
@@ -101,14 +114,14 @@ ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml
 In the event where modifications are needed to your collection AND your `operator-config.yml` file (i.e. adding new input variables), the operator would then need to be reconfigured and reinstalled to account for these new operator-config changes. To pick up these changes, you should run the following command to redeploy your operator
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_operator
 ```
 
 ## Deleting the Operator
 Run the following command to uninstall the operator
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.delete_operator.yml 
+ansible-playbook ibm.operator_collection_sdk.delete_operator
 ```
 
 
@@ -130,13 +143,14 @@ vi ~/.zshrc
 2. Copy the following commands to your bash profile and save:
    
 ```bash
-alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection.yml"
-alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml"
+alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
+alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
+alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
 alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
-alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml"
-alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml"
-alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml"
-alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator.yml"
+alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
+alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
+alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
+alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
 ```
 
 3. Source your bash profile to pick up the latest changes:
