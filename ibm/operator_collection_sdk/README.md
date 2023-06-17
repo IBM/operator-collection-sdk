@@ -139,6 +139,8 @@ Run the following command to generate encrypted credentials in the current Names
 ansible-playbook ibm.operator_collection_sdk.create_credential_secret
 ```
 
+**Note:** Creating encrypted credentials with passphrases are currently not supported via the IBM Operator Collection SDK.
+
 ## Deleting the Operator
 Run the following command to uninstall the operator.
 
