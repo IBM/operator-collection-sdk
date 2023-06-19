@@ -68,23 +68,10 @@ jobs:
             ansible-galaxy collection build ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk -f --output-path ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds
             echo "COLLECTION_BUILD=$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
             echo "COLLECTION_BUILD_LOCATION=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds/$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
-
-        - name: Sign Collection
-          run: |
-            openssl genrsa -out privatekey.pem 2048
-            openssl rsa -in privatekey.pem -out operator-collection-sdk.pub -outform PEM -pubout
-            openssl dgst -sha256 -sign privatekey.pem -out operator-collection-sdk-${RELEASE}.sig ${COLLECTION_BUILD_LOCATION}
-            openssl dgst -sha256 -verify operator-collection-sdk.pub -signature operator-collection-sdk-${RELEASE}.sig ${COLLECTION_BUILD_LOCATION}
-            echo "PUBLIC_KEY=$(readlink -f operator-collection-sdk.pub)" >> $GITHUB_ENV
-            echo "SIGNATURE=$(readlink -f operator-collection-sdk-${RELEASE}.sig)" >> $GITHUB_ENV
-            env:
-              RELEASE:  ${{ env.RELEASE_TAG }}
   
         - name: Upload Collection and Signature Files to GitHub
           run: |
             gh release upload ${RELEASE_TAG} ${COLLECTION_BUILD_LOCATION}
-            gh release upload ${RELEASE_TAG} ${PUBLIC_KEY}
-            gh release upload ${RELEASE_TAG} ${SIGNATURE}
           env:
             GITHUB_TOKEN: ${{ github.TOKEN }}
 
