@@ -69,7 +69,7 @@ jobs:
             echo "COLLECTION_BUILD=$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
             echo "COLLECTION_BUILD_LOCATION=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds/$(ls ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/local/builds)" >> $GITHUB_ENV
   
-        - name: Upload Collection and Signature Files to GitHub
+        - name: Upload Collection to GitHub
           run: |
             gh release upload ${RELEASE_TAG} ${COLLECTION_BUILD_LOCATION}
           env:
@@ -90,8 +90,8 @@ jobs:
               ${{ vars.ICR_NAMESPACE }}/operator-collection-sdk:${{ env.RELEASE_TAG }}
               ${{ vars.ICR_NAMESPACE }}/operator-collection-sdk:latest
 
-        - name: Publish Collection to Ansible Galaxy
-          run: ansible-galaxy collection publish -vvvv --api-key ${GALAXY_API_KEY} ${COLLECTION_BUILD_LOCATION}
-          env:
-            GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
+        # - name: Publish Collection to Ansible Galaxy
+        #   run: ansible-galaxy collection publish -vvvv --api-key ${GALAXY_API_KEY} ${COLLECTION_BUILD_LOCATION}
+        #   env:
+        #     GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
 
