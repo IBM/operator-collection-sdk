@@ -10,6 +10,10 @@
   gather_facts: false
 
   tasks:
+    - name: Print filepath variable
+      ansible.builtin.debug:
+        msg: "{{ filepath }}"
+
     - name: Set local directory
       ansible.builtin.set_fact:
         local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
