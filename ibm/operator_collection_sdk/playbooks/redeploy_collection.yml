@@ -13,6 +13,7 @@
     - name: Print filepath variable
       ansible.builtin.debug:
         msg: "{{ filepath }}"
+      when: filepath is defined
 
     - name: Set local directory
       ansible.builtin.set_fact:
