@@ -4,18 +4,24 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+  - [Ansible Galaxy Installation](#ansible-galaxy-installation)
   - [GitHub Installation](#github-installation)
-  - [IBM Cloud Container Registry](#ibm-cloud-container-registry)
+  - [IBM Cloud Container Registry Installation](#ibm-cloud-container-registry-installation)
 - [Setup](#setup)
 - [Initializing your Operator Collection](#initializing-your-operator-collection)
   - [Initializing a new Operator Collection](#initializing-a-new-operator-collection)
   - [Generating an operator-config.yml in an existing Ansible Collection](#generating-an-operator-configyml-in-an-existing-ansible-collection)
+  - [Converting an existing Operator Collection to execute in an offline OpenShift environment](#converting-an-existing-operator-collection-to-execute-in-an-offline-openshift-environment)
 - [Usage Examples](#usage-examples)
   - [Creating the initial operator on the OpenShift cluster](#creating-the-initial-operator-on-the-openshift-cluster)
   - [Re-deploying your Ansible Collection after making local playbook/role modifications](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications)
   - [Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file](#re-deploying-your-ansible-collection-after-making-local-playbookrole-modifications-and-modifications-to-your-operator-config-file)
+  - [Creating a credential Secret from within the Operator container](#creating-a-credential-secret-from-within-the-operator-container)
   - [Deleting the Operator](#deleting-the-operator)
 - [Tips](#tips)
+  - [Configure alias commands to simplify playbook execution](#configure-alias-commands-to-simplify-playbook-execution)
+  - [Configure extra-vars file to bypass prompts](#configure-extra-vars-file-to-bypass-prompts)
+  - [Suppress playbook warning messages](#suppress-playbook-warning-messages)
 
 # Prerequisites
 - [Openshift Cluster (version 4.10 or later)][openshift]
@@ -28,14 +34,21 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 # Installation
 The IBM Operator Collection SDK can be installed directly from GitHub, or via docker image stored in the IBM Cloud Container Registry
 
+## Ansible Galaxy Installation
+Run the following command to install the collection from Ansible Galaxy
+
+```bash
+ansible-galaxy collection install ibm.operator_collection_sdk
+```
+
 ## GitHub Installation
-Run the following command to install the collection.
+Run the following command to install the collection from GitHub.
 
 ```bash
 ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
 ```
 
-## IBM Cloud Container Registry
+## IBM Cloud Container Registry Installation
 Run the following commands to download and extract the collection to your local filesystem into the `./operator-collection-sdk` directory, and install the IBM Operator Collection SDK collection into your default collection path:
 
 ```bash
@@ -57,20 +70,32 @@ Below are the steps to initialize a new operator collection, or to configure an 
 Run the following command to initialize your operator collection for development.
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.init_collection.yml 
+ansible-playbook ibm.operator_collection_sdk.init_collection
 ```
 
 To bypass input prompts:
 ```bash
-ansible-playbook -e "collectionName=<collection-name> collectionNamespace=<collection-namespace>" ibm.operator_collection_sdk.init_collection.yml
+ansible-playbook -e "collectionName=<collection-name> collectionNamespace=<collection-namespace> offline_install=<y/n>" ibm.operator_collection_sdk.init_collection
 ```
 
 ## Generating an operator-config.yml in an existing Ansible Collection
-If you are planning to convert an existing Ansible Collection to an Operator Collection, then you should run the following command in the root directory of the Ansible collection to generate the `operator-config.yml` template
+If you are planning to convert an existing Ansible Collection to an Operator Collection, then you should run the following command in the root directory of the Ansible Collection to generate the `operator-config.yml` template.
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml
+ansible-playbook ibm.operator_collection_sdk.create_operator_config
 ```
+
+## Converting an existing Operator Collection to execute in an offline OpenShift environment
+If this Operator Collection will be executed in an offline OpenShift environment, then you should run the command below to download the Ansible dependencies before deploying this operator to OpenShift. 
+
+If your local environment is also offline, then you must download the required Ansible dependencies from an internet-enabled computer. Once those collections are downloaded, you should then transfer those files to the offline computer, and store them in the `./collections` directory before executing the following command.
+
+```bash
+ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
+```
+
+**Note:** Offline Python dependencies are currently not supported in the v2.2.1 release of the IBM z/OS Cloud Broker, so the `requirements.txt` file will be removed in the Operator Collection once it has been converted to execute offline. 
+
 
 # Usage Examples
 **Note:** To execute this playbook, it is required that your are in the root directory of the collection that you are developing, with a valid `galaxy.yml` and `operator-config.yml` file in the same directory
@@ -79,13 +104,13 @@ ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml
 1. Run the following command to create the operator on the cluster
 
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
 ```
 2. Once prompted, enter the name, host, and port of the `ZosEndpoint` to execute your collection against
 
 **Note:** You can also pass the required variable as extra vars to bypass input prompts:
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications
@@ -93,7 +118,7 @@ ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name>
 In the event where modifications are needed to your collection, you can run the following command to quickly apply those modifications to your operator
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_collection
 ```
 
 ## Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file
@@ -101,18 +126,31 @@ ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml
 In the event where modifications are needed to your collection AND your `operator-config.yml` file (i.e. adding new input variables), the operator would then need to be reconfigured and reinstalled to account for these new operator-config changes. To pick up these changes, you should run the following command to redeploy your operator
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_operator
 ```
 
-## Deleting the Operator
-Run the following command to uninstall the operator
+## Creating a credential Secret from within the Operator container
+
+If you're currently unable to install the [z/OS Cloud Broker Encryption CLI][cli], you also have the option to generate these encrypted credentials using the `zoscb-encrypt` CLI within the operator container. 
+
+Run the following command to generate encrypted credentials in the current Namespace.
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.delete_operator.yml 
+ansible-playbook ibm.operator_collection_sdk.create_credential_secret
+```
+
+**Note:** Creating encrypted credentials with passphrases are currently not supported via the IBM Operator Collection SDK.
+
+## Deleting the Operator
+Run the following command to uninstall the operator.
+
+```bash
+ansible-playbook ibm.operator_collection_sdk.delete_operator
 ```
 
 
 # Tips
+## Configure alias commands to simplify playbook execution 
 To simplify the commands needed to be executed, linux/mac users should consider creating an alias for each command in your bash profile.
 
 1. Open your bash profile using the following command:
@@ -130,13 +168,15 @@ vi ~/.zshrc
 2. Copy the following commands to your bash profile and save:
    
 ```bash
-alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection.yml"
-alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml"
+alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
+alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
+alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
 alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
-alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml"
-alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml"
-alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml"
-alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator.yml"
+alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
+alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
+alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
+alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
+alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
 ```
 
 3. Source your bash profile to pick up the latest changes:
@@ -163,3 +203,34 @@ Enter your ZosEndpoint name:
 [cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
 [kubernetes]:https://github.com/kubernetes-client/python#installation
 [broker]:https://ibm.biz/ibm-zoscb-install
+
+## Configure extra-vars file to bypass prompts
+If you find yourself inputting vars_prompts frequently, append `--extra-vars <vars>.json` to your playbook command/alias
+
+```bash
+ansible-playbook create_credential_secret.yml --extra-vars vars.json
+```
+
+Example `vars.json` file:
+
+```
+{
+    username: "testuser",
+    operator_name: "racf",
+    ssh_key: "~/.ssh/id_rsa",
+    secret_name: "test-secret"
+}
+```
+
+## Suppress playbook warning messages
+Set the following environment variables to suppress the WARNING messages listed below when executing playbooks within the IBM Operator Collection SDK collection.
+
+```console
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+```
+
+```bash
+export ANSIBLE_LOCALHOST_WARNING=false
+export ANSIBLE_INVENTORY_UNPARSED_WARNING=false
+```

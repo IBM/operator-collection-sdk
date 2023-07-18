@@ -1,0 +1,3 @@
+collection_name: test_collection
+collection_namespace: ibm
+offline_install: "n"

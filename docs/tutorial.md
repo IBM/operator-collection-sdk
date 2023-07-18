@@ -187,7 +187,7 @@ To do this, you should first install the latest release in the `v2.2` channel of
 Now, you should be able to run the following command by using the IBM Operator Collection SDK to build your collection and create an operator:
 
 ```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml
+ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
 ```
 
 Alternatively, you can run the following alias:
@@ -236,7 +236,7 @@ To resolve this failure, you should remove the task that is named "Injecting Fai
 After removing this task, run the following command to publish this playbook modification to the installed operator Pod:
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_collection
 ```
 
 Alternatively, you can run the following alias:
@@ -264,7 +264,7 @@ First, we should uncomment the task that is named "Send email containing login c
 As we are updating the `operator-config` to display a new variable to the user, it is necessary to redeploy the entire operator. This should not be confused with redeploying the collection, as we have done previously. Therefore, run the following command to redeploy the entire operator:
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml
+ansible-playbook ibm.operator_collection_sdk.redeploy_operator
 ```
 
 Alternatively, you can run the following alias:
@@ -284,7 +284,7 @@ After the redeploy is successful, you should be able to create a new instance an
 After validating that your operator runs successfully, you can delete the operator from your namespace by running the following command:
 
 ```bash
-ansible-playbook ibm.operator_collection_sdk.delete_operator.yml
+ansible-playbook ibm.operator_collection_sdk.delete_operator
 ```
 
 Alternatively, you can run the following alias:
