@@ -1,0 +1,132 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Create Offline Requirements
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+
+    - name: Locate galaxy.yml file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'galaxy.yml,galaxy.yaml'
+      register: galaxy_file_results
+
+    - name: Validate galaxy.yml file exists in current working directory
+      ansible.builtin.fail:
+        msg: "Collection must be executed in same directory as galaxy.yml file"
+      when: galaxy_file_results.files | length == 0
+
+    - name: Locate operator-config.yml file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'operator-config.yml,operator-config.yaml'
+      register: oc_file_results
+
+    - name: Validate operator-config.yml file exists in current working directory
+      ansible.builtin.fail:
+        msg: "operator-config.yml file must exist in current directory"
+      when: oc_file_results.files | length == 0 or oc_file_results.files | length > 1
+
+    - name: Set facts
+      ansible.builtin.set_fact:
+        collections_dir: "{{ local_directory }}/collections"
+        requirements_yml: "{{ local_directory }}/requirements.yml"
+        requirements_yaml: "{{ local_directory }}/collections/requirements.yml"
+
+    - name: Validate ansible-galaxy CLI installation
+      ansible.builtin.command: ansible-galaxy --version
+      register: ansible_galaxy_output
+      ignore_errors: true
+
+    - name: Fail if ansible-galaxy CLI isn't installed
+      ansible.builtin.fail:
+        msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
+      when: ansible_galaxy_output.rc != 0
+
+    - name: Locate requirements.yml file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'requirements.yml,requirements.yaml'
+        recurse: true
+      register: requirementsyml_file_results
+
+    - name: Check if the tarball files have already been downloaded in the /collections directory
+      ansible.builtin.find:
+        paths: "{{ collections_dir }}"
+        patterns: '.*\.tar.gz'
+        use_regex: true
+      register: collection_tarball_results
+
+    - name: Copy downloaded tarballs to root of collection
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ local_directory }}/{{ item.path | basename }}"
+        mode: '0644'
+      with_items: "{{ collection_tarball_results.files }}"
+      when: collection_tarball_results.files | length > 0
+
+    - name: Generate requirements.yml file for pre-downloaded collections
+      ansible.builtin.template:
+        src: templates/requirements-local-yml.j2
+        dest: "{{ local_directory }}/requirements.yml"
+        mode: '0644'
+      when: collection_tarball_results.files | length > 0
+
+    - name: Download local dependencies
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ requirementsyml_file_results.files[0].path }}" -p "{{ local_directory }}"
+      register: ansible_galaxy_download_output
+      when: requirementsyml_file_results.files | length > 0 and collection_tarball_results.files | length == 0
+      ignore_errors: true
+
+    - name: Ansible Galaxy dependency download status
+      ansible.builtin.debug:
+        msg: Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ requirementsyml_file_results.files[0].path }} file and store in the {{ collections_dir }} directory
+      when: |
+        ansible_galaxy_download_output.skipped is not defined and
+        ansible_galaxy_download_output.rc != 0 and
+        requirementsyml_file_results.files | length > 0 and
+        collection_tarball_results.files | length == 0
+
+    - name: Locate duplicate requirements.yml files
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'requirements.yml,requirements.yaml'
+        recurse: true
+      register: updated_requirementsyml_file_results
+
+    - name: Remove duplicate requirements.yml file
+      ansible.builtin.file:
+        path: "{{ requirementsyml_file_results.files[0].path }}"
+        state: absent
+      when: |
+        updated_requirementsyml_file_results.files | length > 1 and
+        requirementsyml_file_results.files[0].path != (requirements_yml or requirements_yaml)
+
+    - name: Locate requirements.txt file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'requirements.txt'
+        recurse: true
+      register: requirementstxt_file_results
+
+    - name: Remove requirements.txt file
+      ansible.builtin.file:
+        path: "{{ requirementstxt_file_results.files[0].path }}"
+        state: absent
+      when: requirementstxt_file_results.files | length > 0
+
+    - name: Remove downloaded collections under /collections directory
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      when: collection_tarball_results.files | length > 0
+      with_items: "{{ collection_tarball_results.files  }}"

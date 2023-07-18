@@ -12,48 +12,56 @@
     - name: Set base directory
       ansible.builtin.set_fact:
         base_dir: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}/{{ collection_name  | lower | replace('-','_') }}"
-  
+
     - name: Find collections directory
       ansible.builtin.find:
         paths: "{{ base_dir }}/collections"
       register: collections_path
 
-    - name: Assert that collections directory contains requirement.txt file
+    - name: Assert that collections directory is empty
       ansible.builtin.assert:
         that: 
-          - "'requirements.txt' in item.path"
-      with_items: "{{ collections_path.files }}"
-      when:  "'requirements.txt' in item.path"
+          - collections_path.files | length == 0
 
-    - name: Assert that collections directory contains requirement.yml file
+    - name: Find 'kubernetes-core-2.4.0.tar.gz' file
+      ansible.builtin.find:
+        paths: "{{ base_dir }}"
+        patterns: kubernetes-core-2.4.0.tar.gz
+      register: kubernetes_core_file
+
+    - name: Assert that 'kubernetes-core-2.4.0.tar.gz' file exists
       ansible.builtin.assert:
         that: 
-          - "'requirements.yml' in item.path"
-      with_items: "{{ collections_path.files }}"
-      when:  "'requirements.yml' in item.path"
+          - kubernetes_core_file.files | length == 1
 
-    - name: Read requirements.txt
-      ansible.builtin.set_fact:
-        requirementstxt: "{{ lookup('file', '{{ item.path }}') }}"
-      with_items: "{{ collections_path.files }}"
-      when:  "'requirements.txt' in item.path"
+    - name: Find 'operator_sdk-util-0.4.0.tar.gz' file
+      ansible.builtin.find:
+        paths: "{{ base_dir }}"
+        patterns: operator_sdk-util-0.4.0.tar.gz
+      register: operator_sdk_util_file
 
-    - name: Assert that requirements.txt contains kubernetes module
+    - name: Assert that 'operator_sdk-util-0.4.0.tar.gz' file exists
       ansible.builtin.assert:
         that: 
-          - requirementstxt == "kubernetes==11.0.0"
+          - operator_sdk_util_file.files | length == 1
+
+    - name: Find requirements.yml file
+      ansible.builtin.find:
+        paths: "{{ base_dir }}"
+        patterns: requirements.yml
+      register: requirements_yml_file
 
     - name: Read requirements.yml
       ansible.builtin.set_fact:
-        requirementsyml: "{{ lookup('template', '{{ item.path }}') | from_yaml }}"
-      with_items: "{{ collections_path.files }}"
-      when:  "'requirements.yml' in item.path"
+        requirementsyml: "{{ lookup('template', '{{ requirements_yml_file.files[0].path }}') | from_yaml }}"
 
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "'operator_sdk.util' in requirementsyml.collections[0].name"
-          -  "'kubernetes.core' in requirementsyml.collections[1].name"
+          -  "'kubernetes-core-2.4.0.tar.gz' in requirementsyml.collections[0].name"
+          -  "'2.4.0' in requirementsyml.collections[0].version"
+          -  "'operator_sdk-util-0.4.0.tar.gz' in requirementsyml.collections[1].name"
+          -  "'0.4.0' in requirementsyml.collections[1].version"
 
     - name: Find playbooks directory
       ansible.builtin.find:

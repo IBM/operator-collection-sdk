@@ -1,0 +1,19 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Converge
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Copy example Racf operator directory
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test"
+
+- import_playbook: ../../create_offline_requirements.yml
+  vars:
+    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/racf-operator"
