@@ -87,6 +87,25 @@
       when: requirementsyml_file_results.files | length > 0 and collection_tarball_results.files | length == 0
       ignore_errors: true
 
+    - name: Locate requirements.txt file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'requirements.txt'
+        recurse: true
+      register: requirementstxt_file_results
+    
+    - name: Download local python amd64 dependencies
+      ansible.builtin.shell:
+        cmd: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_x86_64 -d {{ local_directory }}/wheelhouse/amd64 --only-binary=:all:  --python-version 3.6"
+      when: requirementstxt_file_results.files | length > 0 
+      ignore_errors: true
+
+    - name: Download local python s390x dependencies
+      ansible.builtin.shell:
+        cmd: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_s390x -d {{ local_directory }}/wheelhouse/s390x --only-binary=:all:  --python-version 3.6"
+      when: requirementstxt_file_results.files | length > 0 
+      ignore_errors: true
+      
     - name: Ansible Galaxy dependency download status
       ansible.builtin.debug:
         msg: Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ requirementsyml_file_results.files[0].path }} file and store in the {{ collections_dir }} directory
@@ -110,19 +129,6 @@
       when: |
         updated_requirementsyml_file_results.files | length > 1 and
         requirementsyml_file_results.files[0].path != (requirements_yml or requirements_yaml)
-
-    - name: Locate requirements.txt file
-      ansible.builtin.find:
-        paths: "{{ local_directory }}"
-        patterns: 'requirements.txt'
-        recurse: true
-      register: requirementstxt_file_results
-
-    - name: Remove requirements.txt file
-      ansible.builtin.file:
-        path: "{{ requirementstxt_file_results.files[0].path }}"
-        state: absent
-      when: requirementstxt_file_results.files | length > 0
 
     - name: Remove downloaded collections under /collections directory
       ansible.builtin.file:
