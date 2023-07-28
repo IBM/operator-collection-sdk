@@ -98,13 +98,11 @@
       ansible.builtin.shell:
         cmd: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_x86_64 -d {{ local_directory }}/wheelhouse/amd64 --only-binary=:all:  --python-version 3.6"
       when: requirementstxt_file_results.files | length > 0 
-      ignore_errors: true
 
     - name: Download local python s390x dependencies
       ansible.builtin.shell:
         cmd: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_s390x -d {{ local_directory }}/wheelhouse/s390x --only-binary=:all:  --python-version 3.6"
       when: requirementstxt_file_results.files | length > 0 
-      ignore_errors: true
       
     - name: Ansible Galaxy dependency download status
       ansible.builtin.debug:
