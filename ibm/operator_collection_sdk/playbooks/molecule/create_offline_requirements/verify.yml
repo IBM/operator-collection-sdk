@@ -59,13 +59,12 @@
 
     - name: Search for wheelhouse directory
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         file_type: directory
         patterns: 'wheelhouse'
       register: found_wheelhouse
-    
+
     - name: Check if wheelhouse directory exists
       ansible.builtin.assert:
-        that: 
+        that:
           - found_wheelhouse.matched > 0
-    
