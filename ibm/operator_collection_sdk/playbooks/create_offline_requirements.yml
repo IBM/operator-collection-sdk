@@ -132,4 +132,3 @@
         state: absent
       when: collection_tarball_results.files | length > 0
       with_items: "{{ collection_tarball_results.files  }}"
-      
