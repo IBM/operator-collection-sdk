@@ -63,9 +63,8 @@
         file_type: directory
         patterns: 'wheelhouse'
       register: found_wheelhouse
-    
+
     - name: Check if wheelhouse directory exists
       ansible.builtin.assert:
         that: 
           - found_wheelhouse.matched > 0
-    
