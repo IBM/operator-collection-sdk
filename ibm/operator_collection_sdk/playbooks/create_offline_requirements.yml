@@ -95,11 +95,11 @@
       register: requirementstxt_file_results
 
     - name: Download local python amd64 dependencies
-      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_x86_64 -d {{ local_directory }}/wheelhouse/amd64 --only-binary=:all:  --python-version 3.6"
+      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_x86_64 -d {{ local_directory }}/collections/wheelhouse/amd64 --only-binary=:all:  --python-version 3.6"
       when: requirementstxt_file_results.files | length > 0
 
     - name: Download local python s390x dependencies
-      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_s390x -d {{ local_directory }}/wheelhouse/s390x --only-binary=:all:  --python-version 3.6"
+      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_s390x -d {{ local_directory }}/collections/wheelhouse/s390x --only-binary=:all:  --python-version 3.6"
       when: requirementstxt_file_results.files | length > 0
 
     - name: Ansible Galaxy dependency download status
