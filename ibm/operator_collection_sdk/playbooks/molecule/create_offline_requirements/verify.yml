@@ -66,5 +66,5 @@
 
     - name: Check if wheelhouse directory exists
       ansible.builtin.assert:
-        that: 
+        that:
           - found_wheelhouse.matched > 0
