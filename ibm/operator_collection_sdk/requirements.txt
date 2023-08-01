@@ -6,3 +6,4 @@ kubernetes
 pyyaml
 openshift
 yamllint
+jmespath
