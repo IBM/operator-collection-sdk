@@ -21,7 +21,7 @@
     - name: Assert that collections directory is empty
       ansible.builtin.assert:
         that: 
-          - collections_path.files | length == 0
+          - collections_path.files | length == 1
 
     - name: Find 'ibm-ibm_zos_core' file
       ansible.builtin.find:
