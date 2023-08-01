@@ -82,7 +82,7 @@
       when: collection_tarball_results.files | length > 0
 
     - name: Download local dependencies
-      ansible.builtin.command: ansible-galaxy collection download -r "{{ requirementsyml_file_results.files[0].path }}" -p "{{ local_directory }}"
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ requirementsyml_file_results.files[0].path }}" -p "{{ local_directory }}/collections"
       register: ansible_galaxy_download_output
       when: requirementsyml_file_results.files | length > 0 and collection_tarball_results.files | length == 0
       ignore_errors: true
