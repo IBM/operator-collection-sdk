@@ -18,14 +18,14 @@
         paths: "{{ base_dir }}/collections"
       register: collections_path
 
-    - name: Assert that collections directory is empty
+    - name: Assert that collections directory is not empty
       ansible.builtin.assert:
         that: 
-          - collections_path.files | length == 1
+          - collections_path.files | length == 3
 
     - name: Find 'ibm-ibm_zos_core' file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: 'ibm-ibm_zos_core*'
       register: zos_core_file
 
@@ -44,7 +44,7 @@
 
     - name: Find requirements.yml file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: requirements.yml
       register: requirements_yml_file
 
