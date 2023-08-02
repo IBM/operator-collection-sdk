@@ -66,18 +66,10 @@
         use_regex: true
       register: collection_tarball_results
 
-    - name: Copy downloaded tarballs to root of collection
-      ansible.builtin.copy:
-        src: "{{ item.path }}"
-        dest: "{{ local_directory }}/{{ item.path | basename }}"
-        mode: '0644'
-      with_items: "{{ collection_tarball_results.files }}"
-      when: collection_tarball_results.files | length > 0
-
     - name: Generate requirements.yml file for pre-downloaded collections
       ansible.builtin.template:
         src: templates/requirements-local-yml.j2
-        dest: "{{ local_directory }}/requirements.yml"
+        dest: "{{ local_directory }}/collections/requirements.yml"
         mode: '0644'
       when: collection_tarball_results.files | length > 0
 
@@ -110,25 +102,3 @@
         ansible_galaxy_download_output.rc != 0 and
         requirementsyml_file_results.files | length > 0 and
         collection_tarball_results.files | length == 0
-
-    - name: Locate duplicate requirements.yml files
-      ansible.builtin.find:
-        paths: "{{ local_directory }}"
-        patterns: 'requirements.yml,requirements.yaml'
-        recurse: true
-      register: updated_requirementsyml_file_results
-
-    - name: Remove duplicate requirements.yml file
-      ansible.builtin.file:
-        path: "{{ requirementsyml_file_results.files[0].path }}"
-        state: absent
-      when: |
-        updated_requirementsyml_file_results.files | length > 1 and
-        requirementsyml_file_results.files[0].path != (requirements_yml or requirements_yaml)
-
-    - name: Remove downloaded collections under /collections directory
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      when: collection_tarball_results.files | length > 0
-      with_items: "{{ collection_tarball_results.files  }}"
