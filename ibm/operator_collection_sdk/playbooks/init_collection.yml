@@ -116,4 +116,3 @@
           Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ base_dir }}/collections/requirements.yml file and store in the {{ collections_dir }} directory.
           After the collections are downloaded, execute the "create_offline_requirements.yml" playbook to complete the setup
       when: offline_install == "y" and ansible_galaxy_download_output.rc != 0
-
