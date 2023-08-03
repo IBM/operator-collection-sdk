@@ -66,26 +66,33 @@
         use_regex: true
       register: collection_tarball_results
 
-    - name: Copy downloaded tarballs to root of collection
-      ansible.builtin.copy:
-        src: "{{ item.path }}"
-        dest: "{{ local_directory }}/{{ item.path | basename }}"
-        mode: '0644'
-      with_items: "{{ collection_tarball_results.files }}"
-      when: collection_tarball_results.files | length > 0
-
     - name: Generate requirements.yml file for pre-downloaded collections
       ansible.builtin.template:
         src: templates/requirements-local-yml.j2
-        dest: "{{ local_directory }}/requirements.yml"
+        dest: "{{ local_directory }}/collections/requirements.yml"
         mode: '0644'
       when: collection_tarball_results.files | length > 0
 
     - name: Download local dependencies
-      ansible.builtin.command: ansible-galaxy collection download -r "{{ requirementsyml_file_results.files[0].path }}" -p "{{ local_directory }}"
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ requirementsyml_file_results.files[0].path }}" -p "{{ local_directory }}/collections"
       register: ansible_galaxy_download_output
       when: requirementsyml_file_results.files | length > 0 and collection_tarball_results.files | length == 0
       ignore_errors: true
+
+    - name: Locate requirements.txt file
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'requirements.txt'
+        recurse: true
+      register: requirementstxt_file_results
+
+    - name: Download local python amd64 dependencies
+      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_x86_64 -d {{ local_directory }}/collections/wheelhouse/amd64 --only-binary=:all:  --python-version 3.6"
+      when: requirementstxt_file_results.files | length > 0
+
+    - name: Download local python s390x dependencies
+      ansible.builtin.command: "pip3 download -r {{ requirementstxt_file_results.files[0].path }} --platform manylinux2014_s390x -d {{ local_directory }}/collections/wheelhouse/s390x --only-binary=:all:  --python-version 3.6"
+      when: requirementstxt_file_results.files | length > 0
 
     - name: Ansible Galaxy dependency download status
       ansible.builtin.debug:
@@ -95,38 +102,3 @@
         ansible_galaxy_download_output.rc != 0 and
         requirementsyml_file_results.files | length > 0 and
         collection_tarball_results.files | length == 0
-
-    - name: Locate duplicate requirements.yml files
-      ansible.builtin.find:
-        paths: "{{ local_directory }}"
-        patterns: 'requirements.yml,requirements.yaml'
-        recurse: true
-      register: updated_requirementsyml_file_results
-
-    - name: Remove duplicate requirements.yml file
-      ansible.builtin.file:
-        path: "{{ requirementsyml_file_results.files[0].path }}"
-        state: absent
-      when: |
-        updated_requirementsyml_file_results.files | length > 1 and
-        requirementsyml_file_results.files[0].path != (requirements_yml or requirements_yaml)
-
-    - name: Locate requirements.txt file
-      ansible.builtin.find:
-        paths: "{{ local_directory }}"
-        patterns: 'requirements.txt'
-        recurse: true
-      register: requirementstxt_file_results
-
-    - name: Remove requirements.txt file
-      ansible.builtin.file:
-        path: "{{ requirementstxt_file_results.files[0].path }}"
-        state: absent
-      when: requirementstxt_file_results.files | length > 0
-
-    - name: Remove downloaded collections under /collections directory
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      when: collection_tarball_results.files | length > 0
-      with_items: "{{ collection_tarball_results.files  }}"
