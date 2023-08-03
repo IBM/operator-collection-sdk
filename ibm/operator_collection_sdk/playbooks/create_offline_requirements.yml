@@ -14,17 +14,6 @@
       ansible.builtin.set_fact:
         local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
-    - name: Locate galaxy.yml file
-      ansible.builtin.find:
-        paths: "{{ local_directory }}"
-        patterns: 'galaxy.yml,galaxy.yaml'
-      register: galaxy_file_results
-
-    - name: Validate galaxy.yml file exists in current working directory
-      ansible.builtin.fail:
-        msg: "Collection must be executed in same directory as galaxy.yml file"
-      when: galaxy_file_results.files | length == 0
-
     - name: Locate operator-config.yml file
       ansible.builtin.find:
         paths: "{{ local_directory }}"
