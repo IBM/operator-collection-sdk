@@ -18,14 +18,14 @@
         paths: "{{ base_dir }}/collections"
       register: collections_path
 
-    - name: Assert that collections directory is empty
+    - name: Assert that collections directory is not empty
       ansible.builtin.assert:
         that: 
-          - collections_path.files | length == 0
+          - collections_path.files | length == 4
 
     - name: Find 'kubernetes-core-2.4.0.tar.gz' file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: kubernetes-core-2.4.0.tar.gz
       register: kubernetes_core_file
 
@@ -36,7 +36,7 @@
 
     - name: Find 'operator_sdk-util-0.4.0.tar.gz' file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: operator_sdk-util-0.4.0.tar.gz
       register: operator_sdk_util_file
 
@@ -47,7 +47,7 @@
 
     - name: Find requirements.yml file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: requirements.yml
       register: requirements_yml_file
 
@@ -147,5 +147,3 @@
           -  operatorconfigdata.resources[0].vars[0].displayName is defined
           -  operatorconfigdata.resources[0].vars[0].name is defined
           -  operatorconfigdata.resources[0].vars[0].type is defined
-
-    
