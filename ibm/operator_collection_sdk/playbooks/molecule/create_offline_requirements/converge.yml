@@ -14,6 +14,11 @@
         src: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
         dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test"
 
+    - name: Remove galaxy.yaml file
+      ansible.builtin.file:
+        path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/operator-config.yml"
+        state: absent
+
 - import_playbook: ../../create_offline_requirements.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/racf-operator"
