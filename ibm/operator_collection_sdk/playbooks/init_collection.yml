@@ -105,7 +105,7 @@
         path: "{{ base_dir }}"
 
     - name: Download local dependencies
-      ansible.builtin.command: ansible-galaxy collection download -r "{{ base_dir }}/collections/requirements.yml" -p "{{ base_dir}}"
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ base_dir }}/collections/requirements.yml" -p "{{ base_dir}}/collections"
       register: ansible_galaxy_download_output
       when: offline_install == "y"
       ignore_errors: true
@@ -116,9 +116,3 @@
           Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ base_dir }}/collections/requirements.yml file and store in the {{ collections_dir }} directory.
           After the collections are downloaded, execute the "create_offline_requirements.yml" playbook to complete the setup
       when: offline_install == "y" and ansible_galaxy_download_output.rc != 0
-
-    - name: Remove collections directory
-      ansible.builtin.file:
-        path: "{{ collections_dir }}"
-        state: absent
-      when: offline_install == "y"
