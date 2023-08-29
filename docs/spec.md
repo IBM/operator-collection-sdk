@@ -98,15 +98,15 @@ For this reason the Operator created for each `resource` will also provide the f
 Operator ClusterRoles Permission defines cluster-wide Operator permissions that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create clusterrole permissions.
 The following field can be used to create cluster scoped permission.
 
-| Key     | Required | Type            | Description                                                                                                                                          |
-| ------- | -------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rules` | Optional | `array(object)` | A list of Policy Rules for the Operator. See Rules example [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#clusterrole-example) |
+| Key     | Required | Type            | Description                                                                                                                                                         |
+| ------- | -------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rules` | Optional | `array(object)` | A list of cluster-scoped policy rules for the operator. See Rules example [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#clusterrole-example) |
 
 ## Operator Roles Permission
 
 Operator Roles Permission defines Operator roles permissions within a namespace that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create these namespace permissions using Roles field.
 The following field can be used to create namespace scoped permission.
 
-| Key     | Required | Type            | Description                                                                                                                                   |
-| ------- | -------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rules` | Optional | `array(object)` | A list of Policy Rules for the Operator. See Rules example [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-example) |
+| Key     | Required | Type            | Description                                                                                                                                                    |
+| ------- | -------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rules` | Optional | `array(object)` | A list of namespace-scoped policy rules for the operator. See Rules example [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-example) |
