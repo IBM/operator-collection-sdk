@@ -96,20 +96,17 @@ For this reason the Operator created for each `resource` will also provide the f
 ## Operator ClusterRoles Permission
 
 Operator ClusterRoles Permission defines cluster-wide Operator permissions that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create clusterrole permissions.
-The following fields can be used to create each clusterRole.
+The following field can be used to create cluster scoped permission.
 
-| Key               | Required | Type            | Description                                                                                                                                                                                                                                     |
-| ----------------- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata`        | Optional | `string`        | Stores objects metadata information like name, UID, namespace etc as shown [here](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1#ObjectMeta)                                                                                           |
-| `rules`           | Optional | `array(object)` | A list of [PolicyRules](https://pkg.go.dev/k8s.io/api/rbac/v1#PolicyRule) for this ClusterRole                                                                                                                                                  |
-| `aggregationRule` | Optional | `string`        | Describes how to build the Rules for this ClusterRole. If [AggregationRule](https://pkg.go.dev/k8s.io/api/rbac/v1#AggregationRule) is set, then the Rules are controller managed and direct changes to Rules will be stopped by the controller. |
+| Key     | Required | Type            | Description                                                                                    |
+| ------- | -------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| `rules` | Optional | `array(object)` | A list of [PolicyRules](https://pkg.go.dev/k8s.io/api/rbac/v1#PolicyRule) for this ClusterRole |
 
 ## Operator Roles Permission
 
 Operator Roles Permission defines Operator roles permissions within a namespace that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create these namespace permissions using Roles field.
-The following fields can be used to create each Role.
+The following field can be used to create namespace scoped permission.
 
-| Key        | Required | Type            | Description                                                                                                                                           |
-| ---------- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata` | Optional | `string`        | Stores objects metadata information like name, UID, namespace etc as shown [here](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1#ObjectMeta) |
-| `rules`    | Optional | `array(object)` | A list of [PolicyRules](https://pkg.go.dev/k8s.io/api/rbac/v1#PolicyRule) for this Role                                                               |
+| Key     | Required | Type            | Description                                                                             |
+| ------- | -------- | --------------- | --------------------------------------------------------------------------------------- |
+| `rules` | Optional | `array(object)` | A list of [PolicyRules](https://pkg.go.dev/k8s.io/api/rbac/v1#PolicyRule) for this Role |
