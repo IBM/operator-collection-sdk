@@ -96,6 +96,7 @@ For this reason the Operator created for each `resource` will also provide the f
 ## Operator ClusterRoles Permission
 
 Operator ClusterRoles Permission defines cluster-wide Operator permissions that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create clusterrole permissions.
+The following fields can be used to create each clusterRole.
 
 | Key               | Required | Type            | Description                                                                                                                                                                                                                                     |
 | ----------------- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -106,6 +107,7 @@ Operator ClusterRoles Permission defines cluster-wide Operator permissions that 
 ## Operator Roles Permission
 
 Operator Roles Permission defines Operator roles permissions within a namespace that the `OperatorCollection` will make available within the Kubernetes cluster. An `OperatorCollection` can optionally create these namespace permissions using Roles field.
+The following fields can be used to create each Role.
 
 | Key        | Required | Type            | Description                                                                                                                                           |
 | ---------- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
