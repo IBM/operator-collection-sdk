@@ -22,7 +22,6 @@
     - name: Include ocsdk-extra-vars.yml variables
       when: ocsdk_vars_results.files | length > 0
       ansible.builtin.include_vars: "{{ ocsdk_vars_results.files[0].path }}"
-      register: ocsdk_vars
 
     - name: Set Remote ZosEndpoint Type information
       ansible.builtin.pause:
@@ -73,7 +72,7 @@
         username:
         ssh_key:
         passphrase:
-      when: zosendpoint_type == "local" and ocsdk_vars.failed
+      when: zosendpoint_type == "local" and ocsdk_vars_results.files | length == 0
 
     - name: Set Remote ZosEndpoint Username information
       ansible.builtin.pause:
