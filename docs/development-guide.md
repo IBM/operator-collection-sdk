@@ -61,7 +61,7 @@ The steps below describe how to setup Ansible Molecule in a vitrual environment 
     ```
 - Install the following packages after activating the virtual environment.
     ```bash
-    pip install molecule ansible docker kubernetes
+    pip install -r ../requirements.txt
     ```
 - Navigate to the `playbooks` directory to execute the available Molecule scenarios. Example:
     ```bash

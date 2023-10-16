@@ -21,9 +21,8 @@
     - name: Assert that collections directory contains requirement.txt file
       ansible.builtin.assert:
         that: 
-          - "'requirements.txt' in item.path"
+          - "'requirements.txt' not in item.path"
       with_items: "{{ collections_path.files }}"
-      when:  "'requirements.txt' in item.path"
 
     - name: Assert that collections directory contains requirement.yml file
       ansible.builtin.assert:
@@ -31,17 +30,6 @@
           - "'requirements.yml' in item.path"
       with_items: "{{ collections_path.files }}"
       when:  "'requirements.yml' in item.path"
-
-    - name: Read requirements.txt
-      ansible.builtin.set_fact:
-        requirementstxt: "{{ lookup('file', '{{ item.path }}') }}"
-      with_items: "{{ collections_path.files }}"
-      when:  "'requirements.txt' in item.path"
-
-    - name: Assert that requirements.txt contains kubernetes module
-      ansible.builtin.assert:
-        that: 
-          - requirementstxt == "kubernetes==11.0.0"
 
     - name: Read requirements.yml
       ansible.builtin.set_fact:
@@ -135,5 +123,23 @@
           -  operatorconfigdata.resources[0].vars[0].displayName is defined
           -  operatorconfigdata.resources[0].vars[0].name is defined
           -  operatorconfigdata.resources[0].vars[0].type is defined
-
     
+    - name: Find ./.vscode/extensions.json file"
+      ansible.builtin.stat:
+        path: "{{ base_dir }}/.vscode/extensions.json"
+      register: extensions_json
+
+    - name: Validate ./.vscode/extensions.json file exists
+      ansible.builtin.assert:
+        that: extensions_json.stat.exists
+
+    - name: Read extensions.json file
+      ansible.builtin.set_fact:
+        extensionsjson: "{{ lookup('template', '{{ base_dir }}/.vscode/extensions.json') | from_json }}"
+
+    - name: Assert that requirements.yml contains correct ansible requirements
+      ansible.builtin.assert:
+        that: 
+          -  "'recommendations' in extensionsjson"
+          -  "'ibm.operator-collection-sdk' in extensionsjson.recommendations"
+          -  "'redhat.ansible' in extensionsjson.recommendations"
