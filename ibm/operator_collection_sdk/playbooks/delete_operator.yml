@@ -79,6 +79,7 @@
         wait_sleep: 5
         wait_timeout: 140
       when: soc_exists is true
+      ignore_errors: true
 
     - name: Remove Credential Secret
       kubernetes.core.k8s:

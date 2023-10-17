@@ -67,9 +67,9 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
+      ignore_errors: true
 
     - name: Remove local build
       ansible.builtin.file:
         path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/local"
         state: absent
-
