@@ -9,6 +9,20 @@
   connection: local
   gather_facts: false
   tasks:
+    - name: Set local directory
+      ansible.builtin.set_fact:
+        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+
+    - name: Locate ocsdk-extra-vars.yml (if it exists)
+      ansible.builtin.find:
+        paths: "{{ local_directory }}"
+        patterns: 'ocsdk-extra-vars.yml,ocsdk-extra-vars.yaml'
+      register: ocsdk_vars_results
+
+    - name: Include ocsdk-extra-vars.yml variables
+      when: ocsdk_vars_results.files | length > 0
+      ansible.builtin.include_vars: "{{ ocsdk_vars_results.files[0].path }}"
+
     - name: Set Remote ZosEndpoint Type information
       ansible.builtin.pause:
         prompt: "Enter what type (local/remote) of ZosEndpoint you want to create "
@@ -58,11 +72,11 @@
         username:
         ssh_key:
         passphrase:
-      when: zosendpoint_type == "local"
+      when: zosendpoint_type == "local" and ocsdk_vars_results.files | length == 0
 
     - name: Set Remote ZosEndpoint Username information
       ansible.builtin.pause:
-        prompt: "Enter you SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
+        prompt: "Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed) "
       when: zosendpoint_type == "remote" and username is not defined
       register: zosendpoint_username
 
@@ -94,10 +108,6 @@
       ansible.builtin.set_fact:
         passphrase: "{{ zosendpoint_passphrase.user_input }}"
         private: true
-
-    - name: Set local directory
-      ansible.builtin.set_fact:
-        local_directory: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
 
     - name: Prereq Validation
       ansible.builtin.include_role:
