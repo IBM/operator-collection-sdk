@@ -22,7 +22,7 @@
       kubernetes.core.k8s:
         state: absent
         kind: secret
-        name: "{{ secret_name }}" 
+        name: "{{ secret_name }}"
         namespace: "{{ ocpnamespace }}"
         wait: true
         wait_sleep: 5
@@ -77,6 +77,7 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
+      ignore_errors: true
 
     - name: Remove local build
       ansible.builtin.file:
