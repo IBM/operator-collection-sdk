@@ -78,7 +78,7 @@ Ansible Collections MAY provide default variables throughout their collection, b
 | `kindReference` | Optional | `string`   | Specify this field if the `playbook` requires information from other Kubernetes resources managed by the z/OS Cloud Broker. <br><br> This will enable a dynamically populated dropdown in the OCP UIs containing all previously created instances of the specified `kind`. Use this for running actions against previously created instances. <br><br>                                                                                                                                                                                                            |
 | `objectVariables` | Optional | `array(object)`   | A list of variables that SHOULD be provided in the object. See [Resource Variables](#resource-variables).
    |
-| `array` | Optional | `boolean`   |  Set this field to `true` if the variable should be stored an array.
+| `array`          | Optional  | `boolean`   |  Set this field to `true` if the variable should be stored an array.
    |
 
 ## Provided Variables
