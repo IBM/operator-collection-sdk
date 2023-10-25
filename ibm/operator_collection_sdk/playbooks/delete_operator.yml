@@ -57,7 +57,7 @@
           - op: replace
             path: /metadata/finalizers
             value: []
-      when: soc_exists is true
+      when: soc_exists is true and oc_results.resources | length > 0
 
     - name: Remove OperatorCollection
       kubernetes.core.k8s:
@@ -66,7 +66,7 @@
         kind: OperatorCollection
         namespace: "{{ target_namespace }}"
         name: "{{ oc_results.resources[0].metadata.name }}"
-      when: soc_exists is true
+      when: soc_exists is true and oc_results.resources | length > 0
 
     - name: Validate SubOperatorConfig has been removed
       kubernetes.core.k8s:
