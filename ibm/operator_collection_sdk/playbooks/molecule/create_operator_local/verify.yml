@@ -38,7 +38,7 @@
     - name: Assert SubOperatorConfig configuration
       ansible.builtin.assert:
         that: 
-          -  suboperatorconfig_results.resources[0].spec.credentialType == 'personal'
+          -  suboperatorconfig_results.resources[0].spec.credentialType == 'shared'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpoint_name }}'
           -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
