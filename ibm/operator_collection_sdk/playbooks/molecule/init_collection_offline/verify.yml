@@ -18,14 +18,14 @@
         paths: "{{ base_dir }}/collections"
       register: collections_path
 
-    - name: Assert that collections directory is empty
+    - name: Assert that collections directory is not empty
       ansible.builtin.assert:
         that: 
-          - collections_path.files | length == 0
+          - collections_path.files | length == 3
 
     - name: Find 'kubernetes-core-2.4.0.tar.gz' file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: kubernetes-core-2.4.0.tar.gz
       register: kubernetes_core_file
 
@@ -34,20 +34,20 @@
         that: 
           - kubernetes_core_file.files | length == 1
 
-    - name: Find 'operator_sdk-util-0.4.0.tar.gz' file
+    - name: Find 'operator_sdk-util-0.5.0.tar.gz' file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
-        patterns: operator_sdk-util-0.4.0.tar.gz
+        paths: "{{ base_dir }}/collections"
+        patterns: operator_sdk-util-0.5.0.tar.gz
       register: operator_sdk_util_file
 
-    - name: Assert that 'operator_sdk-util-0.4.0.tar.gz' file exists
+    - name: Assert that 'operator_sdk-util-0.5.0.tar.gz' file exists
       ansible.builtin.assert:
         that: 
           - operator_sdk_util_file.files | length == 1
 
     - name: Find requirements.yml file
       ansible.builtin.find:
-        paths: "{{ base_dir }}"
+        paths: "{{ base_dir }}/collections"
         patterns: requirements.yml
       register: requirements_yml_file
 
@@ -55,13 +55,17 @@
       ansible.builtin.set_fact:
         requirementsyml: "{{ lookup('template', '{{ requirements_yml_file.files[0].path }}') | from_yaml }}"
 
+    - name: Read collections name
+      ansible.builtin.set_fact:
+        all_collection_values: "{{ requirementsyml.collections | json_query('[].*') | flatten}}"
+        collection_kube: "kubernetes-core-2.4.0.tar.gz"
+        collection_sdk: "operator_sdk-util-0.5.0.tar.gz"
+
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "'kubernetes-core-2.4.0.tar.gz' in requirementsyml.collections[0].name"
-          -  "'2.4.0' in requirementsyml.collections[0].version"
-          -  "'operator_sdk-util-0.4.0.tar.gz' in requirementsyml.collections[1].name"
-          -  "'0.4.0' in requirementsyml.collections[1].version"
+          - collection_kube in all_collection_values
+          - collection_sdk in all_collection_values
 
     - name: Find playbooks directory
       ansible.builtin.find:
@@ -144,4 +148,22 @@
           -  operatorconfigdata.resources[0].vars[0].name is defined
           -  operatorconfigdata.resources[0].vars[0].type is defined
 
-    
+    - name: Find ./.vscode/extensions.json file"
+      ansible.builtin.stat:
+        path: "{{ base_dir }}/.vscode/extensions.json"
+      register: extensions_json
+
+    - name: Validate ./.vscode/extensions.json file exists
+      ansible.builtin.assert:
+        that: extensions_json.stat.exists
+
+    - name: Read extensions.json file
+      ansible.builtin.set_fact:
+        extensionsjson: "{{ lookup('template', '{{ base_dir }}/.vscode/extensions.json') | from_json }}"
+
+    - name: Assert that requirements.yml contains correct ansible requirements
+      ansible.builtin.assert:
+        that: 
+          -  "'recommendations' in extensionsjson"
+          -  "'ibm.operator-collection-sdk' in extensionsjson.recommendations"
+          -  "'redhat.ansible' in extensionsjson.recommendations"

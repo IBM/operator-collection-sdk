@@ -44,7 +44,7 @@
         collections_dir: "{{ base_dir }}/collections/"
         requirements_yml: "{{ base_dir }}/collections/requirements.yml"
         requirements_yaml: "{{ base_dir }}/collections/requirements.yml"
-        requirements_txt: "{{ base_dir }}/collections/requirements.txt"
+        extensions_json: "{{ base_dir }}/.vscode/extensions.json"
 
     - name: Initialize collection
       ansible.builtin.command: ansible-galaxy collection init {{ collection_namespace | lower | replace('-', '_') }}.{{ collection_name | lower | replace('-', '_') }} --init-path {{ local_directory }}
@@ -92,20 +92,26 @@
         dest: "{{ requirements_yml }}"
         mode: '0644'
 
-    - name: Generate requirements.txt file
-      ansible.builtin.template:
-        src: templates/requirements-txt.j2
-        dest: "{{ requirements_txt }}"
-        mode: '0644'
-
     - name: Create operator-config.yml
       ansible.builtin.include_role:
         name: create_operator_config
       vars:
         path: "{{ base_dir }}"
 
+    - name: Create vscode directory
+      ansible.builtin.file:
+        path: "{{ base_dir }}/.vscode"
+        state: directory
+        mode: '0755'
+
+    - name: Create extensions.json file
+      ansible.builtin.template:
+        src: templates/extensions-json.j2
+        dest: "{{ extensions_json }}"
+        mode: '0644'
+
     - name: Download local dependencies
-      ansible.builtin.command: ansible-galaxy collection download -r "{{ base_dir }}/collections/requirements.yml" -p "{{ base_dir}}"
+      ansible.builtin.command: ansible-galaxy collection download -r "{{ base_dir }}/collections/requirements.yml" -p "{{ base_dir}}/collections"
       register: ansible_galaxy_download_output
       when: offline_install == "y"
       ignore_errors: true
@@ -116,9 +122,3 @@
           Unable to download dependent collections from Ansible Galaxy. Please download the collections listed in the {{ base_dir }}/collections/requirements.yml file and store in the {{ collections_dir }} directory.
           After the collections are downloaded, execute the "create_offline_requirements.yml" playbook to complete the setup
       when: offline_install == "y" and ansible_galaxy_download_output.rc != 0
-
-    - name: Remove collections directory
-      ansible.builtin.file:
-        path: "{{ collections_dir }}"
-        state: absent
-      when: offline_install == "y"
