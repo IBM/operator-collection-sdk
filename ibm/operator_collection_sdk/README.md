@@ -94,7 +94,7 @@ If your local environment is also offline, then you must download the required A
 ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
 ```
 
-**Note:** Offline Python dependencies are currently not supported in the v2.2.1 release of the IBM z/OS Cloud Broker, so the `requirements.txt` file will be removed in the Operator Collection once it has been converted to execute offline. 
+**Note:** Offline Python dependencies are currently not supported in the v2.2.2 release of the IBM z/OS Cloud Broker, so the `requirements.txt` file will be removed in the Operator Collection once it has been converted to execute offline. 
 
 
 # Usage Examples

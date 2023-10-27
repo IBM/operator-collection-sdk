@@ -8,7 +8,7 @@ namespace: ibm
 name: operator_collection_sdk
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.0
+version: 1.1.0
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -62,6 +62,7 @@ issues: https://github.com/IBM/operator-collection-sdk/issues
 build_ignore:
   - .gitignore 
   - playbooks/molecule
+  - ansible_venv
 
 # A dict controlling use of manifest directives used in building the collection artifact. The key 'directives' is a
 # list of MANIFEST.in style

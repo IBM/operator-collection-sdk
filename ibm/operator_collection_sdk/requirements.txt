@@ -1,8 +1,9 @@
 ansible
 docker
-molecule
+molecule===5.1.0
 molecule-docker 
 kubernetes
 pyyaml
 openshift
 yamllint
+jmespath
