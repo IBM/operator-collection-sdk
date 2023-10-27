@@ -13,6 +13,7 @@
 - [Create an instance of the operator](#create-an-instance-of-the-operator)
 - [Debugging the operator](#debugging-the-operator)
 - [Cleanup](#cleanup)
+- [Watch the video](#watch-the-video)
 
 
 # Prerequisites
@@ -293,6 +294,10 @@ Alternatively, you can run the following alias:
 ocsdk-delete-operator
 ```
 
+# Watch The Video
+
+Click [here][tutorial-video] to watch the video of the scenarios covered above.
+
 [openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
 [openshift-cli]:https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html
 [ansible]:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#pip-install
@@ -303,3 +308,4 @@ ocsdk-delete-operator
 [custom-resource]: https://docs.openshift.com/container-platform/3.11/admin_guide/custom_resource_definitions.html
 [finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/
 [operator-config-example]: ../examples/racf-operator/operator-config.yml
+[tutorial-video]:https://mediacenter.ibm.com/playlist/dedicated/1_6hssue17/1_lcap76s4
