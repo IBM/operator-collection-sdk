@@ -100,7 +100,8 @@
             name: "{{ oc_results.resources[0].metadata.name }}"
             namespace: "{{ target_namespace }}"
             labels: "{{ oc_results.resources[0].metadata.labels }}"
-          spec: "{{ oc_results.resources[0].spec }}"
+          spec:
+            skipSignatureVerification: true
 
     - name: Validate OperatorCollection installed successfully
       kubernetes.core.k8s_info:
