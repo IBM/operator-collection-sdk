@@ -202,23 +202,22 @@ Enter your ZosEndpoint name:
 [kubernetes]:https://github.com/kubernetes-client/python#installation
 [broker]:https://ibm.biz/ibm-zoscb-install
 
-## Configure extra-vars file to bypass prompts
-If you find yourself inputting vars_prompts frequently, append `--extra-vars <vars>.json` to your playbook command/alias
+## Configure ocsdk-extra-vars file to bypass prompts
+If you find yourself inputting vars_prompts frequently, create an `ocsdk-extra-vars.yaml` file. If `create_operator.yml` detects this file, it will automatically use it.
 
-```bash
-ansible-playbook create_credential_secret.yml --extra-vars vars.json
+Example `ocsdk-extra-vars.yaml` file:
+
+```yaml
+zosendpoint_type: remote
+zosendpoint_name: my-endpoint
+zosendpoint_host: 1.2.3.4
+zosendpoint_port: '22'
+username: user
+ssh_key: ~/.ssh/id_rsa
+passphrase: my_ssh_passphrase
 ```
 
-Example `vars.json` file:
-
-```
-{
-    username: "testuser",
-    operator_name: "racf",
-    ssh_key: "~/.ssh/id_rsa",
-    secret_name: "test-secret"
-}
-```
+Note: We do not recommend explicitly specifying passphrases in this file as they should be passed through the vars prompt. If the passphrase is specified however, we recommend that the `ocsdk-extra-vars.yaml` file be added to your `.gitignore` file to prevent the exposure of your passphrase on Github.
 
 ## Suppress playbook warning messages
 Set the following environment variables to suppress the WARNING messages listed below when executing playbooks within the IBM Operator Collection SDK collection.
