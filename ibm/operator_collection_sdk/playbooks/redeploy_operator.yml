@@ -32,6 +32,7 @@
       vars:
         path: "{{ local_directory }}"
         namespace: "{{ target_namespace }}"
+        redeploy: true
 
     - name: Get SubOperatorConfig
       kubernetes.core.k8s_info:
@@ -90,6 +91,10 @@
         wait_sleep: 5
         wait_timeout: 140
 
+    - name: Set OperatorCollection name
+      ansible.builtin.set_fact:
+        operatorcollection_name: "{{ operator_name + '.' + operator_domain + '.' + operator_version }}"
+
     - name: Create OperatorCollection
       kubernetes.core.k8s:
         state: present
@@ -97,9 +102,13 @@
           apiVersion: zoscb.ibm.com/v2beta2
           kind: OperatorCollection
           metadata:
-            name: "{{ oc_results.resources[0].metadata.name }}"
+            name: "{{ operatorcollection_name }}"
             namespace: "{{ target_namespace }}"
-            labels: "{{ oc_results.resources[0].metadata.labels }}"
+            labels:
+              managed-by: ibm-zos-cloud-broker
+              operator-domain: "{{ operator_domain }}"
+              operator-name: "{{ operator_name }}"
+              operator-version: "{{ operator_version }}"
           spec:
             skipSignatureVerification: true
 
@@ -107,7 +116,7 @@
       kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
         kind: OperatorCollection
-        name: "{{ oc_results.resources[0].metadata.name }}"
+        name: "{{ operatorcollection_name }}"
         namespace: "{{ target_namespace }}"
       register: updated_oc_results
       until: "updated_oc_results.resources[0].status.phase is defined and updated_oc_results.resources[0].status.phase == 'Successful'"
@@ -121,16 +130,19 @@
           apiVersion: zoscb.ibm.com/v2beta2
           kind: SubOperatorConfig
           metadata:
-            name: "{{ soc_results.resources[0].metadata.name }}"
+            name: "{{ operatorcollection_name }}-soc"
             namespace: "{{ target_namespace }}"
-            labels: "{{ soc_results.resources[0].metadata.labels }}"
-          spec: "{{ soc_results.resources[0].spec }}"
+          spec:
+            credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
+            mapping: "{{ soc_results.resources[0].spec.mapping }}"
+            operatorCollection: "{{ operatorcollection_name }}"
+  
 
     - name: Validate SubOperatorConfig installed successfully
       kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
         kind: SubOperatorConfig
-        name: "{{ soc_results.resources[0].metadata.name }}"
+        name: "{{ operatorcollection_name }}-soc"
         namespace: "{{ target_namespace }}"
       register: updated_soc_results
       until: "updated_soc_results.resources[0].status.phase is defined and updated_soc_results.resources[0].status.phase == 'Successful'"
