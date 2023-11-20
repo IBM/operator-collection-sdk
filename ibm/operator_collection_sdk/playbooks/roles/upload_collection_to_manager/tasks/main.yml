@@ -50,14 +50,14 @@
     msg: "OperatorCollection doesn't exist"
   when: soc_results.resources | length > 0 and oc_results.resources | length == 0
 
-- name: Copy local build to manager pod
+- name: Copy local build to manager pod using existing collection path
   ansible.builtin.command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":"{{ oc_results.resources[0].status.config.collectionPath }}"
-  when: soc_results.resources | length > 0 and oc_results.resources | length > 0
+  when: soc_results.resources | length > 0 and oc_results.resources | length > 0 and (redeploy is not defined or redeploy is false)
 
 - name: Create directory on pod if doesn't exist
   ansible.builtin.command: oc exec -i -n "{{ pod_results.resources[0].metadata.namespace }}" "{{ pod_results.resources[0].metadata.name }}" -- mkdir -p /opt/collections/suboperator/{{ operator_name }}/{{ operator_version }}
-  when: soc_results.resources | length == 0
+  when: soc_results.resources | length == 0 and (redeploy is not defined or redeploy is false)
 
-- name: Copy local build to manager pod during initial operator creation
+- name: Copy local build to manager pod using new collection path
   ansible.builtin.command: oc cp {{ find_result.files[0].path }} "{{ pod_results.resources[0].metadata.namespace }}/{{ pod_results.resources[0].metadata.name }}":/opt/collections/suboperator/{{ operator_name }}/{{ operator_version }}/{{ find_result.files[0].path | basename }}
-  when: soc_results.resources | length == 0
+  when: soc_results.resources | length == 0 or (redeploy is defined and redeploy is true)
