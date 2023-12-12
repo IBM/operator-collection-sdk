@@ -52,7 +52,7 @@
 
 - name: Read operator-config.yml
   ansible.builtin.set_fact:
-    operator_config: "{{ lookup('template', '{{ oc_file_results.files[0].path }}')|from_yaml }}"
+    operator_config: "{{ lookup('template', '{{ oc_file_results.files[0].path }}')| from_yaml | to_json | from_json }}"
 
 - name: Set operator variables
   ansible.builtin.set_fact:
