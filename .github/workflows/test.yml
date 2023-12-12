@@ -97,3 +97,4 @@ jobs:
         env:
             OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
             OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+            ZOSCB_RELEASE: ibm-zoscb.${{ vars.ZOSCB_RELEASE }}
