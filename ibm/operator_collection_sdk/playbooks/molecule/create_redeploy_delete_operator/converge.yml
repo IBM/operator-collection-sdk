@@ -49,7 +49,7 @@
             name: ibm-zoscb
             source: ibm-operator-catalog
             sourceNamespace: openshift-marketplace
-            startingCSV: ibm-zoscb.v2.2.2
+            startingCSV: "{{ zoscb_release }}"
 
     - name: Validate Subscription installed successfully
       kubernetes.core.k8s_info:
