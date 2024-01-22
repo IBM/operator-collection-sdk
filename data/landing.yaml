@@ -1,6 +1,3 @@
-# Note: Template blocks require a 'weight' parameter so they're correctly ordered on the landing page
-
-# Hero
 hero:
   enable: true
   weight: 10
@@ -13,27 +10,28 @@ hero:
       mobile: "gradient-mobile.webp"
 
   badge:
-    text: v0.1.0
+    text: v1.1.1
     color: primary # primary, secondary, success, danger, warning, info, light, dark
-    pill: false # boolean
-    soft: true # boolean
+    pill: false
+    soft: true 
 
-  # titleLogo:
-  #   path: "images/logos"
-  #   filename: "title_logo.png"
-  #   alt: "Lotus Docs Logo"
-  #   height: 80px
-
-  title: "Operator Collection"
-  subtitle: "Operator Collections are simply [Ansible Collections](https://www.ansible.com/blog/getting-started-with-ansible-collections) that are dynamically converted to [Ansible Operators](https://www.ansible.com/blog/ansible-operator) in Openshift when imported in the [IBM® z/OS® Cloud Broker](https://ibm.biz/ibm-zoscb-install). This allows you to write any [Ansible Playbook](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_intro.html), develop and iterate on it locally, publish to Openshift, and expose a catalog of statefully managed new services."
+  title: "IBM Operator Collection SDK"
+  subtitle: "The IBM Operator Collection SDK is used to assist in the end-to-end deployment of your Ansible Collections during the development lifecycle. Operator Collections are simply [Ansible Collections](https://www.ansible.com/blog/getting-started-with-ansible-collections) that are dynamically converted to [Ansible Operators](https://www.ansible.com/blog/ansible-operator) in Openshift when imported via the [IBM® z/OS® Cloud Broker](https://ibm.biz/ibm-zoscb-install). This allows you to write any [Ansible Playbook](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_intro.html), develop and iterate on it locally, publish to Openshift, and expose a catalog of statefully managed, new services."
+  # subtitle: "Operator Collections are simply [Ansible Collections](https://www.ansible.com/blog/getting-started-with-ansible-collections) that are dynamically converted to [Ansible Operators](https://www.ansible.com/blog/ansible-operator) in Openshift when imported via the [IBM® z/OS® Cloud Broker](https://ibm.biz/ibm-zoscb-install). This allows you to write any [Ansible Playbook](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_intro.html), develop and iterate on it locally, publish to Openshift, and expose a catalog of statefully managed, new services."
 
   image:
-    path: "images" # path to image under configured assets directory. default 'images'
-    filename: "oc.png" # filename of your hero image (including file extension)
-    boxShadow: false # default 'false' (excludes .svg images)
-    rounded: true # round the image corners? default 'false' (excludes .svg images)
+    path: "images/logo" # path to image under configured assets directory. default 'images'
+    filename: "oc.png"
+    boxShadow: false
+    rounded: true
 
   ctaButton:
     icon: rocket_launch
     btnText: "Get Started"
-    url: "/docs/overview"
+    url: "/docs/overview/"
+
+# featureGrid:
+#   enable: true
+# imageCompare:
+#   enable: false
+
