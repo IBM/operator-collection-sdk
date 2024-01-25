@@ -1,12 +1,12 @@
 ---
-weight: 300
+weight: 400
 title: "Troubleshooting"
-description: ""
+description: "Common errors and known issues."
 icon: "troubleshoot"
 date: "2024-01-19T16:15:21-08:00"
 lastmod: "2024-01-19T16:15:21-08:00"
 draft: false
-toc: true
+toc: false
 ---
 
 If you experience issues with `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]`, or similar issues, you may need to install and use SSL Certificates before running this extension.
@@ -23,3 +23,8 @@ Alternatively, you can navigate to your python folder and run the `Certificates`
 cd <PATH_TO_PYTHON>
 ./Install\ Certificates.command
 ```
+
+---
+
+##### Can't find what you're looking for?
+[Submit an issue](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues)

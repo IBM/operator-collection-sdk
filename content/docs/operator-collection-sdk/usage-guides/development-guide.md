@@ -2,7 +2,7 @@
 weight: 100
 title: "Development Guide"
 description: ""
-icon: "article"
+icon: "developer_guide"
 date: "2024-01-18T16:50:01-08:00"
 lastmod: "2024-01-18T16:50:01-08:00"
 draft: true

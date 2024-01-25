@@ -2,7 +2,7 @@
 weight: 600
 title: "Ansible Collection Modifications"
 description: ""
-icon: "article"
+icon: "box_edit"
 date: "2024-01-18T16:49:28-08:00"
 lastmod: "2024-01-18T16:49:28-08:00"
 draft: true

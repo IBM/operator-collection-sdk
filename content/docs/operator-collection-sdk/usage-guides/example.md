@@ -2,7 +2,7 @@
 weight: 300
 title: "Example"
 description: ""
-icon: "article"
+icon: "category"
 date: "2024-01-18T16:50:21-08:00"
 lastmod: "2024-01-18T16:50:21-08:00"
 draft: true

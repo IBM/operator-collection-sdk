@@ -1,8 +1,8 @@
 ---
 weight: 100
 title: "Overview"
-description: ""
-icon: "article"
+description: "The IBM Operator Collection SDK provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker which is part of the IBM Z® and Cloud Modernization Stack."
+icon: "overview_key"
 date: "2024-01-15T13:19:10-08:00"
 lastmod: "2024-01-15T13:19:10-08:00"
 draft: true

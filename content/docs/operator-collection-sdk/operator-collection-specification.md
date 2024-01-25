@@ -2,7 +2,7 @@
 weight: 400
 title: "Operator Collection Specification"
 description: ""
-icon: "article"
+icon: "list_alt"
 date: "2024-01-18T15:16:11-08:00"
 lastmod: "2024-01-18T15:16:11-08:00"
 draft: true
