@@ -2,7 +2,7 @@
 weight: 200
 title: "Installation"
 description: ""
-icon: "article"
+icon: "download"
 date: "2024-01-15T13:19:10-08:00"
 lastmod: "2024-01-15T13:19:10-08:00"
 draft: true

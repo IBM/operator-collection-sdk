@@ -35,9 +35,6 @@ copyright = "© Copyright IBM Corporation :YEAR:. Built with [**Lotus Docs**](ht
 
 [params.docs] # Parameters for the /docs 'template'
 
-# link behavior
-intLinkTooltip   = true                                         # Enables tooltip for internal links
-
 # details
 title           = "IBM Operator Collection SDK Documentation"   # default html title for documentation pages/sections
 repoURL         = "https://github.ibm.com/operator-collections/operator-collection-sdk/website"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
@@ -69,4 +66,6 @@ backToTop       = true                                # enable back-to-top butto
 # front matter
 descriptions    = true                                # enable front matter descriptions under content title?
 
-#
+# link behavior
+intLinkTooltip   = true                               # Enables tooltip for internal links
+extLinkNewTab    = true                               # Open external links in a new tab
