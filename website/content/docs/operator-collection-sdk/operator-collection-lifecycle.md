@@ -2,7 +2,7 @@
 weight: 500
 title: "Operator Collection Lifecycle"
 description: ""
-icon: "article"
+icon: "cycle"
 date: "2024-01-18T16:48:59-08:00"
 lastmod: "2024-01-18T16:48:59-08:00"
 draft: true
