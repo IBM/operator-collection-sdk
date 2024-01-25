@@ -1,33 +1,45 @@
 ---
 weight: 200
 title: "Development Guide"
-description: ""
-icon: "article"
+description: "IBM Operator Collection SDK for VS Code development guide."
+icon: "developer_guide"
 date: "2024-01-15T13:21:07-08:00"
 lastmod: "2024-01-15T13:21:07-08:00"
-draft: true
+draft: false
 toc: true
 ---
 
-# IBM Operator Collection SDK for VS Code Development Guide
+<!-- # IBM Operator Collection SDK for VS Code Development Guide -->
 
+## Local Development
 ---
+### Getting started
+**Requirements:** To develop locally, you will first need to install [node js](https://nodejs.org/en) in order to install dependencies, test, build, and deploy the extension.
+1. First clone the IBM Operator Collection SDK VS Code Extension repository on github:
+    ```
+    git clone https://github.com/IBM/operator-collection-sdk-vscode-extension.git \
+    && cd operator-collection-sdk-vscode-extension
+    ```
+2. Install the extension dependencies:
+    ```
+    npm install
+    ```
 
-## Local debugging
+### Explore the API
+* You can open the full set of our API when you open the file `node_modules/@types/vscode/index.d.ts`.
+
+### Making changes
+* You can launch the extension from the debug toolbar after changing code in `src/extension.ts`.
+* You can also reload (`Ctrl+R` or `Cmd+R` on Mac) the VS Code window with your extension to load your changes.
+
+### Debugging
 * Press `F5` to open a new window with your extension loaded.
 * Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Hello World`.
 * Set breakpoints in your code inside `src/extension.ts` to debug your extension.
 * Find output from your extension in the debug console.
 
-## Making changes
-* You can relaunch the extension from the debug toolbar after changing code in `src/extension.ts`.
-* You can also reload (`Ctrl+R` or `Cmd+R` on Mac) the VS Code window with your extension to load your changes.
-
-## Explore the API
-* You can open the full set of our API when you open the file `node_modules/@types/vscode/index.d.ts`.
-
 ## Run tests
-
+---
 ### Running tests in terminal
 * Run the `oc login` command to log in to an OpenShift cluster, and validate you're in the correct project.
 * Run the following command to execute tests.
@@ -57,15 +69,12 @@ Since the current tests require access to an Openshift cluster, you are required
     ```
 
 ## Local builds
-* Run the following command to install the `vsce` package globally
-    ```
-    npm install -g @vscode/vsce
-    ```
-* Run the following command to build the `.vsix` file
+---
+1. Build the `.vsix` file (the extension dependencies must already be installed):
     ```
     npm run build
     ```
-* Run the following command to install the extenion to your VS Code editor
+2. Deploy the extension to your VS Code editor:
     ```
     npm run deploy
     ```
