@@ -34,10 +34,8 @@ mono_font       = "IBM Plex Mono"
 copyright = "© Copyright IBM Corporation :YEAR:. Built with [**Lotus Docs**](https://github.com/colinwilson/lotusdocs)"
 
 [params.docs] # Parameters for the /docs 'template'
-
-# details
 title           = "IBM Operator Collection SDK Documentation"   # default html title for documentation pages/sections
-repoURL         = "https://github.ibm.com/operator-collections/operator-collection-sdk/website"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
+repoURL         = "https://github.com/IBM/operator-collection-sdk"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
 repoBranch      = "main"                              # Name of your Git repository branch
 
 darkMode        = true                                # enable dark mode option? default false

@@ -1,14 +1,16 @@
 ---
-weight: 400
-title: "Troubleshooting"
+weight: 2600
+title: "Troubleshooting" # <!-- omit from toc -->
 description: "Common errors and known issues."
 icon: "troubleshoot"
 date: "2024-01-19T16:15:21-08:00"
 lastmod: "2024-01-19T16:15:21-08:00"
 draft: false
-toc: false
+toc: true
 ---
 
+## SSL Certificates
+---
 If you experience issues with `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]`, or similar issues, you may need to install and use SSL Certificates before running this extension.
 
 To install SSL Certificates in Python, you can install the [`certifi`](https://pypi.org/project/certifi/) package via `pip`:

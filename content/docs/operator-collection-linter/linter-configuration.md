@@ -1,5 +1,5 @@
 ---
-weight: 100
+weight: 3100
 title: "Integrated Operator Collection Linter"
 description: "The IBM Operator Collection SDK for VS Code integrated Operator Collection Linter"
 icon: "quick_reference_all"

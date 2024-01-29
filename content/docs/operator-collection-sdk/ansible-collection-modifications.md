@@ -1,6 +1,6 @@
 ---
-weight: 600
-title: "Ansible Collection Modifications"
+weight: 1600
+title: "Ansible Collection Modifications" # <!-- omit from toc -->
 description: ""
 icon: "box_edit"
 date: "2024-01-18T16:49:28-08:00"
@@ -9,19 +9,10 @@ draft: true
 toc: true
 ---
 
-# Ansible Collection Modifications <!-- omit from toc -->
 Additional Ansible collection modifications may be desirable for a complete native OpenShift experience. 
 
-- [Installing Dependencies](#installing-dependencies)
-  - [Ansible Collection Dependencies](#ansible-collection-dependencies)
-  - [Python Dependencies](#python-dependencies)
-- [Playbook Modifications](#playbook-modifications)
-  - [Target Hosts](#target-hosts)
-  - [Dual Execution](#dual-execution)
-  - [Retrieving CR data](#retrieving-cr-data)
-  - [Setting CR status](#setting-cr-status)
-
 ## Installing Dependencies
+---
 Ansible and Python dependencies can be installed using additional configuration files.
 
 ### Ansible Collection Dependencies
@@ -55,6 +46,7 @@ netaddr
 <!-- ### Offline depedencies -->
 
 ## Playbook Modifications
+---
 For best compatibility with Red Hat OpenShift, some playbook modifications may be necessary.
 
 ### Target Hosts
@@ -137,6 +129,6 @@ This is especially important if you want the Custom Resource that is being manag
 **Note**: The example above contains Jinja variable references (`k8s_cr_version`, `ansible_operator_meta.name`, `ansible_operator_meta.namespace`) that are part of the [provided variables](spec.md#provided-variables) made avaiable to the ansible playbook when being executed as a z/OS Cloud Broker suboperator.
 
 Any data can be added to the CR `status` with the following limitations:
-1. The `status.conditions` fields are not modified
-1. The serialized CR content cannot exceed 2MB
-1. Be cautious about placing sensitive information into the `status` as other users may be able to see this information based on their levels of access control in Kubernetes. Additionally, all updates are logged in Kubernetes audit logs.
+* The `status.conditions` fields are not modified
+* The serialized CR content cannot exceed 2MB
+* Be cautious about placing sensitive information into the `status` as other users may be able to see this information based on their levels of access control in Kubernetes. Additionally, all updates are logged in Kubernetes audit logs.

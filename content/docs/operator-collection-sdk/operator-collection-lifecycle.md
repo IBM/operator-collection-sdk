@@ -1,6 +1,6 @@
 ---
-weight: 500
-title: "Operator Collection Lifecycle"
+weight: 1500
+title: "Operator Collection Lifecycle" # <!-- omit from toc -->
 description: ""
 icon: "cycle"
 date: "2024-01-18T16:48:59-08:00"
@@ -9,18 +9,18 @@ draft: true
 toc: true
 ---
 
-# Operator Collection Lifecycle <!-- omit from toc -->
 This document explains the lifecycle capabilities of Kubernetes Operators and how OperatorCollections can be used throughout this lifecycle.
 
-- [Standalone Ansible Collection](#standalone-ansible-collection)
+<!-- - [Standalone Ansible Collection](#standalone-ansible-collection)
   - [Discovery](#discovery)
   - [Provisioning \& Management](#provisioning--management)
   - [Day 2 Actions](#day-2-actions)
 - [Consumable Services](#consumable-services)
 
-![Collection Lifecycle](images/collection-lifecycle.png)
+![Collection Lifecycle](images/collection-lifecycle.png) -->
 
 ## Standalone Ansible Collection
+---
 The base of an Operator Collection is just a standard Ansible Collection. 
 
 It is intended that these Ansible Collections can be invoked directly on a local machine or build server. This becomes an easy environment for clients to work on their automated tasks, while also handling basic automation around invoking these playbooks. 
@@ -65,6 +65,7 @@ This is intended for automation tasks like:
 
 
 ## Consumable Services
+---
 After an Operator Collection has been imported and configured, the resources defined in the operator collection are available to users in the OCP Catalog for self-service management.
 
 A SubOperator can be installed for everyone in the cluster via the `openshift-marketplace` namespace, or to a set of specific namespaces that will be allowed to consume the SubOperator and its provided APIs (CRs).
