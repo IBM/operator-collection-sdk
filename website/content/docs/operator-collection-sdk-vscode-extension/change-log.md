@@ -1,5 +1,5 @@
 ---
-weight: 500
+weight: 2500
 title: "Change Log"
 description: "A record of feature enhancements, bug fixes, and other changes to the IBM Operator Collection SDK for VS Code extension."
 icon: "change_history"
