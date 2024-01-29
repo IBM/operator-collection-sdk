@@ -1,12 +1,13 @@
 ---
-weight: 200
-title: "Development Guide"
+weight: 2300
+title: "Development Guide" # <!-- omit from toc -->
 description: "IBM Operator Collection SDK for VS Code development guide."
 icon: "developer_guide"
 date: "2024-01-15T13:21:07-08:00"
 lastmod: "2024-01-15T13:21:07-08:00"
 draft: false
 toc: true
+tags: ["Beginners"]
 ---
 
 <!-- # IBM Operator Collection SDK for VS Code Development Guide -->
