@@ -1,16 +1,16 @@
 ---
-weight: 200
-title: "Tutorial"
-description: ""
+weight: 1220
+title: "Operator Collection Tutorial" # <!-- omit from toc -->
+description: "A step-by-step walkthrough of building a new Operator Collection."
 icon: "developer_guide"
 date: "2024-01-18T16:50:12-08:00"
 lastmod: "2024-01-18T16:50:12-08:00"
 draft: true
 toc: true
+tags: ["Beginners"]
 ---
 
-# Operator Collection Tutorial <!-- omit from toc -->
-
+<!-- 
 - [Prerequisites](#prerequisites)
 - [Overview](#overview)
 - [(Optional) Configure the IBM Operator Collection SDK Alias Commands](#optional-configure-the-ibm-operator-collection-sdk-alias-commands)
@@ -24,10 +24,10 @@ toc: true
 - [Create an instance of the operator](#create-an-instance-of-the-operator)
 - [Debugging the operator](#debugging-the-operator)
 - [Cleanup](#cleanup)
-- [Watch the video](#watch-the-video)
+- [Watch the video](#watch-the-video) -->
 
-
-# Prerequisites
+## Prerequisites
+---
 - [Red Hat OpenShift Cluster (version 4.10 or later)][openshift]
 - [Red Hat OpenShift Command Line Interface (CLI)][openshift-cli]
 - [Ansible CLI Tools (version 2.7 or later)][ansible]
@@ -36,11 +36,13 @@ toc: true
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
 
 
-# Overview
+## Overview
+---
 This tutorial is a walkthrough of building a new operator collection that performs RACF user management against a z/OS environment. This operator will allow you to create a new user ID by creating instances in Openshift, and removing this ID once this instance is deleted.
 
 
-# (Optional) Configure the IBM Operator Collection SDK Alias Commands
+## (Optional) Configure the IBM Operator Collection SDK Alias Commands
+---
 Alternatively, you can configure alias commands to simplify the IBM Operator Collection SDK `ansible-playbook` commands:
 
 1. Open your bash profile using the following command:
@@ -78,7 +80,8 @@ or
 source ~/.zshrc
 ```
 
-# Install the IBM Operator Collection SDK
+## Install the IBM Operator Collection SDK
+---
 To install the latest version of IBM Operator Collection SDK, run the following command:
 
 ```bash
@@ -92,7 +95,8 @@ ocsdk-install
 ```
 
 
-# Initialize a new Operator Collection
+## Initialize a new Operator Collection
+---
 To initialize a new Operator Collection, run the following command:
 
 ```bash
@@ -109,8 +113,9 @@ Enter the collection name and Ansible Galaxy namespace when prompted. For the co
 
 After completing the previous step, an Operator Collection scaffold should appear in the `./<galaxy-namespace>/<collection-name>` directory. Navigate to this directory to proceed with the rest of this tutorial.
 
-# Apply collection modifications
-## Update collection requirements
+## Apply collection modifications
+---
+### Update collection requirements
 Update the `collections/requirements.yml` file as follows to add the `ibm.ibm_zos_core` collection:
 
 ```bash
@@ -122,7 +127,7 @@ collections:
   - name: ibm.ibm_zos_core
 ```
 
-## Apply playbooks and roles
+### Apply playbooks and roles
 Clone the repo, and copy the files in the `playbooks/` directory from the [racf-operator example][racf-operator] and replace the files in your current `playbooks/` directory with the ones you copied.
 
 The playbooks and roles in the `playbooks/` directory serve as your operator controller logic and execute every time a user creates an operator instance in Openshift.
@@ -131,7 +136,7 @@ The playbooks and roles in the `playbooks/` directory serve as your operator con
 
 **Note:** Playbooks must use the `hosts: all` parameter. Target hosts for operator collection are driven by using z/OS endpoints that are provided by the IBM® z/OS Cloud Broker. When the Ansible playbook is executed by the IBM® z/OS Cloud Broker, the `hosts: all` value is limited to the selected z/OS endpoint by setting the `--limit` flag. The IBM® z/OS Cloud Broker handles host limiting internally and no additional playbook modifications are required.
 
-## Update the operator-config
+### Update the operator-config
 The `operator-config.yml` file contains the necessary metadata for the IBM® z/OS Cloud Broker to configure your operator in Openshift. This file is used to configure things such as the name, description, and icon to be displayed in your operator. This is also where you will configure the name of the [custom resource][custom-resource] to be generated in Openshift. More details on configuring custom resources will be discussed in the following sections.
 
 **Let's start by configuring the `domain`, `name`, `version`, `displayName`, and `description` of our operator:**
@@ -191,7 +196,8 @@ icon:
 
 In the end, your `operator-config.yml` field should look similar to this [example][operator-config-example].
 
-# Create the operator
+## Create the operator
+---
 Now that we've applied our playbooks and updated our `operator-config`, we can build our collection and create an operator in Openshift to validate our changes.
 
 To do this, you should first install the latest release in the `v2.2` channel of the IBM® z/OS Cloud Broker in your namespace and create an instance of the `ZosCloudBroker` resource. Once the installation is successful, log in to the cluster from your command line by using the `oc login` command and validate that you are in the correct project by using the `oc project` command.
@@ -225,12 +231,14 @@ After the installation completes, you should see the RACF Operator in Openshift 
 
 ![InstalledOperator](../docs/images/installed-racf-operator.png)
 
-# Create an instance of the operator
+## Create an instance of the operator
+---
 In the installed operator in Openshift, you can now attempt to create an instance of the operator by supplying the required values and clicking `Create`.
 
 **Note:** The initial creation will fail due to an injected failure. However, this failure will be corrected in the following debugging stage.
 
-# Debugging the operator
+## Debugging the operator
+---
 There are multiple ways to debug failures in the operator. The first way would be to open the newly created instance and scroll down to the `Conditions` section to see whether a task message is displaying with a `Failed` Reason.
 
 ![Conditions](../docs/images/Conditions.png)
@@ -291,8 +299,8 @@ After the redeploy is successful, you should be able to create a new instance an
 
 **Note:** An email will not be sent to the requested email ID because this is a fake task that simply prints a debug statement.
 
-# Cleanup
-
+## Cleanup
+---
 After validating that your operator runs successfully, you can delete the operator from your namespace by running the following command:
 
 ```bash
@@ -305,8 +313,8 @@ Alternatively, you can run the following alias:
 ocsdk-delete-operator
 ```
 
-# Watch The Video
-
+## Watch The Video
+---
 Click [here][tutorial-video] to watch the video of the scenarios covered above.
 
 [openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
@@ -315,8 +323,8 @@ Click [here][tutorial-video] to watch the video of the scenarios covered above.
 [cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
 [kubernetes]:https://github.com/kubernetes-client/python#installation
 [broker]:https://ibm.biz/ibm-zoscb-install
-[racf-operator]:../examples/racf-operator/playbooks/
+[racf-operator]:https://github.com/IBM/operator-collection-sdk/tree/main/examples/racf-operator
 [custom-resource]: https://docs.openshift.com/container-platform/3.11/admin_guide/custom_resource_definitions.html
 [finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/
-[operator-config-example]: ../examples/racf-operator/operator-config.yml
+[operator-config-example]:https://github.com/IBM/operator-collection-sdk/tree/main/examples/racf-operator/operator-config.yml
 [tutorial-video]:https://mediacenter.ibm.com/playlist/dedicated/1_6hssue17/1_lcap76s4

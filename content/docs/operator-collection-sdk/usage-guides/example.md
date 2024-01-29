@@ -1,7 +1,7 @@
 ---
-weight: 300
+weight: 1230
 title: "Example"
-description: ""
+description: "An example definition for an Operator Config yaml file. "
 icon: "category"
 date: "2024-01-18T16:50:21-08:00"
 lastmod: "2024-01-18T16:50:21-08:00"
@@ -9,8 +9,7 @@ draft: true
 toc: true
 ---
 
-# Example
-The example below shows a minimal example configuration needed to be provided in an `operator-config.yml` file in order for dynamic generation of Kubernetes Operators. 
+The example below shows a minimal configuration needed to be provided in an `operator-config.yml` file in order for dynamic generation of Kubernetes Operators. 
 
 This example will create a `RACF` operator which extends the Kubernetes API with a new Custom Resource Definition (CRD) called `ZosUserId`. The CRD will be an additional tile in the OCP Developer Catalog and showcases the [lifecycle stages](./lifecycle.md) supported by z/OS Cloud Broker.
 
