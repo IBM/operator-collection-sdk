@@ -1,23 +1,13 @@
 ---
 weight: 1500
 title: "Operator Collection Lifecycle" # <!-- omit from toc -->
-description: ""
+description: "An explanation of the lifecycle capabilities of Kubernetes Operators and how Operator Collections can be used throughout this lifecycle."
 icon: "cycle"
 date: "2024-01-18T16:48:59-08:00"
 lastmod: "2024-01-18T16:48:59-08:00"
 draft: true
 toc: true
 ---
-
-This document explains the lifecycle capabilities of Kubernetes Operators and how OperatorCollections can be used throughout this lifecycle.
-
-<!-- - [Standalone Ansible Collection](#standalone-ansible-collection)
-  - [Discovery](#discovery)
-  - [Provisioning \& Management](#provisioning--management)
-  - [Day 2 Actions](#day-2-actions)
-- [Consumable Services](#consumable-services)
-
-![Collection Lifecycle](images/collection-lifecycle.png) -->
 
 ## Standalone Ansible Collection
 ---

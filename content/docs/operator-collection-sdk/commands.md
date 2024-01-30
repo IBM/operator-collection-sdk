@@ -1,7 +1,7 @@
 ---
 weight: 1200
 title: "Commands"
-description: ""
+description: "Commands, use cases, and helpful tips."
 icon: "workspaces"
 date: "2024-01-18T16:50:32-08:00"
 lastmod: "2024-01-18T16:50:32-08:00"
@@ -11,10 +11,10 @@ toc: true
 
 ## Initializing your Operator Collection
 ---
-Below are the steps to initialize a new operator collection, or to configure an operator collection from an existing Ansible collection.
+Below are the steps to initialize a new Operator Collection, or to configure an operator collection from an existing Ansible Collection.
 
 ### Initializing a new Operator Collection
-Run the following command to initialize your operator collection for development.
+Run the following command to initialize your Operator Collection for development.
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.init_collection
@@ -40,7 +40,6 @@ If your local environment is also offline, then you must download the required A
 ```bash
 ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
 ```
-
 
 ## Usage Examples
 ---

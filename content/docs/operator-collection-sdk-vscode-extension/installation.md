@@ -1,7 +1,7 @@
 ---
 weight: 2200
 title: "Installation"
-description: "Installation guide for the IBM Operator Collection SDK for VS Code extension."
+description: "Installation guide for the IBM Operator Collection SDK extension for VS Code."
 icon: "download"
 date: "2024-01-26T13:45:15-08:00"
 lastmod: "2024-01-26T13:45:15-08:00"
@@ -13,10 +13,10 @@ toc: false
 {{< alert context="warning" text="This extension is not supported on Windows OS." />}}
 
 **Requirements:** This VS Code extension requires the following dependencies to function:
-* [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) version 2.9.10 or higher
-* [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/overview/#installation) Ansible Collection
+* [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
+* [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/installation/) Ansible Collection
     * Alternatively, you can install this collection via the VS Code extension upon activation.
-* [Install the OpenShift CLI](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html) if you haven't already
+* [Install the OpenShift Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
 
 Depending on your environment configuration, you may also need to [install SSL Certificates](docs/operator-collection-sdk-vscode-extension/troubleshooting/#ssl-certificates), before using this extension.
 
