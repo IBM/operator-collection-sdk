@@ -17,7 +17,7 @@ toc: true
 - Added support for scaffolding files, an operator-sdk submenu, and quick-fix actions for the linter.
 - Local ZosEndpoint fixes
 - Added '-' and '_' as valid characters in sha256 token regex.
-- Added support for operator collection workspace initialization
+- Added support for operator collection workspace initialization.
 
 ### [v1.0.1](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/1.0.1)
 - Bypass 401 failures when extension activates but user isn't logged into OpenShift
