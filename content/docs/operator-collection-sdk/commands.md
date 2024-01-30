@@ -5,7 +5,7 @@ description: "Commands, use cases, and helpful tips."
 icon: "workspaces"
 date: "2024-01-18T16:50:32-08:00"
 lastmod: "2024-01-18T16:50:32-08:00"
-draft: true
+draft: false
 toc: true
 ---
 
@@ -48,15 +48,16 @@ ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
 ### Creating the initial operator on the OpenShift cluster
 1. Run the following command to create the operator on the cluster
 
-```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
-```
+    ```bash
+    ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
+    ```
 2. Once prompted, enter the name, host, and port of the `ZosEndpoint` to execute your collection against
 
-**Note:** You can also pass the required variable as extra vars to bypass input prompts:
-```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator
-```
+    **Note:** You can also pass the required variable as extra vars to bypass input prompts:
+
+    ```bash
+    ANSIBLE_JINJA2_NATIVE=true ansible-playbook -e "zosendpoint_name=<endpoint-name> zosendpoint_host=<host> zosendpoint_port=<port> username=<user> ssh_key=<ssh-key-path> passphrase=''" ibm.operator_collection_sdk.create_operator
+    ```
 
 ### Re-deploying your Ansible Collection after making local playbook/role modifications
 
@@ -100,47 +101,48 @@ To simplify the commands needed to be executed, linux/mac users should consider 
 
 1. Open your bash profile using the following command:
 
-```bash
-vi ~/.bash_profile
-```
+    ```bash
+    vi ~/.bash_profile
+    ```
 
-or 
+    or 
 
-```bash
-vi ~/.zshrc
-```
+    ```bash
+    vi ~/.zshrc
+    ```
 
 2. Copy the following commands to your bash profile and save:
    
-```bash
-alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
-alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
-alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
-alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
-alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
-alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
-alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
-alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
-alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
-```
+    ```bash
+    alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
+    alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
+    alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
+    alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
+    alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
+    alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
+    alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
+    alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
+    alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
+    ```
 
 3. Source your bash profile to pick up the latest changes:
 
-```bash
-source ~/.bash_profile
-```
-or
+    ```bash
+    source ~/.bash_profile
+    ```
 
-```bash
-source ~/.zshrc
-```
+    or
+
+    ```bash
+    source ~/.zshrc
+    ```
 
 4. The aliases that were created can now be called instead of the full `ansible-playbook` commands
 
-```bash
-~> ocsdk-create-operator
-Enter your ZosEndpoint name: 
-```
+    ```bash
+    ~> ocsdk-create-operator
+    Enter your ZosEndpoint name: 
+    ```
 
 ### Configure ocsdk-extra-vars file to bypass prompts
 If you find yourself inputting vars_prompts frequently, create an `ocsdk-extra-vars.yaml` file. If `create_operator.yml` detects this file, it will automatically use it.
@@ -157,7 +159,7 @@ ssh_key: ~/.ssh/id_rsa
 passphrase: my_ssh_passphrase
 ```
 
-Note: We do not recommend explicitly specifying passphrases in this file as they should be passed through the vars prompt. If the passphrase is specified however, we recommend that the `ocsdk-extra-vars.yaml` file be added to your `.gitignore` file to prevent the exposure of your passphrase on Github.
+**Note:** We do not recommend explicitly specifying passphrases in this file as they should be passed through the vars prompt. If the passphrase is specified however, we recommend that the `ocsdk-extra-vars.yaml` file be added to your `.gitignore` file to prevent the exposure of your passphrase on Github.
 
 ### Suppress playbook warning messages
 Set the following environment variables to suppress the WARNING messages listed below when executing playbooks within the IBM Operator Collection SDK collection.

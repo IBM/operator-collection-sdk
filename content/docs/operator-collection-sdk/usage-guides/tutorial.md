@@ -5,35 +5,25 @@ description: "A step-by-step walkthrough of building a new Operator Collection."
 icon: "developer_guide"
 date: "2024-01-18T16:50:12-08:00"
 lastmod: "2024-01-18T16:50:12-08:00"
-draft: true
+draft: false
 toc: true
-tags: ["Beginners"]
 ---
-
-<!-- 
-- [Prerequisites](#prerequisites)
-- [Overview](#overview)
-- [(Optional) Configure the IBM Operator Collection SDK Alias Commands](#optional-configure-the-ibm-operator-collection-sdk-alias-commands)
-- [Install the IBM Operator Collection SDK](#install-the-ibm-operator-collection-sdk)
-- [Initialize a new Operator Collection](#initialize-a-new-operator-collection)
-- [Apply collection modifications](#apply-collection-modifications)
-  - [Update collection requirements](#update-collection-requirements)
-  - [Apply playbooks and roles](#apply-playbooks-and-roles)
-  - [Update the operator-config](#update-the-operator-config)
-- [Create the operator](#create-the-operator)
-- [Create an instance of the operator](#create-an-instance-of-the-operator)
-- [Debugging the operator](#debugging-the-operator)
-- [Cleanup](#cleanup)
-- [Watch the video](#watch-the-video) -->
 
 ## Prerequisites
 ---
-- [Red Hat OpenShift Cluster (version 4.10 or later)][openshift]
-- [Red Hat OpenShift Command Line Interface (CLI)][openshift-cli]
-- [Ansible CLI Tools (version 2.7 or later)][ansible]
+- [Openshift Cluster (version 4.10 or later)][openshift]
+- [OpenShift Command Line Interface (CLI)][openshift-cli]
+- [Ansible CLI Tools (version 2.9.10 or later)][ansible]
 - [Kubernetes Python Client][kubernetes]
 - [z/OS Cloud Broker v2.2.0+][broker]
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
+
+[openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
+[openshift-cli]:https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands
+[ansible]:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#pip-install
+[cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
+[kubernetes]:https://github.com/kubernetes-client/python#installation
+[broker]:https://ibm.biz/ibm-zoscb-install
 
 
 ## Overview
@@ -47,38 +37,48 @@ Alternatively, you can configure alias commands to simplify the IBM Operator Col
 
 1. Open your bash profile using the following command:
 
-```bash
-vi ~/.bash_profile
-```
+    ```bash
+    vi ~/.bash_profile
+    ```
 
-or 
+    or 
 
-```bash
-vi ~/.zshrc
-```
+    ```bash
+    vi ~/.zshrc
+    ```
 
 2. Copy the following commands to your bash profile and save:
    
-```bash
-alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection.yml"
-alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config.yml"
-alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
-alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator.yml"
-alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection.yml"
-alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator.yml"
-alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator.yml"
-```
+    ```bash
+    alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
+    alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
+    alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
+    alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
+    alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
+    alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
+    alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
+    alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
+    alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
+    ```
 
 3. Source your bash profile to pick up the latest changes:
 
-```bash
-source ~/.bash_profile
-```
-or
+    ```bash
+    source ~/.bash_profile
+    ```
 
-```bash
-source ~/.zshrc
-```
+    or
+
+    ```bash
+    source ~/.zshrc
+    ```
+
+4. The aliases that were created can now be called instead of the full `ansible-playbook` commands
+
+    ```bash
+    ~> ocsdk-create-operator
+    Enter your ZosEndpoint name: 
+    ```
 
 ## Install the IBM Operator Collection SDK
 ---
@@ -317,12 +317,6 @@ ocsdk-delete-operator
 ---
 Click [here][tutorial-video] to watch the video of the scenarios covered above.
 
-[openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
-[openshift-cli]:https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html
-[ansible]:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#pip-install
-[cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
-[kubernetes]:https://github.com/kubernetes-client/python#installation
-[broker]:https://ibm.biz/ibm-zoscb-install
 [racf-operator]:https://github.com/IBM/operator-collection-sdk/tree/main/examples/racf-operator
 [custom-resource]: https://docs.openshift.com/container-platform/3.11/admin_guide/custom_resource_definitions.html
 [finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/
