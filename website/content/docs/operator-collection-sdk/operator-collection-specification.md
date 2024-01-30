@@ -1,7 +1,7 @@
 ---
 weight: 1400
 title: "Operator Collection Specification" # <!-- omit from toc -->
-description: ""
+description: "Configuration details for the operator-config YAML file."
 icon: "list_alt"
 date: "2024-01-18T15:16:11-08:00"
 lastmod: "2024-01-18T15:16:11-08:00"
