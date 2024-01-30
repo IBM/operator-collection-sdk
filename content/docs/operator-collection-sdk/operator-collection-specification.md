@@ -1,21 +1,13 @@
 ---
 weight: 1400
-title: "Operator Collection Specification" # <!-- omit from toc -->
+title: "Operator Collection Specification"
 description: "Configuration details for the operator-config YAML file."
 icon: "list_alt"
 date: "2024-01-18T15:16:11-08:00"
 lastmod: "2024-01-18T15:16:11-08:00"
-draft: true
+draft: false
 toc: true
 ---
-
-<!-- ## Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Notations \& Terminology](#notations--terminology)
-- [OperatorHub Integration](#operatorhub-integration)
-- [Operator Resources](#operator-resources)
-- [Resource Variables](#resource-variables)
-- [Provided Variables](#provided-variables) -->
 
 The `OperatorCollection` specification defines a YAML interface for
 standard [Ansible Collections](https://www.ansible.com/blog/getting-started-with-ansible-collections) to be converted
@@ -54,7 +46,7 @@ for the Openshift OperatorHub catalog.
 {{< /table >}} <!-- OperatorHub Integration Table End -->
 
 
-## Icon Object <!-- omit from toc -->
+## Icon Object
 ---
 {{< table "table-striped table-hover"  >}} <!-- Icon Object Table Begin -->
 | Key          | Required | Type     | Description                                |

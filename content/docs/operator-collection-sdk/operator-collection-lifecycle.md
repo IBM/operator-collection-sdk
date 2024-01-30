@@ -1,11 +1,11 @@
 ---
 weight: 1500
-title: "Operator Collection Lifecycle" # <!-- omit from toc -->
+title: "Operator Collection Lifecycle"
 description: "An explanation of the lifecycle capabilities of Kubernetes Operators and how Operator Collections can be used throughout this lifecycle."
 icon: "cycle"
 date: "2024-01-18T16:48:59-08:00"
 lastmod: "2024-01-18T16:48:59-08:00"
-draft: true
+draft: false
 toc: true
 ---
 

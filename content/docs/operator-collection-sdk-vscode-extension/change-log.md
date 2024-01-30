@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-### v1.1.0
+### [v1.1.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/1.1.0)
 - Prevent error messages and response delays when connectivity to OpenShift and Ansible Galaxy connectivity is disrupted
 - Added documentation note about lack of Windows OS support.
 - Added ability to copy error message from toast notification
@@ -19,16 +19,16 @@ toc: true
 - Added '-' and '_' as valid characters in sha256 token regex.
 - Added support for operator collection workspace initialization
 
-### v1.0.1
+### [v1.0.1](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/1.0.1)
 - Bypass 401 failures when extension activates but user isn't logged into OpenShift
 
-### v1.0.0
+### [v1.0.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/1.0.0)
 - Updated linter json schema with latest spec changes
 - Open link failure message change
 - Fixed namespace failures during OCP logout
 - Restrict viewing resources while operations are pending
 
-### v0.4.0
+### [v0.4.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/0.4.0)
 
 - Display z/OS Cloud Broker install status in About view
 - Fixed Critical Vulnerability CVSS Score 9.8: tough-cookie-2.5.0.tgz
@@ -42,7 +42,7 @@ toc: true
 - Add dependency on `iliazeus.vscode-ansi` extension to add styling to Ansible logs
 - Update context when current OpenShift project is invalid
 
-### v0.3.0
+### [v0.3.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/0.3.0)
 
 - Display logs as virtual documents
 - Display Custom Resource yaml files as virtual documents in editor
@@ -67,13 +67,13 @@ toc: true
 - Addded install dependency step for OcSDK
 - Prompt user to login when OCP token expires
 
-### v0.2.0
+### [v0.2.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/0.2.0)
 
 - Removed additional prompt asking if user would like to use extra vars file
 - Prompt for SSH Key passphrase when using extra vars file
 - Fix to detect extra vars file in specific Operator Collection, when multiple Operator Collections are listed in the workspace
 - Fixed undefined error messages
 
-### v0.1.0
+### [v0.1.0](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases/tag/0.1.0)
 
 - Initial prototype

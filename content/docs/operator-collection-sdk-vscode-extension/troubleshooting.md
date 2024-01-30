@@ -1,6 +1,6 @@
 ---
 weight: 2600
-title: "Troubleshooting" # <!-- omit from toc -->
+title: "Troubleshooting"
 description: "Common errors and known issues."
 icon: "troubleshoot"
 date: "2024-01-19T16:15:21-08:00"

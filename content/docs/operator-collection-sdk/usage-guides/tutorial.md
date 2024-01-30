@@ -1,6 +1,6 @@
 ---
 weight: 1220
-title: "Operator Collection Tutorial" # <!-- omit from toc -->
+title: "Operator Collection Tutorial"
 description: "A step-by-step walkthrough of building a new Operator Collection."
 icon: "developer_guide"
 date: "2024-01-18T16:50:12-08:00"
