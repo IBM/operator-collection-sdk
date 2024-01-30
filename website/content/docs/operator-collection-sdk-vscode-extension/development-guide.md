@@ -1,6 +1,6 @@
 ---
 weight: 2300
-title: "Development Guide" # <!-- omit from toc -->
+title: "Development Guide"
 description: "IBM Operator Collection SDK for VS Code development guide."
 icon: "developer_guide"
 date: "2024-01-15T13:21:07-08:00"
