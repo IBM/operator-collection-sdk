@@ -16,6 +16,7 @@ toc: false
 * [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) version 2.9.10 or higher
 * [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/overview/#installation) Ansible Collection
     * Alternatively, you can install this collection via the VS Code extension upon activation.
+* [Install the OpenShift CLI](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html) if you haven't already
 
 Depending on your environment configuration, you may also need to [install SSL Certificates](docs/operator-collection-sdk-vscode-extension/troubleshooting/#ssl-certificates), before using this extension.
 
@@ -56,3 +57,7 @@ Depending on your environment configuration, you may also need to [install SSL C
     ```
 {{% /tab %}}
 {{< /tabs >}}
+
+---
+##### Experiencing Issues?
+[Visit the troubleshooting page](/docs/operator-collection-sdk-vscode-extension/troubleshooting/)
