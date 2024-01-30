@@ -1,7 +1,7 @@
 ---
 weight: 2100
 title: "Overview" # <!-- omit from toc -->
-description: "Overview of the IBM Operator Collection SDK for VS Code extension."
+description: "Overview of the IBM Operator Collection SDK extension for VS Code."
 icon: "overview_key"
 date: "2024-01-15T13:24:15-08:00"
 lastmod: "2024-01-15T13:24:15-08:00"
@@ -12,9 +12,9 @@ toc: true
 ---
 {{< alert context="warning" text="This extension is not supported on Windows OS." />}}
 
-The IBM Operator Collection SDK for VS Code extension simplifies the Operator Collection development experience by allowing you to manage the deployment of your operator in OpenShift and debug direcly from your VS Code editor.
+The IBM Operator Collection SDK extension for VS Code simplifies the Operator Collection development experience by allowing you to manage the deployment of your operator in OpenShift and debug direcly from your VS Code editor.
 
-Get started by [installing the VS Code extension](/docs/operator-collection-sdk-vscode-extension/installation/) today.
+Get started by [installing the extension for VS Code](/docs/operator-collection-sdk-vscode-extension/installation/) today.
 
 
 ## Features
