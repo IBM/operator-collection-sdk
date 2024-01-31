@@ -48,7 +48,9 @@
 
     - name: Initialize collection
       ansible.builtin.command: ansible-galaxy collection init {{ collection_namespace | lower | replace('-', '_') }}.{{ collection_name | lower | replace('-', '_') }} --init-path {{ local_directory }}
-      ignore_errors: true
+      failed_when:
+        - result.rc == 1
+        - '"already exists" in result.stderr'
 
     - name: Create playbooks directory
       ansible.builtin.file:
