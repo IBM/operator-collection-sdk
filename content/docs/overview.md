@@ -19,4 +19,4 @@ The IBM Operator Collection SDK suite provides a range of tools designed to simp
     Designed to automate many aspects of the Collection development workflow, the OC SDK extension makes it easier than ever to iterate, deploy, and test quickly, all fom within your VS Code editor.
 
 * [Integrated Operator Collection Linter](/docs/operator-collection-linter/)\
-    Streamline development with the integrated Operator Collection Linter. With linting enabled, errors in key Operator Collection files can be quickly identified and resolved.
+    Streamline development with the integrated Operator Collection Linter. With linting enabled, errors in key Operator Collection files can be identified and resolved quickly.
