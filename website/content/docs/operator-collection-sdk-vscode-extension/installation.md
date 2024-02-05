@@ -14,6 +14,11 @@ toc: false
 
 **Requirements:** This VS Code extension requires the following dependencies to function:
 * [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
+    * After installing Ansible, export `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or locatioin of choice) and `source` it.
+    ```
+    export PATH=~/.local/bin:PATH
+    ```
+* [Install the OpenShift Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands)
 * [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/installation/) Ansible Collection
     * Alternatively, you can install this collection via the VS Code extension upon activation.
 * [Install the OpenShift Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
