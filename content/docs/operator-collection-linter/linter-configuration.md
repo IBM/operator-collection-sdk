@@ -63,3 +63,10 @@ You can customize the linter rules and files to suit your needs. By default, the
 |**`finalizer-path`**    |Finalizer relative path validation error |
 |**`missing-finalizer`** |Validate Finalizer existence             |
 {{< /table >}}
+
+
+## Quick Fix Options
+---
+The built-in linter will attempt to remedy playbooks specified in the `operator-config` yaml file with playbooks that it finds in the collection workspace. When errors are found, for instance in the case that the specifed playbook cannot be located, the linter may provide options to quickly resolve them:
+
+![Linter Quick Fix Options](/images/vs-code-extension/linter-quick-fix-options.png) 
