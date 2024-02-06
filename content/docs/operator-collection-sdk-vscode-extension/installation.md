@@ -13,19 +13,19 @@ toc: false
 {{< alert context="warning" text="This extension is not supported on Windows OS." />}}
 
 **Requirements:** This VS Code extension requires the following dependencies to function:
-* [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
-    * After installing Ansible, export `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or locatioin of choice) and `source` it.
+* [Install Ansible®](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
+    * After installing Ansible, export `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or location of choice) and `source` it.
     ```
     export PATH=~/.local/bin:PATH
     ```
-* [Install the OpenShift Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands)
+* [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands)
 * [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/installation/) Ansible Collection
     * Alternatively, you can install this collection via the VS Code extension upon activation.
-* [Install the OpenShift Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
+* [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
 
 Depending on your environment configuration, you may also need to [install SSL Certificates](docs/operator-collection-sdk-vscode-extension/troubleshooting/#ssl-certificates), before using this extension.
 
-**Installing the VS Code extension for the IBM Operator Collection:**\
+**Installing the IBM Operator Collection SDK extension for VS Code:**\
 {{< tabs tabTotal="3">}}
 {{% tab tabName="Visual Studio® Marketplace (Recommended)" %}}
 [Install the VS Code Extension](https://marketplace.visualstudio.com/items?itemName=IBM.operator-collection-sdk) from the Visual Studio® Marketplace.

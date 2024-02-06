@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-## Standalone Ansible Collection
+## Standalone Ansible® Collection
 ---
 The base of an Operator Collection is just a standard Ansible Collection. 
 
@@ -23,7 +23,7 @@ Lifecycle phases that may be relevant for managing remote systems include:
 1. Day 2 Actions
 
 ### Discovery
-Discovery playbooks connect to a z/OS environment and return information that can be registered into OCP for future usage. 
+Discovery playbooks connect to a z/OS environment and return information that can be registered into OCP® for future usage. 
 
 When a Discovery Playbook runs, it can create Custom Resource instances in OCP for stateful management. Those discovered resources can be automatically converted to instances managed by a "Provisioning & Management" Operator with proper implementation of the provisioning playbook for handling discovered resources.
 
