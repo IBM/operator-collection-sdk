@@ -54,7 +54,7 @@ toc: true
 - Bug [#25](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/25) fix
 - Bug fix [#37](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/37)\
 - Linter enhancements
-- Added single clicks to Help and Openshift Panels. Functions as expected. Enhancements [#55](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/5) and [#13](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/13)
+- Added single clicks to Help and OpenShift Panels. Functions as expected. Enhancements [#55](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/5) and [#13](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/13)
 - Prohibit project update during certain operations, bug fix [#43](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/43)
 - Added logout button for enhancement [#14](https://github.com/IBM/operator-collection-sdk-vscode-extension/issues/14)
 - Enhanced Linter name matching fix
