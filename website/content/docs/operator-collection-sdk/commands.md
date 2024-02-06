@@ -11,7 +11,7 @@ toc: true
 
 ## Initializing your Operator Collection
 ---
-Below are the steps to initialize a new Operator Collection, or to configure an operator collection from an existing Ansible Collection.
+Below are the steps to initialize a new Operator Collection, or to configure an operator collection from an existing Ansible® Collection.
 
 ### Initializing a new Operator Collection
 Run the following command to initialize your Operator Collection for development.
@@ -32,8 +32,8 @@ If you are planning to convert an existing Ansible Collection to an Operator Col
 ansible-playbook ibm.operator_collection_sdk.create_operator_config
 ```
 
-### Converting an existing Operator Collection to execute in an offline OpenShift environment
-If this Operator Collection will be executed in an offline OpenShift environment, then you should run the command below to download the Ansible dependencies before deploying this operator to OpenShift. 
+### Converting an existing Operator Collection to execute in an offline OpenShift® environment
+If this Operator Collection will be executed in an offline OpenShift® environment, then you should run the command below to download the Ansible dependencies before deploying this operator to OpenShift. 
 
 If your local environment is also offline, then you must download the required Ansible dependencies from an internet-enabled computer. Once those collections are downloaded, you should then transfer those files to the offline computer, and store them in the `./collections` directory before executing the following command.
 

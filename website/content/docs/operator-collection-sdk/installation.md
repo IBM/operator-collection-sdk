@@ -11,10 +11,10 @@ toc: true
 
 ## Requirements
 ---
-- [Openshift Cluster (version 4.10 or later)][openshift]
-- [OpenShift Command Line Interface (CLI)][openshift-cli]
-- [Ansible CLI Tools (version 2.9.10 or later)][ansible]
-    - After installing Ansible, export the `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or locatioin of choice) and `source` it.
+- [OpenShift® Cluster (version 4.10 or later)][openshift]
+- [OpenShift® Command Line Interface (CLI)][openshift-cli]
+- [Ansible® CLI Tools (version 2.9.10 or later)][ansible]
+    - After installing Ansible, export the `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or location of choice) and `source` it.
     ```
     export PATH=~/.local/bin:PATH
     ```
@@ -32,7 +32,7 @@ toc: true
 
 ## Installation
 ---
-The IBM Operator Collection SDK can be installed from Ansible Galaxy, directly from GitHub, or via a docker image stored in the IBM Cloud Container Registry
+The IBM Operator Collection SDK can be installed from Ansible® Galaxy, directly from GitHub, or via a docker image stored in the IBM Cloud Container Registry
 
 {{< tabs tabTotal="3">}} <!-- Tab Start -->
 {{% tab tabName="Ansible Galaxy" %}} <!-- Tab 1 Start -->
@@ -68,7 +68,7 @@ ansible-galaxy collection install ibm.operator_collection_sdk --upgrade
 
 ## Setup
 ---
-The following steps are required prior to deploying your operator in OpenShift using the IBM Operator Collection SDK playbooks:
+The following steps are required prior to deploying your operator in OpenShift® using the IBM Operator Collection SDK playbooks:
 
 1. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
 2. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.
