@@ -26,7 +26,7 @@
 
 
 # Overview
-This tutorial is a walkthrough of building a new operator collection that performs RACF user management against a z/OS environment. This operator will allow you to create a new user ID by creating instances in Openshift, and removing this ID once this instance is deleted.
+This tutorial is a walkthrough of building a new operator collection that performs RACF user management against a z/OS environment. This operator will allow you to create a new user ID by creating instances in OpenShift, and removing this ID once this instance is deleted.
 
 
 # (Optional) Configure the IBM Operator Collection SDK Alias Commands
@@ -114,14 +114,14 @@ collections:
 ## Apply playbooks and roles
 Clone the repo, and copy the files in the `playbooks/` directory from the [racf-operator example][racf-operator] and replace the files in your current `playbooks/` directory with the ones you copied.
 
-The playbooks and roles in the `playbooks/` directory serve as your operator controller logic and execute every time a user creates an operator instance in Openshift.
+The playbooks and roles in the `playbooks/` directory serve as your operator controller logic and execute every time a user creates an operator instance in OpenShift.
 - `add-user.yml` - This playbook creates a new user ID on the z/OS environment.
 - `remove-user.yml` - This playbook removes a user ID from the z/OS environment.
 
 **Note:** Playbooks must use the `hosts: all` parameter. Target hosts for operator collection are driven by using z/OS endpoints that are provided by the IBM® z/OS Cloud Broker. When the Ansible playbook is executed by the IBM® z/OS Cloud Broker, the `hosts: all` value is limited to the selected z/OS endpoint by setting the `--limit` flag. The IBM® z/OS Cloud Broker handles host limiting internally and no additional playbook modifications are required.
 
 ## Update the operator-config
-The `operator-config.yml` file contains the necessary metadata for the IBM® z/OS Cloud Broker to configure your operator in Openshift. This file is used to configure things such as the name, description, and icon to be displayed in your operator. This is also where you will configure the name of the [custom resource][custom-resource] to be generated in Openshift. More details on configuring custom resources will be discussed in the following sections.
+The `operator-config.yml` file contains the necessary metadata for the IBM® z/OS Cloud Broker to configure your operator in OpenShift. This file is used to configure things such as the name, description, and icon to be displayed in your operator. This is also where you will configure the name of the [custom resource][custom-resource] to be generated in OpenShift. More details on configuring custom resources will be discussed in the following sections.
 
 **Let's start by configuring the `domain`, `name`, `version`, `displayName`, and `description` of our operator:**
 
@@ -138,7 +138,7 @@ description: >-
 
 **Now let's configure our new [custom resource][custom-resource]:**
 
-A custom resource is an object that expands the functions of the Kubernetes API or allows you to introduce your own API into a project or a cluster. In this example, we will introduce a new custom resource called `ZosUserId`. This custom resource will enable Openshift users to call our new `ZosUserId` API and create user IDs on a z/OS endpoint.
+A custom resource is an object that expands the functions of the Kubernetes API or allows you to introduce your own API into a project or a cluster. In this example, we will introduce a new custom resource called `ZosUserId`. This custom resource will enable OpenShift users to call our new `ZosUserId` API and create user IDs on a z/OS endpoint.
 
 When creating our new custom resource, we also need to configure our operator with the playbook to execute when a new custom resource instance is created by the user, and the playbook to execute when the custom resource instance is deleted. This is done by supplying these playbook locations in the `playbook` and [finalizer][finalizers] fields respectively. 
 
@@ -153,7 +153,7 @@ resources:
 
 **Now we need to configure the variables that are needed to execute our playbooks.**
 
-The `add-user` playbook requires two variables, `name`, and `userid`, which must be supplied by the user. The `remove-user` playbook also accepts the `userid` variable. To prompt the user for these values in Openshift, we must configure these variables in the `vars` section of our new custom resource. By doing this, the IBM® z/OS Cloud Broker can configure our operator to request these values from the user. After configuration, these values will be supplied to the playbook as "extra vars" (-e) input parameters during execution.
+The `add-user` playbook requires two variables, `name`, and `userid`, which must be supplied by the user. The `remove-user` playbook also accepts the `userid` variable. To prompt the user for these values in OpenShift, we must configure these variables in the `vars` section of our new custom resource. By doing this, the IBM® z/OS Cloud Broker can configure our operator to request these values from the user. After configuration, these values will be supplied to the playbook as "extra vars" (-e) input parameters during execution.
 
 ```bash
 vars:
@@ -181,7 +181,7 @@ icon:
 In the end, your `operator-config.yml` field should look similar to this [example][operator-config-example].
 
 # Create the operator
-Now that we've applied our playbooks and updated our `operator-config`, we can build our collection and create an operator in Openshift to validate our changes.
+Now that we've applied our playbooks and updated our `operator-config`, we can build our collection and create an operator in OpenShift to validate our changes.
 
 To do this, you should first install the latest release in the `v2.2` channel of the IBM® z/OS Cloud Broker in your namespace and create an instance of the `ZosCloudBroker` resource. Once the installation is successful, log in to the cluster from your command line by using the `oc login` command and validate that you are in the correct project by using the `oc project` command.
 
@@ -210,12 +210,12 @@ Enter the passphrase for the SSH Key for this endpoint (Press Enter to skip if t
 
 **Note:** SSH credentials are optional when creating the operator. If SSH credentials are not supplied, the operator is configured by using the `personal` credential type, which requires a credential to be generated by using the `zoscb-encrypt` CLI before creating an instance of the operator.
 
-After the installation completes, you should see the RACF Operator in Openshift under Operators > Installed Operators.
+After the installation completes, you should see the RACF Operator in OpenShift under Operators > Installed Operators.
 
 ![InstalledOperator](../docs/images/installed-racf-operator.png)
 
 # Create an instance of the operator
-In the installed operator in Openshift, you can now attempt to create an instance of the operator by supplying the required values and clicking `Create`.
+In the installed operator in OpenShift, you can now attempt to create an instance of the operator by supplying the required values and clicking `Create`.
 
 **Note:** The initial creation will fail due to an injected failure. However, this failure will be corrected in the following debugging stage.
 
@@ -260,7 +260,7 @@ First, we should uncomment the task that is named "Send email containing login c
   required: true
 ```
 
-**Note:** Adding new required variables can cause an error in Openshift if there are existing instances in the namespace. This is because those instances would not have the new required variable in their `spec`. To avoid this error, you should remove all existing instances for this custom resource before applying this new configuration.
+**Note:** Adding new required variables can cause an error in OpenShift if there are existing instances in the namespace. This is because those instances would not have the new required variable in their `spec`. To avoid this error, you should remove all existing instances for this custom resource before applying this new configuration.
 
 As we are updating the `operator-config` to display a new variable to the user, it is necessary to redeploy the entire operator. This should not be confused with redeploying the collection, as we have done previously. Therefore, run the following command to redeploy the entire operator:
 

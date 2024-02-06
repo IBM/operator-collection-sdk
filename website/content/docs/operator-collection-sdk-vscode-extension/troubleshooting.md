@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-## Ansible Python Interpreter
+## Ansible® Python Interpreter
 ---
 When implementing playbooks for your operators and using the `delegate_to` key, you may encounter the following error (or something similar) stating that the path to your python executable is invalid:
 

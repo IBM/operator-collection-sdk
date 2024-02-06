@@ -1,6 +1,6 @@
 ---
 weight: 1600
-title: "Ansible Collection Modifications"
+title: "Ansible® Collection Modifications"
 description: ""
 icon: "box_edit"
 date: "2024-01-18T16:49:28-08:00"
@@ -9,7 +9,7 @@ draft: false
 toc: true
 ---
 
-Additional Ansible collection modifications may be desirable for a complete native OpenShift experience. 
+Additional Ansible® collection modifications may be desirable for a complete native OpenShift® experience. 
 
 ## Installing Dependencies
 ---

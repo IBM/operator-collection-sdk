@@ -25,7 +25,7 @@ ansible-galaxy collection install git+${REPO_URL}#ibm/operator_collection_sdk,${
 ```
 
 # Executing GitHub Workflows in a forked GitHub repo
-GitHub doesn't allow GitHub workflow Secrets to be passed to forked repositories. Since the current Ansible Molecule tests require access to an Openshift cluster, you are required to configure the following two variables in your workspace before successfully executing an end to end test of your changes.
+GitHub doesn't allow GitHub workflow Secrets to be passed to forked repositories. Since the current Ansible Molecule tests require access to an OpenShift cluster, you are required to configure the following two variables in your workspace before successfully executing an end to end test of your changes.
 
 - Navigate to `Setting > Secrets and variables > Actions` and click the "New repository secret" button
 ![GitHub Settings](images/GitHub%20Settings.png)
@@ -33,7 +33,7 @@ GitHub doesn't allow GitHub workflow Secrets to be passed to forked repositories
     ```bash
     oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'
     ```
-- Generate a new Service Account token in Openshift and configure the `OPENSHIFT_TOKEN` secret in GitHub. Follow the steps below to generate a token with the proper access in the cluster
+- Generate a new Service Account token in OpenShift and configure the `OPENSHIFT_TOKEN` secret in GitHub. Follow the steps below to generate a token with the proper access in the cluster
     ```bash
     oc create sa github -n default
     oc adm policy add-cluster-role-to-user cluster-admin -z github -n default
