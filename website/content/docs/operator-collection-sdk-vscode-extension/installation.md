@@ -14,7 +14,7 @@ toc: false
 
 **Requirements:** This VS Code extension requires the following dependencies to function:
 * [Install Ansible®](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
-    * After installing Ansible, export `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~.profile` (or location of choice) and `source` it.
+    * After installing Ansible, export `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~/.profile` (or location of choice) and `source` it.
     ```
     export PATH=~/.local/bin:PATH
     ```
