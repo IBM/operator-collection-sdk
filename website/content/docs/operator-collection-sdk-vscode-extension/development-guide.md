@@ -42,7 +42,7 @@ tags: ["Beginners"]
 ## Run tests
 ---
 ### Running tests in terminal
-* Run the `oc login` command to log in to an OpenShift cluster, and validate you're in the correct project.
+* Run the `oc login` command to log in to an OpenShift® cluster, and validate you're in the correct project.
 * Run the following command to execute tests.
 ```
 npm run test
@@ -54,14 +54,14 @@ npm run test
 * See the output of the test result in the debug console.
 
 ### Executing Tests using GitHub Workflows
-Since the current tests require access to an Openshift cluster, you are required to configure the following variables in your workspace before successfully executing an end to end test of your changes.
+Since the current tests require access to an OpenShift cluster, you are required to configure the following variables in your workspace before successfully executing an end to end test of your changes.
 * Navigate to `Setting > Secrets and variables > Actions` and click the "New repository secret" button
 ![GitHub Settings](/images/vs-code-extension/github-settings.png)
 * Configure the `OCP_SERVER_URL` secret. This value can be retrieved  and set using the following command:
     ```bash
     oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'
     ```
-* Generate a new Service Account token in Openshift and configure the `OCP_TOKEN` secret in GitHub. Follow the steps below to generate a token with the proper access in the cluster
+* Generate a new Service Account token in OpenShift and configure the `OCP_TOKEN` secret in GitHub. Follow the steps below to generate a token with the proper access in the cluster
     ```bash
     saName=github
     oc create sa ${saName} -n default
