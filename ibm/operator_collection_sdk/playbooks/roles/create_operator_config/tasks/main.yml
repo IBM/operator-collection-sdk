@@ -1,0 +1,33 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Locate galaxy.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'galaxy.yml,galaxy.yaml'
+  register: galaxy_file_results
+
+- name: Validate galaxy.yml file exists in current working directory
+  ansible.builtin.fail:
+    msg: "Collection must be executed in same directory as galaxy.yml file"
+  when: galaxy_file_results.files | length == 0
+
+- name: Read galaxy.yml
+  ansible.builtin.set_fact:
+    galaxy_yaml: "{{ lookup('template', '{{ galaxy_file_results.files[0].path }}')|from_yaml }}"
+
+- name: Set operator variables
+  ansible.builtin.set_fact:
+    oc_name: "{{ galaxy_yaml.name | lower | replace('_','-') }}"
+    oc_domain: "{{ galaxy_yaml.namespace | lower | replace('_','-') }}"
+    oc_version: "{{ galaxy_yaml.version }}"
+    oc_description: "{{ galaxy_yaml.description }}"
+
+- name: Generate operator-config.yml file
+  ansible.builtin.template:
+    src: templates/operator-config.j2
+    dest: "{{ path }}/operator-config.yml"
+    mode: '0644'

@@ -1,0 +1,28 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Get SubOperator Pod Name
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors:
+      - "operator-name = {{ operator_name }}"
+  register: suboperator_pod_results
+
+- name: Validate suboperator pod exists
+  ansible.builtin.fail:
+    msg: "Suboperator pod doesn't exist"
+  when: suboperator_pod_results.resources | length == 0
+
+- name: Restart suboperator pod
+  kubernetes.core.k8s:
+    state: absent
+    kind: Pod
+    name: "{{ suboperator_pod_results.resources[0].metadata.name }}"
+    namespace: "{{ namespace }}"
+  with_items: "{{ suboperator_pod_results.resources }}"
+  when: item.metadata.deletionTimestamp is not defined
+  no_log: true
