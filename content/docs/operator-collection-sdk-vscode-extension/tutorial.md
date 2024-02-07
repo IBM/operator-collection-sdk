@@ -1,117 +1,44 @@
 ---
-weight: 1220
+weight: 2400
 title: "Operator Collection Tutorial"
-description: "A step-by-step walkthrough of building a new Operator Collection."
+description: "A step-by-step walkthrough of building a new Operator Collection using the extension for VS Code."
 icon: "developer_guide"
 date: "2024-01-18T16:50:12-08:00"
 lastmod: "2024-01-18T16:50:12-08:00"
-draft: false
+draft: true
 toc: true
 ---
 
 ## Prerequisites
 ---
-- [OpenShift® Cluster (version 4.10 or later)][openshift]
-- [OpenShift® Command Line Interface (CLI)][openshift-cli]
-- [Ansible® CLI Tools (version 2.9.10 or later)][ansible]
-- [Kubernetes Python Client][kubernetes]
-- [z/OS Cloud Broker v2.2.0+][broker]
-- [z/OS Cloud Broker Encryption CLI][cli] (optional)
-
-[openshift]:https://www.redhat.com/en/technologies/cloud-computing/openshift
-[openshift-cli]:https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands
-[ansible]:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#pip-install
-[cli]:https://www.ibm.com/docs/en/cloud-paks/z-modernization-stack/2023.1?topic=credentials-installing-zoscb-encrypt-cli-tool
-[kubernetes]:https://github.com/kubernetes-client/python#installation
-[broker]:https://ibm.biz/ibm-zoscb-install
-
+Follow [instructions](/docs/operator-collection-sdk-vscode-extension/installation/) to install the IBM Operator Collection SDK for VS Code and its dependencies.
 
 ## Overview
 ---
 This tutorial is a walkthrough of building a new operator collection that performs RACF user management against a z/OS environment. This operator will allow you to create a new user ID by creating instances in OpenShift®, and remove this ID once this instance is deleted.
 
-
-## (Optional) Configure the IBM Operator Collection SDK Alias Commands
+## Install or Upgrade the IBM Operator Collection SDK
 ---
-Alternatively, you can configure alias commands to simplify the IBM Operator Collection SDK `ansible-playbook` commands:
+You can install or update the IBM Operator Collection SDK from the extension for VS Code if necessary. If you're installing it for the first time from the extension, make sure the [install the specified requirements](/docs/operator-collection-sdk/installation/#requirements).
 
-1. Open your bash profile using the following command:
-
-    ```bash
-    vi ~/.bash_profile
-    ```
-
-    or 
-
-    ```bash
-    vi ~/.zshrc
-    ```
-
-2. Copy the following commands to your bash profile and save:
-   
-    ```bash
-    alias ocsdk-init="ansible-playbook ibm.operator_collection_sdk.init_collection"
-    alias ocsdk-create-offline-requirements="ansible-playbook ibm.operator_collection_sdk.create_offline_requirements"
-    alias ocsdk-create-operator-config="ansible-playbook ibm.operator_collection_sdk.create_operator_config"
-    alias ocsdk-install="ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f"
-    alias ocsdk-create-operator="ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator"
-    alias ocsdk-redeploy-collection="ansible-playbook ibm.operator_collection_sdk.redeploy_collection"
-    alias ocsdk-redeploy-operator="ansible-playbook ibm.operator_collection_sdk.redeploy_operator"
-    alias ocsdk-delete-operator="ansible-playbook ibm.operator_collection_sdk.delete_operator"
-    alias ocsdk-create-credential-secret="ansible-playbook ibm.operator_collection_sdk.create_credential_secret"
-    ```
-
-3. Source your bash profile to pick up the latest changes:
-
-    ```bash
-    source ~/.bash_profile
-    ```
-
-    or
-
-    ```bash
-    source ~/.zshrc
-    ```
-
-4. The aliases that were created can now be called instead of the full `ansible-playbook` commands
-
-    ```bash
-    ~> ocsdk-create-operator
-    Enter your ZosEndpoint name: 
-    ```
-
-## Install the IBM Operator Collection SDK
----
-To install the latest version of IBM Operator Collection SDK, run the following command:
-
-```bash
-ansible-galaxy collection install git+https://github.com/IBM/operator-collection-sdk.git#ibm/operator_collection_sdk -f
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-install
-```
-
+![Upgrade the IBM Operator Collection SDK](/images/vs-code-extension/tutorial-install-ocsdk.png)
 
 ## Initialize a new Operator Collection
 ---
-To initialize a new Operator Collection, run the following command:
+Click the "Initialize Operator Collection" button in the Operators panel of the extension:
 
-```bash
-ansible-playbook ibm.operator_collection_sdk.init_collection.yml 
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-init
-```
+![Initialize an Operator Collection](/images/vs-code-extension/tutorial-initialize-operator-collection.png)
 
 Enter the collection name and Ansible® Galaxy namespace when prompted. For the collection name, enter `racf_operator`. For the Ansible Galaxy namespace, enter the name of your existing namespace in Ansible Galaxy. Note that a valid Ansible Galaxy namespace is required only if you plan to publish this collection to Ansible Galaxy after completion.
 
 After completing the previous step, an Operator Collection scaffold should appear in the `./<galaxy-namespace>/<collection-name>` directory. Navigate to this directory to proceed with the rest of this tutorial.
+
+## Alternative Method for Initializing a New Operator Collection
+---
+
+You can also initialize an operator collection using the extension sub-menu. Right-click (Control-click) the destination folder in your editor's workspace. From there navigate to the sub-menu and select "New Operator Collection...". Follow the prompts as outlined above.
+
+![Alternative Initialization of Operator Collection](/images/vs-code-extension/tutorial-alt-initialize-operator-collection.png)
 
 ## Apply collection modifications
 ---
@@ -200,19 +127,11 @@ In the end, your `operator-config.yml` field should look similar to this [exampl
 ---
 Now that we've applied our playbooks and updated our `operator-config`, we can build our collection and create an operator in OpenShift to validate our changes.
 
-To do this, you should first install the latest release in the `v2.2` channel of the IBM® z/OS Cloud Broker in your namespace and create an instance of the `ZosCloudBroker` resource. Once the installation is successful, log in to the cluster from your command line by using the `oc login` command and validate that you are in the correct project by using the `oc project` command.
+To do this, you should first install the latest release in the `v2.2` channel of the IBM® z/OS Cloud Broker in your namespace and create an instance of the `ZosCloudBroker` resource. Once the installation is successful, log in to the cluster by using the `oc login` command from the terminal or the extension's OpenShift Cluster Info panel. The OpenShift Cluster Info also shows which project is currently active and allows you to switch active projects.
 
-Now, you should be able to run the following command by using the IBM Operator Collection SDK to build your collection and create an operator:
+Now, you should be able to create an an operator by clicking the play button in the Operators panel:
 
-```bash
-ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-create-operator
-```
+![Create Operator](/images/vs-code-extension/tutorial-create-operator.png)
 
 This command should now prompt you for the z/OS endpoint you would like to execute this operator against, and the SSH credentials that are needed to access this endpoint.
 
@@ -255,15 +174,7 @@ To resolve this failure, you should remove the task that is named "Injecting Fai
 
 After removing this task, run the following command to publish this playbook modification to the installed operator Pod:
 
-```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_collection
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-redeploy-collection 
-```
+![Redeploy Collection](/images/vs-code-extension/tutorial-redeploy-collection.png)
 
 After the operator Pod restarts, the instance that is previously created in the namespace should reconcile automatically and create the requested user ID on the z/OS endpoint.
 
@@ -283,15 +194,7 @@ First, we should uncomment the task that is named "Send email containing login c
 
 As we are updating the `operator-config` to display a new variable to the user, it is necessary to redeploy the entire operator. This should not be confused with redeploying the collection, as we have done previously. Therefore, run the following command to redeploy the entire operator:
 
-```bash
-ansible-playbook ibm.operator_collection_sdk.redeploy_operator
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-redeploy-operator
-```
+![Redeploy Operator](/images/vs-code-extension/tutorial-redeploy-operator.png)
 
 After the redeploy is successful, you should be able to create a new instance and supply an email address for the credentials to be sent after completion.
 
@@ -303,15 +206,7 @@ After the redeploy is successful, you should be able to create a new instance an
 ---
 After validating that your operator runs successfully, you can delete the operator from your namespace by running the following command:
 
-```bash
-ansible-playbook ibm.operator_collection_sdk.delete_operator
-```
-
-Alternatively, you can run the following alias:
-
-```bash
-ocsdk-delete-operator
-```
+![Delete Operator](/images/vs-code-extension/tutorial-delete-operator.png)
 
 ## Watch The Video
 ---
