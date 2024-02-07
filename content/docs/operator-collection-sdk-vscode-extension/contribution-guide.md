@@ -1,5 +1,5 @@
 ---
-weight: 2400
+weight: 2600
 title: "Contribution Guide"
 description: "Contribution guidelines for the IBM Operator Collection SDK for VS Code extension."
 icon: "library_add"
