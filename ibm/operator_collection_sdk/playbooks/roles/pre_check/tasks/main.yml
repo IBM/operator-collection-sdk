@@ -1,0 +1,69 @@
+#
+# Copyright 2023 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Validate OCP cluster authorization
+  ansible.builtin.command: oc project
+  register: oc_project_output
+  ignore_errors: true
+
+- name: Cluster login prompt
+  ansible.builtin.fail:
+    msg: "Please log into an OCP cluster via the command line. (example: oc login --token=<token> --server=<server_url>)"
+  when: oc_project_output.rc != 0
+
+- name: Locate galaxy.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'galaxy.yml,galaxy.yaml'
+  register: galaxy_file_results
+
+- name: Validate galaxy.yml file exists in current working directory
+  ansible.builtin.fail:
+    msg: "Collection must be executed in same directory as galaxy.yml file"
+  when: galaxy_file_results.files | length == 0
+
+- name: Locate operator-config.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'operator-config.yml,operator-config.yaml'
+  register: oc_file_results
+
+- name: Validate operator-config.yml file exists in current working directory
+  ansible.builtin.fail:
+    msg: "operator-config.yml file must exist in current directory"
+  when: oc_file_results.files | length == 0 or oc_file_results.files | length > 1
+
+- name: Validate zoscb-encrypt CLI
+  ansible.builtin.command: zoscb-encrypt version
+  register: zoscb_encrypt_output
+  ignore_errors: true
+
+- name: Set encrypt_cli_available variable
+  ansible.builtin.set_fact:
+    encrypt_cli_available: "{{ true if zoscb_encrypt_output.rc == 0 and skip_credential_check is undefined else false }}"
+
+- name: Print CLI Warning
+  ansible.builtin.debug:
+    msg: zoscb-encrypt CLI not installed. SubOperatorConfig will be generated using the 'personal' credential type
+  when: encrypt_cli_available is false
+
+- name: Read operator-config.yml
+  ansible.builtin.set_fact:
+    operator_config: "{{ lookup('template', '{{ oc_file_results.files[0].path }}')| from_yaml | to_json | from_json }}"
+
+- name: Set operator variables
+  ansible.builtin.set_fact:
+    operator_name: "{{ operator_config.name | lower }}"
+    operator_domain: "{{ operator_config.domain | lower }}"
+    operator_version: "{{ operator_config.version }}"
+
+- name: Get namespace
+  ansible.builtin.command: oc config view --minify -o 'jsonpath={..namespace}'
+  register: namespace_output
+
+- name: Set namespace variable
+  ansible.builtin.set_fact:
+    target_namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
