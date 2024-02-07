@@ -23,7 +23,7 @@ Your settings page should look similar to the following:
 ## Configuration Options
 ---
 
-### Ansible Galaxy
+### Ansible® Galaxy
 {{< table "table-striped table-hover"  >}}
 | Setting Name                    | Default Value              | Description                                                     |
 |---------------------------------|----------------------------|-----------------------------------------------------------------|
