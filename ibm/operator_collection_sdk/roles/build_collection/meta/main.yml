@@ -1,0 +1,17 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+---
+galaxy_info:
+  role_name: build_collection
+  author: ibm
+  description: Builds an operator collection artifact that can be uploaded to the IBM z/OS Cloud Broker
+  license: Apache2.0
+  min_ansible_version: '2.9.10'
+  galaxy_tags: 
+    - zos
+    - z
+    - broker
+    - operator
+    - collection
