@@ -1,7 +1,7 @@
 ---
 weight: 1210
-title: "Operator Collection Development Guide"
-description: "IBM Operator Collection SDK development guide."
+title: "Development Guide"
+description: "IBM Operator Collection SDK project development guide."
 icon: "developer_guide"
 date: "2024-01-18T16:50:01-08:00"
 lastmod: "2024-01-18T16:50:01-08:00"
