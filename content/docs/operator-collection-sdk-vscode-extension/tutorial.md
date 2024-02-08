@@ -208,10 +208,6 @@ After validating that your operator runs successfully, you can delete the operat
 
 ![Delete Operator](/images/vs-code-extension/tutorial-delete-operator.png)
 
-## Watch The Video
----
-Click [here][tutorial-video] to watch the video of the scenarios covered above.
-
 [racf-operator]:https://github.com/IBM/operator-collection-sdk/tree/main/examples/racf-operator
 [custom-resource]: https://docs.openshift.com/container-platform/3.11/admin_guide/custom_resource_definitions.html
 [finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/
