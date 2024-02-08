@@ -1,6 +1,6 @@
 # build_collection
 
-This Ansible role builds a local operator collection artifact that can be uploaded to the IBM z/OS Cloud Broker
+This Ansible role builds an operator collection artifact that can be uploaded to the IBM z/OS Cloud Broker
 
 ## License
 
