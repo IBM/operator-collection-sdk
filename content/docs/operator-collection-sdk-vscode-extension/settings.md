@@ -1,5 +1,5 @@
 ---
-weight: 2500
+weight: 2400
 title: "Extension Settings"
 description: "Configuration settings for the IBM Operator Collection SDK extension for VS Code."
 icon: "settings"
@@ -11,11 +11,9 @@ toc: true
 
 ## Where to Find the Extension Settings
 ---
-From the "Extensions" tab of your VS Code editor, search for the installed extension and select the associated cog-wheel icon. From there you can navigate to "Extension Settings" page.
+From the "Extensions" tab of your VS Code editor, search for the installed extension and select the associated cog-wheel icon. From there you can navigate to "Extension Settings" page. Search query: `@installed IBM Operator Collection SDK`
 
 ![Extension Settings Location](images/vs-code-extension/extension-settings-location.png)
-
-Your settings page should look similar to the following:
 
 ![Extension Settings](images/vs-code-extension/extension-settings.png)
 

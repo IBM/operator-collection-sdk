@@ -1,5 +1,5 @@
 ---
-weight: 1500
+weight: 1600
 title: "Operator Collection Lifecycle"
 description: "An explanation of the lifecycle capabilities of Kubernetes Operators and how Operator Collections can be used throughout this lifecycle."
 icon: "cycle"

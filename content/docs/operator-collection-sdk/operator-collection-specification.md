@@ -1,5 +1,5 @@
 ---
-weight: 1400
+weight: 1500
 title: "Operator Collection Specification"
 description: "Configuration details for the operator-config YAML file."
 icon: "list_alt"
