@@ -5,11 +5,11 @@ description: "Enable Continuous Integration and Continuous Delivery for your Ope
 icon: "valve"
 date: "2024-02-09T16:04:34-08:00"
 lastmod: "2024-02-09T16:04:34-08:00"
-draft: true
+draft: false
 toc: true
 ---
 
-## Using GitHub Workflow Actions
+## Using GitHub Workflow Actions for Deployment
 ---
 
 You can use GitHub Workflows to automate the Operator Collection signing process. Workflow files are written in YAML and should be placed in the `.github/workflows` directory of your repository. 
@@ -168,7 +168,7 @@ You can use GitHub Workflows to automate the Operator Collection signing process
 |    Variable       |                                     description                                          |
 |-------------------|------------------------------------------------------------------------------------------|
 | `COLLECTION_PATH` | (Enviornment Variable) The path from repository root to the folder that holds both your `galaxy` and `operator-config` files, i.e. "ibm/operator-collection-sdk". |
-| `COLLECTION_NAME` | (Enviornment Variable) The name of your Operator Collection. One term were words are delinated with hyphens or underscore, i.e. "file-manager". |
+| `COLLECTION_NAME` | (Enviornment Variable) The name of your Operator Collection. One term where words are demarcated with hyphens or underscore, i.e. "file-manager". |
 | `GALAXY_API_KEY`  | (Secret) Your Ansible Galaxy API access token. Remove this secret and the [publishing](/docs/operator-collection-sdk/building-deploying/cicd/#publishing-to-ansible-galaxy) step if you would not like to upload your signed collections to Ansible Galaxy.|
         {{< /table >}}
 
