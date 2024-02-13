@@ -11,7 +11,7 @@ toc: true
 
 ## Linter Configuration
 ---
-The IBM Operator Collection SDK for VS Code has a built-in linter meant to validate your `operator-config` yaml file. 
+The IBM Operator Collection SDK extension for VS Code has a built-in linter meant to validate your `operator-config` yaml file. 
 
 
 The linter can be configured with a yaml file called **`.oc-lint`**, which should be placed in the same directory as your `operator-config` file. It contains the following format:

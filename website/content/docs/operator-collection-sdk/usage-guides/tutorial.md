@@ -1,5 +1,5 @@
 ---
-weight: 1220
+weight: 1310
 title: "Operator Collection Tutorial"
 description: "A step-by-step walkthrough of building a new Operator Collection."
 icon: "developer_guide"

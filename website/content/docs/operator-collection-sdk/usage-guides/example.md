@@ -1,5 +1,5 @@
 ---
-weight: 1230
+weight: 1320
 title: "Example"
 description: "An example definition for an Operator Config yaml file. "
 icon: "category"
