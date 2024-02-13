@@ -35,7 +35,7 @@ You can use pair of public and private (asymmetric) keys to sign and verify your
 You can use this process to sign any file, just replace the `<filename>.tar.gz` in the commands above.
 These signatures should work with both the manual and galaxy import paths.
 
-## Using GitHub Workflow Actions
+## Automate using GitHub Workflow Actions
 ---
 
-Alternatively, you can easily automate the process of building, signing, and deploying you Operator Collections with GitHub Workflow Actions. Follow the [tutorial](/docs/operator-collection-sdk/building-deploying/cicd/#using-github-workflow-actions) to get started today.
+Alternatively, you can easily automate the process of building, signing, and deploying you Operator Collections with GitHub Workflow Actions. Follow the [CI/CD tutorial](/docs/operator-collection-sdk/building-deploying/cicd/#using-github-workflow-actions) to get started.
