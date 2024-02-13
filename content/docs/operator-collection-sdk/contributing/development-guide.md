@@ -1,5 +1,5 @@
 ---
-weight: 1210
+weight: 1820
 title: "Development Guide"
 description: "IBM Operator Collection SDK project development guide."
 icon: "developer_guide"

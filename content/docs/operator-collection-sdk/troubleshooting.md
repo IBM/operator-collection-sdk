@@ -1,5 +1,5 @@
 ---
-weight: 1900
+weight: 1950
 title: "Troubleshooting"
 description: "Common errors and known issues."
 icon: "troubleshoot"

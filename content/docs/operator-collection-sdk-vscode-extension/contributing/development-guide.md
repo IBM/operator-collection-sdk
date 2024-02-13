@@ -1,5 +1,5 @@
 ---
-weight: 2300
+weight: 2520
 title: "Development Guide"
 description: "IBM Operator Collection SDK extension for VS Code development guide."
 icon: "developer_guide"

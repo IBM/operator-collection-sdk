@@ -1,5 +1,5 @@
 ---
-weight: 2400
+weight: 2300
 title: "Operator Collection Tutorial"
 description: "A step-by-step walkthrough of building a new Operator Collection using the extension for VS Code."
 icon: "developer_guide"
@@ -11,7 +11,7 @@ toc: true
 
 ## Prerequisites
 ---
-Follow [instructions](/docs/operator-collection-sdk-vscode-extension/installation/) to install the IBM Operator Collection SDK for VS Code and its dependencies.
+Follow [instructions](/docs/operator-collection-sdk-vscode-extension/installation/) to install the IBM Operator Collection SDK extension for VS Code and its dependencies.
 
 ## Overview
 ---
