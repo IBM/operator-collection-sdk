@@ -1,5 +1,5 @@
 ---
-weight: 1800
+weight: 1900
 title: "Release Notes"
 description: "A record of feature enhancements, bug fixes, and other changes to the IBM Operator Collection SDK."
 icon: "notes"
