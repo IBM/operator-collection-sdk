@@ -162,8 +162,6 @@ You can use GitHub Workflows to automate the Operator Collection signing process
 
     * In your newly created environment, **add the following environment secrets and variables** for use in your release workflow. For details on how to add environment secrets and variables, consult GitHub's [documentation](https://docs.github.com/en/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows).
 
-        ![Release Variables](/images/operator-collection-sdk/release-variables.png)
-
         {{< table "table-striped table-hover"  >}}
 |    Variable       |                                     description                                          |
 |-------------------|------------------------------------------------------------------------------------------|
@@ -171,6 +169,8 @@ You can use GitHub Workflows to automate the Operator Collection signing process
 | `COLLECTION_NAME` | (Enviornment Variable) The name of your Operator Collection. One term where words are demarcated with hyphens or underscore, i.e. "file-manager". |
 | `GALAXY_API_KEY`  | (Secret) Your Ansible Galaxy API access token. Remove this secret and the [publishing](/docs/operator-collection-sdk/building-deploying/cicd/#publishing-to-ansible-galaxy) step if you would not like to upload your signed collections to Ansible Galaxy.|
         {{< /table >}}
+
+        ![Release Variables](/images/operator-collection-sdk/release-variables.png)
 
         **Note:** Secrets and variables prefixed with `GITHUB_` such as `GITHUB_TOKEN` and `GITHUB_WORKSPACE` will be [created automatically](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret) for each workflow job, no further action is needed.
 
