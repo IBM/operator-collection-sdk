@@ -138,7 +138,7 @@
       when: encrypt_cli_available is true
 
     - name: Create Remote ZosEndpoint
-      oc_zosendpoint: 
+      oc_zosendpoint:
         name: "{{ zosendpoint_name }}"
         namespace: "{{ target_namespace }}"
         port: "{{zosendpoint_port}}"
@@ -153,7 +153,7 @@
         msg: '{{ endpoint_output }}'
 
     - name: Create Local ZosEndpoint
-      oc_zosendpoint:  
+      oc_zosendpoint:
         name:  "{{ zosendpoint_name }}"
         namespace: "{{ target_namespace }}"
         endpointType: "{{ zosendpoint_type}}"
