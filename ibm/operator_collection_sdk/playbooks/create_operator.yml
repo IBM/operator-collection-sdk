@@ -158,6 +158,27 @@
             name: "{{ zosendpoint_name }}"
             namespace: "{{ target_namespace }}"
           spec: "{{spec | from_yaml}}"
+    - name: Create Remote ZosEndpoint
+      oc_zosendpoint: 
+        name: "testing-rem"
+        namespace: "{{ target_namespace }}"
+        port: "{{zosendpoint_port}}"
+        host: "{{ zosendpoint_host}}"
+        endpointType: "{{ zosendpoint_type}}"
+        state: "present"
+      when: zosendpoint_type == "remote" and zosendpoint_port is defined and zosendpoint_port is defined
+      register: testout
+    - name: Create Local ZosEndpoint
+      oc_zosendpoint:  #oc_zosendpoint
+        name: "testing"
+        namespace: "{{ target_namespace }}"
+        endpointType: "{{ zosendpoint_type}}"
+        state: "present"
+      when: zosendpoint_type == "local"
+      register: testout
+    - name: dump test output
+      debug:
+        msg: '{{ testout }}'
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
