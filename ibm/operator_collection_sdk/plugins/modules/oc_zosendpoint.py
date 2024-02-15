@@ -53,7 +53,6 @@ options:
         required: false
         type: list
 
-    
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
 # extends_documentation_fragment:
@@ -96,12 +95,12 @@ resource:
     description: The resource that was modified.
     type: str
     returned: always
-   
+
 errMsg:
     description: The error message that the test module generates.
     type: str
     returned: always
-   
+
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -133,7 +132,6 @@ def run_module():
         changed=False,
         resource='',
         error=False,
-       
     )
 
     # the AnsibleModule object will be our abstraction working with Ansible
@@ -158,7 +156,7 @@ def run_module():
     config.load_kube_config()
 
     v1 = client.CoreV1Api()
-    
+
     environment = Environment(loader=FileSystemLoader("./templates"))
     template = environment.get_template("endpoint.yml")
     content = template.render(
@@ -170,7 +168,7 @@ def run_module():
 
     # this is going to be the part where your module will do what it needs to do
     crd_resource, changed, err, errorMsg = endpoint_action(module, yaml_object)
-   
+
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
@@ -195,7 +193,6 @@ def run_module():
     module.exit_json(**result)
 
 def verify_arguments_passed(module):
-
     
     if module.params["endpointType"] == "local" and (module.params["host"] or module.params["port"]):
         return "EndpointType local shouldn't have host or port defined"
@@ -223,7 +220,7 @@ def endpoint_action(module, yaml_object):
         elif module.params["state"] == "patched":
             crd_resource = kubernetes.client.CustomObjectsApi().patch_namespaced_custom_object(group="zoscb.ibm.com", version="v2beta2", plural="zosendpoints", name=module.params["name"] ,body=yaml_object, namespace=module.params["namespace"])
             changed = True
-    
+
         return crd_resource,changed, err, None
     except Exception as e:
         err = True
