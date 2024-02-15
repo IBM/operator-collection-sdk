@@ -6,9 +6,7 @@
 ---
 - name: Set Required Variables
   import_tasks: set_vars.yml
-  when: > 
-    path is undefined 
-    or operator_version is undefined 
+  when: path is undefined or operator_version is undefined 
 
 - name: Build Collection
   ansible.builtin.command: ansible-galaxy collection build {{ path }} -f --output-path {{ path }}/local/builds/{{ operator_version }}
