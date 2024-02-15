@@ -1,0 +1,18 @@
+{# templates/endpoint.yml #}
+
+apiVersion: zoscb.ibm.com/v2beta2
+kind: ZosEndpoint
+metadata:
+  name: {{name}}
+  namespace: {{namespace}}
+spec:
+  {% if endpointType == "local" %}
+  endpointType: "{{ endpointType}}"
+  {% else %}
+  endpointType: "{{ endpointType}}"
+  host: {{ host }}
+  port: {{port | int }}
+  {% endif %}
+  variables: {{variables}}
+
+ 
