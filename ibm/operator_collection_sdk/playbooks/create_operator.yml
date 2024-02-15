@@ -149,7 +149,7 @@
       register: endpoint_output
 
     - name: Show remote endpoint output
-      debug:
+      ansible.builtin.debug:
         msg: '{{ endpoint_output }}'
 
     - name: Create Local ZosEndpoint
@@ -162,7 +162,7 @@
       register: endpoint_output
 
     - name: Show local endpoint output
-      debug:
+      ansible.builtin.debug:
         msg: '{{ endpoint_output }}'
 
     - name: Create OperatorCollection
