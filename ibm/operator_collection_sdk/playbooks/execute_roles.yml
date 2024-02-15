@@ -1,0 +1,22 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Execute Roles
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  collections:
+    - ibm.operator-collection-sdk
+  
+  roles: 
+    # - pre_check
+    # - cluster_setup
+    # - create_operator_config
+    - build_collection
+    - upload_collection_to_manager
+    # - restart_suboperator_pod
+  
