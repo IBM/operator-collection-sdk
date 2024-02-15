@@ -137,48 +137,33 @@
         credential_name: "{{ zosendpoint_name }}-credential"
       when: encrypt_cli_available is true
 
-    - name: Set Endpoint spec
-      ansible.builtin.set_fact:
-        spec: |
-          {% if zosendpoint_type == "local" %}
-          endpointType: "{{ zosendpoint_type}}"
-          {% else %}
-          endpointType: "{{ zosendpoint_type}}"
-          host: "{{ zosendpoint_host }}"
-          port: {{zosendpoint_port | int }}
-          {% endif %}
-
-    - name: Create ZosEndpoint
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: ZosEndpoint
-          metadata:
-            name: "{{ zosendpoint_name }}"
-            namespace: "{{ target_namespace }}"
-          spec: "{{spec | from_yaml}}"
     - name: Create Remote ZosEndpoint
       oc_zosendpoint: 
-        name: "testing-rem"
+        name: "{{ zosendpoint_name }}"
         namespace: "{{ target_namespace }}"
         port: "{{zosendpoint_port}}"
         host: "{{ zosendpoint_host}}"
         endpointType: "{{ zosendpoint_type}}"
         state: "present"
-      when: zosendpoint_type == "remote" and zosendpoint_port is defined and zosendpoint_port is defined
-      register: testout
+      when: zosendpoint_type == "remote" and zosendpoint_host is defined and zosendpoint_port is defined
+      register: endpoint_output
+
+    - name: Show remote endpoint output
+      debug:
+        msg: '{{ endpoint_output }}'
+
     - name: Create Local ZosEndpoint
-      oc_zosendpoint:  #oc_zosendpoint
-        name: "testing"
+      oc_zosendpoint:  
+        name:  "{{ zosendpoint_name }}"
         namespace: "{{ target_namespace }}"
         endpointType: "{{ zosendpoint_type}}"
         state: "present"
       when: zosendpoint_type == "local"
-      register: testout
-    - name: dump test output
+      register: endpoint_output
+
+    - name: Show local endpoint output
       debug:
-        msg: '{{ testout }}'
+        msg: '{{ endpoint_output }}'
 
     - name: Create OperatorCollection
       kubernetes.core.k8s:
