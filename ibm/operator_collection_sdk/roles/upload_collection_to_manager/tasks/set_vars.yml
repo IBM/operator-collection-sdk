@@ -1,0 +1,36 @@
+---
+# Setting the "path" var
+- name: Set local directory
+  ansible.builtin.set_fact:
+    path: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
+  when: path is undefined
+
+# Setting the "namespace" var
+- name: Get namespace
+  ansible.builtin.command: oc config view --minify -o 'jsonpath={..namespace}'
+  register: namespace_output
+  when: namespace is undefined
+
+- name: Set namespace variable
+  ansible.builtin.set_fact:
+    namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
+  when: namespace is undefined
+
+# Setting the "operator_name" and "operator_version" vars
+- name: Locate operator-config.yml file
+  ansible.builtin.find:
+    paths: "{{ path }}"
+    patterns: 'operator-config.yml,operator-config.yaml'
+  register: oc_file_results
+  when: operator_name is undefined or operator_version is undefined
+
+- name: Read operator-config.yml
+  ansible.builtin.set_fact:
+    operator_config: "{{ lookup('template', '{{ oc_file_results.files[0].path }}')| from_yaml | to_json | from_json }}"
+  when: operator_name is undefined or operator_version is undefined
+
+- name: Set operator variables
+  ansible.builtin.set_fact:
+    operator_name: "{{ operator_config.name | lower }}"
+    operator_version: "{{ operator_config.version }}"
+  when: operator_name is undefined or operator_version is undefined

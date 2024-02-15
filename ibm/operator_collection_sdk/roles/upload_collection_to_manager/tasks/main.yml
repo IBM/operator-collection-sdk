@@ -4,6 +4,14 @@
 #
 
 ---
+- name: Set Required Variables
+  import_tasks: set_vars.yml
+  when: > 
+    path is undefined 
+    or namespace is undefined
+    or operator_name is undefined
+    or operator_version is undefined
+
 - name: Get Manager Pod Name
   kubernetes.core.k8s_info:
     kind: Pod
