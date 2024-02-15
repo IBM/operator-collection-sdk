@@ -14,5 +14,3 @@ spec:
   port: {{port | int }}
   {% endif %}
   variables: {{variables}}
-
- 
