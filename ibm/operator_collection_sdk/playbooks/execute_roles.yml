@@ -9,8 +9,8 @@
   connection: local
   gather_facts: false
 
-  collections:
-    - ibm.operator-collection-sdk
+  # collections:
+  #   - ibm.operator-collection-sdk
   
   roles: 
     # - pre_check

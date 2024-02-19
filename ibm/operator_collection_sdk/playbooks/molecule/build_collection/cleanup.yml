@@ -1,0 +1,15 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Converge
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Delete test Racf Collection
+      ansible.builtin.file:
+        path: "{{ test_operator_path }}"
+        state: absent
