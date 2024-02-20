@@ -63,16 +63,25 @@ EXAMPLES = r'''
     name: endpoint-1
     namespace: test-world
     credentialType: shared
-    
+    endpointMapping:
+    - namespace: "test-world"
+        zosendpoints:
+        - name: "new-ep1"
+    collection_src: "zos-package-manager.zpm.2.1.0"
     state: present
 
 # pass in a message and have changed true
 - name: Test with personal suboperatorconfig
   ocsdk.collection.oc_suboperatorconfig:
     name: endpoint-2
-    namespace: test-world
     state: present
+    namespace: "zarin-dev"
     credentialType: personal
+    endpointMapping:
+    - namespace: "zarin-dev"
+        zosendpoints:
+        - name: "new-ep1"
+    collection_src: "zos-package-manager.zpm.2.1.0"
 # fail the module
 - name: Test failure of the module
   ocsdk.collection.oc_suboperatorconfig:
