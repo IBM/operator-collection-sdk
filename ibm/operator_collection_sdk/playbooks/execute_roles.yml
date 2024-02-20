@@ -8,15 +8,12 @@
   hosts: localhost
   connection: local
   gather_facts: false
-
   # collections:
   #   - ibm.operator-collection-sdk
-  
-  roles: 
+  roles:
     # - pre_check
     # - cluster_setup
     # - create_operator_config
     - build_collection
     - upload_collection_to_manager
     # - restart_suboperator_pod
-  
