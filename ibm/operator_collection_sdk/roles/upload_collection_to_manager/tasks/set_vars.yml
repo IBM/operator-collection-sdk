@@ -9,12 +9,12 @@
 - name: Get namespace
   ansible.builtin.command: oc config view --minify -o 'jsonpath={..namespace}'
   register: namespace_output
-  when: namespace is undefined
+  when: target_namespace is undefined
 
 - name: Set namespace variable
   ansible.builtin.set_fact:
-    namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
-  when: namespace is undefined
+    target_namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
+  when: target_namespace is undefined
 
 # Setting the "operator_name" and "operator_version" vars
 - name: Locate operator-config.yml file

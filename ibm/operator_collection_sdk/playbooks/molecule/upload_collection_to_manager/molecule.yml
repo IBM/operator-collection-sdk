@@ -1,8 +1,30 @@
 ---
+dependency:
+  name: galaxy
 driver:
-  name: default
+  name: delegated
 platforms:
   - name: instance
-    # you might want to add your own variables here based on what provisioning
-    # you are doing like:
-    # image: quay.io/centos/centos:stream8
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      jinja2_native: true
+  # playbooks:
+  #   cleanup: cleanup.yml
+
+  inventory:
+    group_vars:
+      all:
+        operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/"
+        test_operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/"
+        ocpnamespace: "{{ ${OCP_NAMESPACE:-molecule} | lower | replace('_','-') | replace('/','-') }}"
+
+scenario:
+  test_sequence:
+    - destroy
+    - converge
+    # - verify
+    - destroy
+verifier:
+  name: ansible

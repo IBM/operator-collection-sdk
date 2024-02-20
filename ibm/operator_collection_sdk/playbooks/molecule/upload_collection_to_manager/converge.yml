@@ -1,8 +1,28 @@
 ---
 - name: Converge
-  hosts: all
+  hosts: localhost
+  connection: local
   gather_facts: false
+  no_log: "{{ molecule_no_log }}"
   tasks:
-    - name: Replace this task with one that validates your content
-      ansible.builtin.debug:
-        msg: "This is the effective test"
+  - name: Copy example Racf operator directory
+    ansible.builtin.copy:
+      src: "{{ operator_path }}"
+      dest: "{{ test_operator_path }}"
+
+  - name: Build Collection
+    ansible.builtin.include_role:
+      name: ../../roles/build_collection
+      tasks_from: main.yml
+    vars:
+      path: "{{ test_operator_path }}"
+
+  - name: Test "upload_collection_to_manager" role
+    ansible.builtin.include_role:
+      name: ../../roles/upload_collection_to_manager
+      tasks_from: main.yml
+    vars:
+      path: "{{ test_operator_path }}"
+      
+
+    
