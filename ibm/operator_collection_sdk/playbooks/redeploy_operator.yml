@@ -124,18 +124,13 @@
       delay: 5
 
     - name: Create SubOperatorConfig
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_suboperatorconfig:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: SubOperatorConfig
-          metadata:
-            name: "{{ operatorcollection_name }}-soc"
-            namespace: "{{ target_namespace }}"
-          spec:
-            credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
-            mapping: "{{ soc_results.resources[0].spec.mapping }}"
-            operatorCollection: "{{ operatorcollection_name }}"
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+        credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
+        endpointMapping: "{{ soc_results.resources[0].spec.mapping }}"
+        collection_src: "{{ operatorcollection_name }}"
 
     - name: Validate SubOperatorConfig installed successfully
       kubernetes.core.k8s_info:
