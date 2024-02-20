@@ -5,35 +5,6 @@
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
   tasks:
-    # - name: Locate operator-config.yml file
-    #   ansible.builtin.find:
-    #     paths: "{{ test_operator_path }}"
-    #     patterns: 'operator-config.yml,operator-config.yaml'
-    #   register: operator_config_results
-
-    # - name: Verify operator-config.yml file exists in test path
-    #   ansible.builtin.debug:
-    #     msg: "Current path does not contain an galaxy.yml file. Path: {{ test_operator_path }}"
-    #   when: operator_config_results.files | length == 0
-
-    # - name: Read operator-config.yml
-    #   ansible.builtin.set_fact:
-    #     operator_config_file: "{{ lookup('template', '{{ operator_config_results.files[0].path }}')| from_yaml | to_json | from_json }}"
-
-    # - name: Get Operator Collection name
-    #   ansible.builtin.set_fact:
-    #     operator_name: "{{ operator_config_file.name }}"
-    
-    # - name: Get current namespace
-    #   ansible.builtin.command: oc config view --minify -o 'jsonpath={..namespace}'
-    #   register: namespace_output
-    #   when: target_namespace is undefined
-
-    # - name: Set namespace variable
-    #   ansible.builtin.set_fact:
-    #     target_namespace: "{{ namespace_output.stdout if ocpnamespace is undefined else ocpnamespace }}"
-    #   when: target_namespace is undefined
-
     - name: Set Required Variables
       ansible.builtin.include_role:
         name: ../../roles/upload_collection_to_manager
