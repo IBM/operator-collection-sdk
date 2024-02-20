@@ -214,7 +214,7 @@
           - namespace: "{{ target_namespace }}"
             zosendpoints:
               - name: "{{ zosendpoint_name }}"
-        collection_src: "{{ operatorcollection_name }}"
+        collection_name: "{{ operatorcollection_name }}"
       when: (encrypt_cli_available is false or (username == "" and ssh_key == "")) and zosendpoint_type == "remote"
 
     - name: Create SubOperatorConfig without mapped credential for local endpoint type
@@ -227,7 +227,7 @@
             - namespace: "{{ target_namespace }}"
               zosendpoints:
                 - name: "{{ zosendpoint_name }}"
-        collection_src: "{{ operatorcollection_name }}"
+        collection_name: "{{ operatorcollection_name }}"
       when: zosendpoint_type == "local"
 
     - name: Create SubOperatorConfig with mapped credential
@@ -241,7 +241,7 @@
               zosendpoints:
                 - name: "{{ zosendpoint_name }}"
                   credentialName: "{{ credential_name }}"
-        collection_src: "{{ operatorcollection_name }}"
+        collection_name: "{{ operatorcollection_name }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and zosendpoint_type == "remote"
 
     - name: Validate SubOperatorConfig installed successfully

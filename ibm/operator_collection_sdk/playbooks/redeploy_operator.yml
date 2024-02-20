@@ -130,7 +130,7 @@
         namespace: "{{ target_namespace }}"
         credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
         endpointMapping: "{{ soc_results.resources[0].spec.mapping }}"
-        collection_src: "{{ operatorcollection_name }}"
+        collection_name: "{{ operatorcollection_name }}"
 
     - name: Validate SubOperatorConfig installed successfully
       kubernetes.core.k8s_info:
