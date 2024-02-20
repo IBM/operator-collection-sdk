@@ -60,7 +60,7 @@ EXAMPLES = r'''
 # Pass in a message
 - name: Test with shared suboperatorconfig
   ocsdk.collection.oc_suboperatorconfig:
-    name: endpoint-1
+    name: suboperatorconfig-1
     namespace: test-world
     credentialType: shared
     endpointMapping:
@@ -73,7 +73,7 @@ EXAMPLES = r'''
 # pass in a message and have changed true
 - name: Test with personal suboperatorconfig
   ocsdk.collection.oc_suboperatorconfig:
-    name: endpoint-2
+    name: suboperatorconfig-2
     state: present
     namespace: "zarin-dev"
     credentialType: personal
@@ -85,10 +85,10 @@ EXAMPLES = r'''
 # fail the module
 - name: Test failure of the module
   ocsdk.collection.oc_suboperatorconfig:
-    name: endpoint-3
+    name: suboperatorconfig-3
     namespace: test-world
-    state: blah
-    endpointType: blah
+    state: present
+    credentialType: blah
 '''
 
 RETURN = r'''
