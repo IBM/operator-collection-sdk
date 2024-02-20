@@ -10,8 +10,8 @@ provisioner:
   config_options:
     defaults:
       jinja2_native: true
-  # playbooks:
-  #   cleanup: cleanup.yml
+  playbooks:
+    cleanup: cleanup.yml
 
   inventory:
     group_vars:
@@ -24,7 +24,7 @@ scenario:
   test_sequence:
     - destroy
     - converge
-    # - verify
+    - verify
     - destroy
 verifier:
   name: ansible
