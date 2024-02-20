@@ -14,8 +14,8 @@
   when: operator_version is undefined
 
 - name: Verify operator-config.yml file exists in path
-  ansible.builtin.debug:
-    msg: "Current path does not contain an operator-config.yml file. Path: {{ path }}"
+  ansible.builtin.fail:
+    msg: "Missing required operator-config file. Path: {{ path }}"
   when: oc_file_results.files | length == 0
 
 - name: Read operator-config.yml

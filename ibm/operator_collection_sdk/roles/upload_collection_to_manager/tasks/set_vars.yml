@@ -5,7 +5,7 @@
     path: "{{ lookup('env', 'PWD') if filepath is undefined else filepath }}"
   when: path is undefined
 
-# Setting the "namespace" var
+# Setting the "target_namespace" var
 - name: Get namespace
   ansible.builtin.command: oc config view --minify -o 'jsonpath={..namespace}'
   register: namespace_output
@@ -25,9 +25,12 @@
   when: operator_name is undefined or operator_version is undefined
 
 - name: Verify operator-config.yml file exists in path
-  ansible.builtin.debug:
-    msg: "Current path does not contain an operator-config.yml file. Path: {{ path }}"
-  when: oc_file_results.files | length == 0
+  ansible.builtin.fail:
+    msg: "Missing required variables \"operator_name\" and \"operator_version\". Variables must be supplied because the current path does not contain an operator-config.yml file. Path: {{ path }}"
+  when: >
+    oc_file_results.files | length == 0 
+    and operator_name is undefined 
+    or operator_version is undefined
 
 - name: Read operator-config.yml
   ansible.builtin.set_fact:
@@ -39,3 +42,4 @@
     operator_name: "{{ operator_config.name | lower }}"
     operator_version: "{{ operator_config.version }}"
   when: operator_name is undefined or operator_version is undefined
+
