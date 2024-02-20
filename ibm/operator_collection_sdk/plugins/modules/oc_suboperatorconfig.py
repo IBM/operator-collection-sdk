@@ -40,7 +40,7 @@ options:
         description: Sets credential type to shared or personal.
         required: true
         type: str
-    collection_src:
+    collection_name:
         description: Sets location of the collection source.
         required: true
         type: str
@@ -67,7 +67,7 @@ EXAMPLES = r'''
     - namespace: "test-world"
         zosendpoints:
         - name: "new-ep1"
-    collection_src: "zos-package-manager.zpm.2.1.0"
+    collection_name: "zos-package-manager.zpm.2.1.0"
     state: present
 
 # pass in a message and have changed true
@@ -81,7 +81,7 @@ EXAMPLES = r'''
     - namespace: "zarin-dev"
         zosendpoints:
         - name: "new-ep1"
-    collection_src: "zos-package-manager.zpm.2.1.0"
+    collection_name: "zos-package-manager.zpm.2.1.0"
 # fail the module
 - name: Test failure of the module
   ocsdk.collection.oc_suboperatorconfig:
@@ -112,7 +112,7 @@ def run_module():
     module_args = dict(
         name=dict(type='str', required=True),
         namespace=dict(type='str', required=True),
-        collection_src=dict(type='str', required=True),
+        collection_name=dict(type='str', required=True),
         credentialType=dict(type='str', required=True, choices=["personal", "shared" ]),
         endpointMapping=dict(type="list", required=True),
         state=dict(type='str', required=True, choices=[ "absent", "present", "patched" ]),

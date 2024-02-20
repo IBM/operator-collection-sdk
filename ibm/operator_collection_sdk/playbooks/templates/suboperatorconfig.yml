@@ -7,5 +7,5 @@ metadata:
   namespace: {{namespace}}
 spec:
   credentialType: {{ credentialType}}
-  operatorCollection: {{ collection_src }}
+  operatorCollection: {{ collection_name }}
   mapping: {{endpointMapping}}
