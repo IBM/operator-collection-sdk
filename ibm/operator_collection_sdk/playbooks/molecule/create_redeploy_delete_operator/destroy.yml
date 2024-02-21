@@ -36,7 +36,7 @@
             path: /metadata/finalizers
             value: []
       when: soc_results.resources | length > 0
-      with_items: soc_results.resources
+      with_items: "{{ soc_results.resources }}"
 
     - name: Delete test secret
       kubernetes.core.k8s:
