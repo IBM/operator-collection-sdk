@@ -74,7 +74,7 @@ options:
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
 # extends_documentation_fragment:
-#     - bm.operator_collection_sdk.my_doc_fragment_name
+#     - ibm.operator_collection_sdk.my_doc_fragment_name
 
 author:
     - Your Name (@zohiba)
@@ -83,7 +83,7 @@ author:
 EXAMPLES = r'''
 # Pass in a message
 - name: Test with remote endpointType
-  bm.operator_collection_sdk.oc_zosendpoint:
+  ibm.operator_collection_sdk.oc_zosendpoint:
     name: endpoint-1
     namespace: test-world
     host: test-host-1
@@ -93,14 +93,14 @@ EXAMPLES = r'''
 
 # pass in a message and have changed true
 - name: Test with local endpointType
-  bm.operator_collection_sdk.oc_zosendpoint:
+  ibm.operator_collection_sdk.oc_zosendpoint:
     name: endpoint-2
     namespace: test-world
     state: present
     endpointType: local
 # fail the module
 - name: Test failure of the module
-  bm.operator_collection_sdk.oc_zosendpoint:
+  ibm.operator_collection_sdk.oc_zosendpoint:
     name: endpoint-3
     namespace: test-world
     state: blah
