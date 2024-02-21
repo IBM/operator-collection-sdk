@@ -8,7 +8,25 @@ import csv, os, json, yaml
 from jinja2 import Environment, FileSystemLoader
 
 from kubernetes import client, config, watch
-
+from ansible_collections.kubernetes.core.plugins.module_utils.ansiblemodule import (
+    AnsibleModule,
+)
+from ansible_collections.kubernetes.core.plugins.module_utils.args_common import (
+    AUTH_ARG_SPEC,
+    DELETE_OPTS_ARG_SPEC,
+    NAME_ARG_SPEC,
+    RESOURCE_ARG_SPEC,
+    WAIT_ARG_SPEC,
+)
+from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import (
+    AnsibleK8SModule,
+)
+from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import (
+    CoreException,
+)
+from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import (
+    run_module,
+)
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -103,12 +121,11 @@ errMsg:
 
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-
-
-def run_module():
+def run_zosendpoint_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
+        kind=dict(type='str', default="ZosEndpoint"),
+        api_version=dict(type='str', default="zoscb.ibm.com/v2beta2"),
         name=dict(type='str', required=True),
         namespace=dict(type='str', required=True),
         host=dict(type='str', required=False),
@@ -130,7 +147,6 @@ def run_module():
     # for consumption, for example, in a subsequent task
     result = dict(
         changed=False,
-        resource='',
         error=False,
     )
 
@@ -138,7 +154,8 @@ def run_module():
     # this includes instantiation, a couple of common attr would be the
     # args/params passed to the execution, as well as if the module
     # supports check mode
-    module = AnsibleModule(
+    module = AnsibleK8SModule(
+        module_class=AnsibleModule,
         argument_spec=module_args,
         supports_check_mode=True,
         required_if = required_if_args,
@@ -150,50 +167,35 @@ def run_module():
         result['error'] = True
         module.fail_json(msg=errorMsg, **result)
 
-    #config.load_incluster_config() #used during testing inside cluster, also needs to give permission to SA to list endpoints
-    # config.load_incluster_config()
-    # v1 = client.CoreV1Api()
-    config.load_kube_config()
-
-    v1 = client.CoreV1Api()
-
     environment = Environment(loader=FileSystemLoader("./templates"))
     template = environment.get_template("endpoint.yml")
     content = template.render(
         module.params
     )
-    # print(content)
-    yaml_object = yaml.safe_load(content)
-    # print(yaml_object)
 
-    # this is going to be the part where your module will do what it needs to do
-    crd_resource, changed, err, errorMsg = endpoint_action(module, yaml_object)
+    module.params["resource_definition"] = content
 
-    # if the user is working with this module in only check mode we do not
-    # want to make any changes to the environment, just return the current
-    # state with no modifications
-    if module.check_mode:
-        module.exit_json(**result)
+    # # if the user is working with this module in only check mode we do not
+    # # want to make any changes to the environment, just return the current
+    # # state with no modifications
+    # if module.check_mode:
+    #     module.exit_json(**result)
 
-    # use whatever logic you need to determine whether or not this module
-    # made any modifications to your target
-    result['resource'] = crd_resource
-    result['error'] = err
-    result['changed'] = changed
+    try:
+        run_module(module)
+    except CoreException as e:
+        module.fail_from_exception(e)
 
-    if err:
-        module.fail_json(msg=errorMsg, **result)
-    # during the execution of the module, if there is an exception or a
-    # conditional state that effectively causes a failure, run
-    # AnsibleModule.fail_json() to pass in the message and the result
+    # # during the execution of the module, if there is an exception or a
+    # # conditional state that effectively causes a failure, run
+    # # AnsibleModule.fail_json() to pass in the message and the result
 
-    
-    # in the event of a successful module execution, you will want to
-    # simple AnsibleModule.exit_json(), passing the key/value results
+    # # in the event of a successful module execution, you will want to
+    # # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
 def verify_arguments_passed(module):
-    
+
     if module.params["endpointType"] == "local" and (module.params["host"] or module.params["port"]):
         return "EndpointType local shouldn't have host or port defined"
 
@@ -205,29 +207,8 @@ def verify_arguments_passed(module):
 
     return None
 
-def endpoint_action(module, yaml_object):
-    # Given the module(params,kubeconfig etc) check the desired state of the resource and apply the kubernetes API accordingly.
-    crd_resource=""
-    err= False
-    changed = False
-    try:
-        if module.params["state"] == "present":
-            crd_resource = kubernetes.client.CustomObjectsApi().create_namespaced_custom_object(group="zoscb.ibm.com", version="v2beta2", plural="zosendpoints", body=yaml_object, namespace=module.params["namespace"])
-            changed = True
-        elif module.params["state"] == "absent":
-            crd_resource = kubernetes.client.CustomObjectsApi().delete_namespaced_custom_object(group="zoscb.ibm.com", version="v2beta2", plural="zosendpoints", name=module.params["name"] , namespace=module.params["namespace"])
-            changed = True
-        elif module.params["state"] == "patched":
-            crd_resource = kubernetes.client.CustomObjectsApi().patch_namespaced_custom_object(group="zoscb.ibm.com", version="v2beta2", plural="zosendpoints", name=module.params["name"] ,body=yaml_object, namespace=module.params["namespace"])
-            changed = True
-
-        return crd_resource,changed, err, None
-    except Exception as e:
-        err = True
-        return crd_resource, changed, err, str(e)
-
 def main():
-    run_module()
+    run_zosendpoint_module()
 
 
 if __name__ == '__main__':
