@@ -18,6 +18,26 @@
     ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
 
   tasks:
+    - name: Get SubOperatorConfigs
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ target_namespace }}"
+      register: soc_results
+
+    - name: Remove Orphaned SubOperatorConfigs
+      kubernetes.core.k8s_json_patch:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ target_namespace }}"
+        name: "{{ item.metadata.name }}"
+        patch:
+          - op: replace
+            path: /metadata/finalizers
+            value: []
+      when: soc_results.resources | length > 0
+      with_items: soc_results.resources
+
     - name: Delete test secret
       kubernetes.core.k8s:
         state: absent
