@@ -154,7 +154,7 @@
 
     - name: Create Local ZosEndpoint
       ibm.operator_collection_sdk.oc_zosendpoint:
-        name:  "{{ zosendpoint_name }}"
+        name: "{{ zosendpoint_name }}"
         namespace: "{{ target_namespace }}"
         endpointType: "{{ zosendpoint_type}}"
         state: "present"
