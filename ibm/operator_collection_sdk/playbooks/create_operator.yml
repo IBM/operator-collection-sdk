@@ -224,9 +224,9 @@
         namespace: "{{ target_namespace }}"
         credentialType: shared
         endpointMapping:
-            - namespace: "{{ target_namespace }}"
-              zosendpoints:
-                - name: "{{ zosendpoint_name }}"
+          - namespace: "{{ target_namespace }}"
+            zosendpoints:
+              - name: "{{ zosendpoint_name }}"
         collection_name: "{{ operatorcollection_name }}"
       when: zosendpoint_type == "local"
 
@@ -237,10 +237,10 @@
         namespace: "{{ target_namespace }}"
         credentialType: shared
         endpointMapping:
-            - namespace: "{{ target_namespace }}"
-              zosendpoints:
-                - name: "{{ zosendpoint_name }}"
-                  credentialName: "{{ credential_name }}"
+          - namespace: "{{ target_namespace }}"
+            zosendpoints:
+              - name: "{{ zosendpoint_name }}"
+                credentialName: "{{ credential_name }}"
         collection_name: "{{ operatorcollection_name }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and zosendpoint_type == "remote"
 
