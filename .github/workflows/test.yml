@@ -44,6 +44,9 @@ jobs:
 
       - name: Perform PIP installs
         run: pip install ansible-lint==6.16.0
+      
+      - name: Perform collection installs
+        run: ansible-galaxy collection install . --force
 
       - name: Run ansible-lint
         run: |
