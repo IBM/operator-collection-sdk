@@ -101,6 +101,7 @@ author:
     - Yemi Kelani (@yemi-kelani)
 '''
 
+# Usage examples
 EXAMPLES = r'''
   - name: Create ZosCloudBroker
     ibm.operator_collection_sdk.oc_zoscloudbroker:
@@ -146,9 +147,96 @@ EXAMPLES = r'''
         namespace: yemi-test-2
     register: zcb_results
 '''
-
+# Examples of returns
 RETURN = r'''
-# TODO: add examples returns
+{
+    "changed": true,
+    "error": false,
+    "failed": false,
+    "state": {
+        "apiVersion": "v1",
+        "details": {
+            "group": "zoscb.ibm.com",
+            "kind": "zoscloudbrokers",
+            "name": "zoscloudbroker",
+            "uid": "13fd4922-6fce-4d2f-9920-a7d227a65f24"
+        },
+        "kind": "Status",
+        "metadata": {},
+        "status": "Success"
+    }
+}
+
+{
+    "changed": true,
+    "error": false,
+    "failed": false,
+    "state": {
+        "apiVersion": "zoscb.ibm.com/v2beta1",
+        "kind": "ZosCloudBroker",
+        "metadata": {
+            "creationTimestamp": "2024-02-22T01:01:02Z",
+            "generation": 1,
+            "managedFields": [
+                {
+                    "apiVersion": "zoscb.ibm.com/v2beta1",
+                    "fieldsType": "FieldsV1",
+                    "fieldsV1": {
+                        "f:spec": {
+                            ".": {},
+                            "f:catalogResources": {},
+                            "f:galaxyConfig": {
+                                ".": {},
+                                "f:enabled": {},
+                                "f:galaxyURL": {}
+                            },
+                            "f:license": {
+                                ".": {},
+                                "f:accept": {}
+                            },
+                            "f:logLevel": {},
+                            "f:managerResources": {},
+                            "f:multiNamespace": {},
+                            "f:storage": {
+                                ".": {},
+                                "f:configure": {},
+                                "f:enabled": {},
+                                "f:pvc": {}
+                            },
+                            "f:uiResources": {}
+                        }
+                    },
+                    "manager": "OpenAPI-Generator",
+                    "operation": "Update",
+                    "time": "2024-02-22T01:01:02Z"
+                }
+            ],
+            "name": "zoscloudbroker",
+            "namespace": "yemi-test-2",
+            "resourceVersion": "148579203",
+            "uid": "0db17b06-fed4-4d63-b82d-3bb021849933"
+        },
+        "spec": {
+            "catalogResources": {},
+            "galaxyConfig": {
+                "enabled": true,
+                "galaxyURL": "https://galaxy.ansible.com"
+            },
+            "license": {
+                "accept": true
+            },
+            "logLevel": "debug",
+            "managerResources": {},
+            "multiNamespace": true,
+            "storage": {
+                "configure": false,
+                "enabled": true,
+                "pvc": "zoscloudbroker"
+            },
+            "uiResources": {}
+        }
+    }
+}
 '''
 
 # import kubernetes
@@ -209,9 +297,7 @@ def run_module():
 
     validated_params = validate_module_parameters(module=module, result=result)
 
-    # if the user is working with this module in only check mode we do not
-    # want to make any changes to the environment, just return the current
-    # state with no modifications
+    # if in only check mode, return the state with no modifications
     if module.check_mode:
         module.exit_json(**result)
 
