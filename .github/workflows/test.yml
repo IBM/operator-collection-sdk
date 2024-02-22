@@ -80,6 +80,9 @@ jobs:
 
       - name: Perform PIP installs
         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
+
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
       
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
