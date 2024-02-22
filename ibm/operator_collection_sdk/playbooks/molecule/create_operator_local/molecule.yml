@@ -30,7 +30,7 @@ provisioner:
         zosendpoint_name: ibmcloud-vm
         openshift_token: ${OPENSHIFT_TOKEN}
         openshift_server: ${OPENSHIFT_SERVER}
-        zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.4}
+        zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.5}
 scenario:
   test_sequence:
     - prepare
