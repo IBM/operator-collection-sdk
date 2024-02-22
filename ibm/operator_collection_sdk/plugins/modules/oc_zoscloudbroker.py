@@ -239,7 +239,6 @@ RETURN = r'''
 }
 '''
 
-# import kubernetes
 import re
 import yaml
 from kubernetes import client, config
@@ -258,7 +257,7 @@ def run_module():
         ansible_galaxy_configuration=dict(
             type="dict",
             required=False,
-            default={"enabled": True, "url": "https://galaxy.ansible.com"},
+            default=dict(enabled="true", url="https://galaxy.ansible.com"),
             aliases=["galaxy_configuration", "galaxyConfig", "galaxy_config"],
             options=dict(
                 enabled=dict(type="bool", required=False, default=True),
@@ -295,11 +294,11 @@ def run_module():
         error=False
     )
 
-    validated_params = validate_module_parameters(module=module, result=result)
-
     # if in only check mode, return the state with no modifications
     if module.check_mode:
         module.exit_json(**result)
+
+    validated_params = validate_module_parameters(module=module, result=result)
 
     # load template and render yaml object
     environment = Environment(loader=FileSystemLoader("./templates/"))
@@ -308,16 +307,14 @@ def run_module():
     yaml_object = yaml.safe_load(content)
 
     config.load_kube_config()
-    v1 = client.CoreV1Api()
 
     # create or delete zoscloudbroker instance
     crd_resource, error = change_zoscloudbroker_state(validated_params, yaml_object=yaml_object)
-    
-    result["state"] = crd_resource
 
     # determine if modifications were made on target
     if error is None:
         result["changed"] = True
+        result["state"] = crd_resource
     else:
         result["error"] = True
         module.fail_json(msg=str(error), **result)
@@ -359,18 +356,11 @@ def validate_module_parameters(module, result):
                     msg=f"Missing required argument '{param}'. The following arguments must be suppled when argument storage.configure is True: {", ".join(required_params)}.",
                     **result)
     elif params_copy["storage"]["enabled"]:
-            # if configure is false, but enabled is true
-            # ensure persistent_volume_claim param is valid
-            pvc_alias = get_present_alias(
-                "persistent_volume_claim", module, 
-                aliases=module.argument_spec["storage"]["options"], 
-                params=params_copy["storage"])
-            
-            if pvc_alias == "" \
-            or params_copy["storage"][pvc_alias] is None \
-            or params_copy["storage"][pvc_alias] == "":
+            if "persistent_volume_claim" not in params_copy["storage"] \
+            or params_copy["storage"]["persistent_volume_claim"] == "" \
+            or params_copy["storage"]["persistent_volume_claim"] is None:
                 module.fail_json(
-                    msg=f"Missing required argument '{pvc_alias}'. {pvc_alias} must be suppled when argument storage.enabled is True.",
+                    msg=f"Missing required argument 'persistent_volume_claim'. persistent_volume_claim must be suppled when argument storage.enabled is True.",
                     **result)
 
     # validate label format if they exist
@@ -388,22 +378,8 @@ def validate_module_parameters(module, result):
         params_copy["labels"] = labels
 
     return params_copy
-    
-# Gets the alias being used for a certain argument
-def get_present_alias(real_arg_name, module, aliases=None, params=None):
-    params = module.params if params is None else params
-    aliases = module.argument_spec[real_arg_name]["aliases"] if aliases is None else aliases
 
-    if real_arg_name in params:
-        return real_arg_name
-    
-    for alias in aliases:
-        if alias in module.params:
-            return alias
-    
-    return ""
-
-def change_zoscloudbroker_state(params, yaml_object):
+def change_zoscloudbroker_state(params, yaml_object) -> tuple[dict|None, Exception|None]:
     state = params["state"]
     namespace = params["namespace"]
     name = params["name"]
