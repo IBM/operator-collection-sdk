@@ -2,31 +2,9 @@
 
 # Copyright: (c) 2024, Zarin Ohiba <zarin.ohiba@ibm.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-from __future__ import (absolute_import, division, print_function)
-import kubernetes
-import csv, os, json, yaml
-from jinja2 import Environment, FileSystemLoader
 
-from kubernetes import client, config, watch
-from ansible_collections.kubernetes.core.plugins.module_utils.ansiblemodule import (
-    AnsibleModule,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.args_common import (
-    AUTH_ARG_SPEC,
-    DELETE_OPTS_ARG_SPEC,
-    NAME_ARG_SPEC,
-    RESOURCE_ARG_SPEC,
-    WAIT_ARG_SPEC,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import (
-    AnsibleK8SModule,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import (
-    CoreException,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import (
-    run_module,
-)
+from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -41,10 +19,13 @@ description: This module creates a zosendpoint.
 
 options:
     state:
-        description: Determines if an object should be created, patched, or deleted. When set to C(present), an object will be created, if it does not already exist. If set to C(absent), an existing object will be deleted. If set to C(present), an existing object will be patched, if its attributes differ from those specified using I(resource_definition) or I(src). C(patched) state is an existing resource that has a given patch applied. If the resource doesn't exist, silently skip it (do not raise an error).
+        description: >
+          Determines if an object should be created, patched, or deleted. When set to C(present), an object will be created,
+          if it does not already exist. If set to C(absent), an existing object will be deleted.
+          If set to C(present), an existing object will be patched, if its attributes differ from those specified using I(resource_definition) or I(src).
+          C(patched) state is an existing resource that has a given patch applied. If the resource doesn't exist, silently skip it (do not raise an error).
         type: str
         required: true
-        default: present
         choices: [ absent, present, patched ]
     name:
         description: The name of the zosendpoint.
@@ -54,10 +35,21 @@ options:
         description: The endpoint is created in this provided namespace.
         required: true
         type: str
+    api_version:
+        description: The apiversion.
+        required: false
+        type: str
+        default: zoscb.ibm.com/v2beta2
+    kind:
+        description: The kind of resource.
+        required: false
+        type: str
+        default: ZosEndpoint
     endpointType:
         description: Sets endpoint type to remote or local.
         required: true
         type: str
+        choices: [local, remote]
     host:
         description: If provided, it sets host of the zosendpoint.
         required: false
@@ -70,6 +62,8 @@ options:
         description: If provided, it sets vars of the zosendpoint.
         required: false
         type: list
+        default: []
+        elements: str
 
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
@@ -121,7 +115,20 @@ errMsg:
 
 '''
 
+from ansible.module_utils.basic import AnsibleModule
+DEPENDENCY_IMPORT_ERROR = None
+
+try:
+    from jinja2 import Environment, FileSystemLoader
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
+except ImportError as e:
+    DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
+
+
 def run_zosendpoint_module():
+
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
         kind=dict(type='str', default="ZosEndpoint"),
@@ -130,14 +137,14 @@ def run_zosendpoint_module():
         namespace=dict(type='str', required=True),
         host=dict(type='str', required=False),
         port=dict(type='int', required=False),
-        endpointType=dict(type='str', required=True, choices=["remote", "local" ]),
-        variables=dict(type="list", required=False, default=[]),
-        state=dict(type='str', required=True, choices=[ "absent", "present", "patched" ]),
+        endpointType=dict(type='str', required=True, choices=["remote", "local"]),
+        variables=dict(type="list", required=False, elements="str", default=[]),
+        state=dict(type='str', required=True, choices=["absent", "present", "patched"]),
     )
 
     # make sure host and port is provided when endpointType is set to "remote"
     required_if_args = [
-    ["endpointType", "remote", ["host", "port"]]
+        ["endpointType", "remote", ["host", "port"]]
     ]
 
     # seed the result dict in the object
@@ -150,6 +157,9 @@ def run_zosendpoint_module():
         error=False,
     )
 
+    if DEPENDENCY_IMPORT_ERROR is not None:
+        module = AnsibleModule(argument_spec=module_args)
+        module.fail_json(msg=DEPENDENCY_IMPORT_ERROR)
     # the AnsibleModule object will be our abstraction working with Ansible
     # this includes instantiation, a couple of common attr would be the
     # args/params passed to the execution, as well as if the module
@@ -158,12 +168,12 @@ def run_zosendpoint_module():
         module_class=AnsibleModule,
         argument_spec=module_args,
         supports_check_mode=True,
-        required_if = required_if_args,
+        required_if=required_if_args,
     )
 
     errorMsg = verify_arguments_passed(module)
 
-    if errorMsg != None:
+    if errorMsg is not None:
         result['error'] = True
         module.fail_json(msg=errorMsg, **result)
 
@@ -183,7 +193,9 @@ def run_zosendpoint_module():
 
     try:
         run_module(module)
+        result["changed"] = True
     except CoreException as e:
+        result["error"] = True
         module.fail_from_exception(e)
 
     # # during the execution of the module, if there is an exception or a
@@ -194,6 +206,7 @@ def run_zosendpoint_module():
     # # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
+
 def verify_arguments_passed(module):
 
     if module.params["endpointType"] == "local" and (module.params["host"] or module.params["port"]):
@@ -202,10 +215,11 @@ def verify_arguments_passed(module):
     if module.params["endpointType"] == "remote" and module.params["host"] == "":
         return "Valid Host required when endpointType is remote"
 
-    if module.params["endpointType"] == "remote" and module.params["port"] <=0 :
+    if module.params["endpointType"] == "remote" and module.params["port"] <= 0 :
         return "Valid Port required when endpointType is remote"
 
     return None
+
 
 def main():
     run_zosendpoint_module()

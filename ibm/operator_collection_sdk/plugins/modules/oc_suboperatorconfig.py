@@ -2,35 +2,12 @@
 
 # Copyright: (c) 2024, Zarin Ohiba <zarin.ohiba@ibm.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-from __future__ import (absolute_import, division, print_function)
-import kubernetes
-import csv, os, json, yaml
-from jinja2 import Environment, FileSystemLoader
 
-from kubernetes import client, config, watch
-from ansible_collections.kubernetes.core.plugins.module_utils.ansiblemodule import (
-    AnsibleModule,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.args_common import (
-    AUTH_ARG_SPEC,
-    DELETE_OPTS_ARG_SPEC,
-    NAME_ARG_SPEC,
-    RESOURCE_ARG_SPEC,
-    WAIT_ARG_SPEC,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import (
-    AnsibleK8SModule,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import (
-    CoreException,
-)
-from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import (
-    run_module,
-)
+from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: oc_suboperatorconfig
 
@@ -42,10 +19,13 @@ description: This module creates a suboperatorconfig.
 
 options:
     state:
-        description: Determines if an object should be created, patched, or deleted. When set to C(present), an object will be created, if it does not already exist. If set to C(absent), an existing object will be deleted. If set to C(present), an existing object will be patched, if its attributes differ from those specified using I(resource_definition) or I(src). C(patched) state is an existing resource that has a given patch applied. If the resource doesn't exist, silently skip it (do not raise an error).
+        description: >
+          Determines if an object should be created, patched, or deleted. When set to C(present), an object will be created,
+          if it does not already exist. If set to C(absent), an existing object will be deleted.
+          If set to C(present), an existing object will be patched, if its attributes differ from those specified using I(resource_definition) or I(src).
+          C(patched) state is an existing resource that has a given patch applied. If the resource doesn't exist, silently skip it (do not raise an error).
         type: str
         required: true
-        default: present
         choices: [ absent, present, patched ]
     name:
         description: The name of the zosendpoint.
@@ -55,17 +35,33 @@ options:
         description: The endpoint is created in this provided namespace.
         required: true
         type: str
+    api_version:
+        description: The apiversion.
+        required: false
+        type: str
+        default: zoscb.ibm.com/v2beta2
+    kind:
+        description: The kind of resource.
+        required: false
+        type: str
+        default: SubOperatorConfig
     credentialType:
         description: Sets credential type to shared or personal.
         required: true
         type: str
+        choices: [ personal, shared ]
     collection_name:
         description: Sets location of the collection source.
         required: true
         type: str
-    
+    endpointMapping:
+        description: Sets location of the collection source.
+        required: true
+        type: list
+        elements: dict
 
-    
+
+
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
 # extends_documentation_fragment:
@@ -73,7 +69,7 @@ options:
 
 author:
     - Your Name (@zohiba)
-'''
+"""
 
 EXAMPLES = r'''
 # Pass in a message
@@ -83,9 +79,9 @@ EXAMPLES = r'''
     namespace: test-world
     credentialType: shared
     endpointMapping:
-    - namespace: "test-world"
+      - namespace: "test-world"
         zosendpoints:
-        - name: "new-ep1"
+          - name: "new-ep1"
     collection_name: "zos-package-manager.zpm.2.1.0"
     state: present
 
@@ -97,9 +93,9 @@ EXAMPLES = r'''
     namespace: "zarin-dev"
     credentialType: personal
     endpointMapping:
-    - namespace: "zarin-dev"
+      - namespace: "zarin-dev"
         zosendpoints:
-        - name: "new-ep1"
+          - name: "new-ep1"
     collection_name: "zos-package-manager.zpm.2.1.0"
 # fail the module
 - name: Test failure of the module
@@ -116,15 +112,26 @@ resource:
     description: The resource that was modified.
     type: str
     returned: always
-   
+
 errMsg:
     description: The error message that the test module generates.
     type: str
     returned: always
-   
+
 '''
 
 from ansible.module_utils.basic import AnsibleModule
+DEPENDENCY_IMPORT_ERROR = None
+
+try:
+    from jinja2 import Environment, FileSystemLoader
+    # from ansible.module_utils.basic import AnsibleModule
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
+    from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
+except ImportError as e:
+    DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
+
 
 def run_suboperatorconfig_module():
     # define available arguments/parameters a user can pass to the module
@@ -134,9 +141,9 @@ def run_suboperatorconfig_module():
         name=dict(type='str', required=True),
         namespace=dict(type='str', required=True),
         collection_name=dict(type='str', required=True),
-        credentialType=dict(type='str', required=True, choices=["personal", "shared" ]),
-        endpointMapping=dict(type="list", required=True),
-        state=dict(type='str', required=True, choices=[ "absent", "present", "patched" ]),
+        credentialType=dict(type='str', required=True, choices=["personal", "shared"]),
+        endpointMapping=dict(type="list", elements="dict", required=True),
+        state=dict(type='str', required=True, choices=["absent", "present", "patched"]),
     )
 
     # seed the result dict in the object
@@ -149,6 +156,9 @@ def run_suboperatorconfig_module():
         error=False,
     )
 
+    if DEPENDENCY_IMPORT_ERROR is not None:
+        module = AnsibleModule(argument_spec=module_args)
+        module.fail_json(msg=DEPENDENCY_IMPORT_ERROR)
     # the AnsibleModule object will be our abstraction working with Ansible
     # this includes instantiation, a couple of common attr would be the
     # args/params passed to the execution, as well as if the module
@@ -174,7 +184,9 @@ def run_suboperatorconfig_module():
 
     try:
         run_module(module)
+        result["changed"] = True
     except CoreException as e:
+        result["error"] = True
         module.fail_from_exception(e)
     # during the execution of the module, if there is an exception or a
     # conditional state that effectively causes a failure, run
@@ -184,8 +196,10 @@ def run_suboperatorconfig_module():
     # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
+
 def main():
     run_suboperatorconfig_module()
+
 
 if __name__ == '__main__':
     main()
