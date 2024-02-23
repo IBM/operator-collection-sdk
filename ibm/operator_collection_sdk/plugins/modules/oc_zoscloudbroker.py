@@ -294,7 +294,6 @@ def run_zoscloudbroker_module():
 
     result = dict(
         changed=False,  # if this module effectively modified the target
-        state=None,     # any data passed back for consumption in a subsequent task
         error=False
     )
 
@@ -312,7 +311,6 @@ def run_zoscloudbroker_module():
 
     # attempt to modify target
     try:
-        config.load_kube_config()
         run_module(module)
         result["changed"] = True
     except CoreException as e:
