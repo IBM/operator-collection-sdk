@@ -66,7 +66,7 @@ For this reason, the playbook MUST use the `hosts: all` value as seen below.
 When the Ansible Playbook is executed by z/OS Cloud Broker, the `hosts: all` value is limited to the selected z/OS Endpoint by setting the [`--limit` flag](https://docs.ansible.com/ansible/latest/inventory_guide/intro_patterns.html#patterns-and-ad-hoc-commands). This is done internally by z/OS Cloud Broker and no additional playbook modifications must be made to handle host limiting.
 
 ### Dual Execution
-If a playbook is intended to co-exist as both a SubOperator and a native Ansible playbook able to executed outside of Kubernetes, use the `k8s_managed` [provided variable](/docs/operator-collection-sdk/operator-collection-specification/#provided-variables) to ensure tasks that require Kubernetes environments will not cause failures.
+If a playbook is intended to co-exist as both a SubOperator and a native Ansible playbook able to executed outside of Kubernetes, use the `k8s_managed` [provided variable](/docs/ibm-operator-collection-sdk/operator-collection-specification/#provided-variables) to ensure tasks that require Kubernetes environments will not cause failures.
 
 ```yaml
 - name: Retrieve all information about a Kubernetes custom resource (CR)
@@ -84,7 +84,7 @@ When creating playbooks that are driven from Kubernetes Custom Resources (CRs), 
 
 To pull the full information of a Custom Resource as is currently visible in Kubernetes, use the `kubernetes.core.k8s_info` [module](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_info_module.html). 
 
-Typically, this is only needed for scenarios when you want to retrieve the `status` of the CR or additional metadata. Additional information about the CR is also provided in the Operator Collection spec's [provided variable](/docs/operator-collection-sdk/operator-collection-specification/#provided-variables).
+Typically, this is only needed for scenarios when you want to retrieve the `status` of the CR or additional metadata. Additional information about the CR is also provided in the Operator Collection spec's [provided variable](/docs/ibm-operator-collection-sdk/operator-collection-specification/#provided-variables).
 
 You may want to understand the current values of the `status` fields to identify if this resource has been previously provisioned or if it's in some improper functional state. In these cases, use an Ansible task similar to the following example.
 
@@ -106,7 +106,7 @@ You may want to understand the current values of the `status` fields to identify
       reserved_ips: "{{ cr_info.resources[0].status.some_field }}"
 ```
 
-**Note**: The example above contains Jinja variable references (`k8s_cr_version`, `ansible_operator_meta.name`, `ansible_operator_meta.namespace`) that are part of the [provided variable](/docs/operator-collection-sdk/operator-collection-specification/#provided-variables) made avaiable to the ansible playbook when being executed as a z/OS Cloud Broker suboperator.
+**Note**: The example above contains Jinja variable references (`k8s_cr_version`, `ansible_operator_meta.name`, `ansible_operator_meta.namespace`) that are part of the [provided variable](/docs/ibm-operator-collection-sdk/operator-collection-specification/#provided-variables) made avaiable to the ansible playbook when being executed as a z/OS Cloud Broker suboperator.
 
 ### Setting CR status
 To make the Ansible playbooks truly part of the Kubernetes ecosystem and report updates back to the Kubernetes custom resource, usage of the `operator_sdk.utils.k8s_status` [module](https://galaxy.ansible.com/operator_sdk/util) is necessary.
@@ -126,7 +126,7 @@ This is especially important if you want the Custom Resource that is being manag
       bar_output_var: true
 ```
 
-**Note**: The example above contains Jinja variable references (`k8s_cr_version`, `ansible_operator_meta.name`, `ansible_operator_meta.namespace`) that are part of the [provided variable](/docs/operator-collection-sdk/operator-collection-specification/#provided-variables) made avaiable to the ansible playbook when being executed as a z/OS Cloud Broker suboperator.
+**Note**: The example above contains Jinja variable references (`k8s_cr_version`, `ansible_operator_meta.name`, `ansible_operator_meta.namespace`) that are part of the [provided variable](/docs/ibm-operator-collection-sdk/operator-collection-specification/#provided-variables) made avaiable to the ansible playbook when being executed as a z/OS Cloud Broker suboperator.
 
 Any data can be added to the CR `status` with the following limitations:
 * The `status.conditions` fields are not modified

@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    # - name: Create ZosCloudBroker
+    #   ibm.operator_collection_sdk.oc_zoscloudbroker:
+    #     state: present
+    #     name: zoscloudbroker
+    #     namespace: yemi-test-2
+    #     accept_license: true
+    #     multi_namespace: true
+    #     log_level: debug
+    #     labels:
+    #       - test=true
+    #       - namespace=yemi-test
+    #     storage:
+    #       enabled: true
+    #       pvc: zoscloudbroker
+    #   register: zcb_results
+    
+    - name: Delete ZosCloudBroker
+      ibm.operator_collection_sdk.oc_zoscloudbroker:
+        state: absent
+        name: zoscloudbroker
+        namespace: yemi-test-2
+      register: zcb_results
+
+    - name: debug
+      debug: 
+        var: zcb_results
