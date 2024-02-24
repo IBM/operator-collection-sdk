@@ -38,4 +38,4 @@ These signatures should work with both the manual and galaxy import paths.
 ## Automate using GitHub Workflow Actions
 ---
 
-Alternatively, you can easily automate the process of building, signing, and deploying you Operator Collections with GitHub Workflow Actions. Follow the [CI/CD tutorial](/docs/operator-collection-sdk/building-deploying/cicd/#using-github-workflow-actions) to get started.
+Alternatively, you can easily automate the process of building, signing, and deploying you Operator Collections with GitHub Workflow Actions. Follow the [CI/CD tutorial](/docs/ibm-operator-collection-sdk/building-deploying/cicd/#using-github-workflow-actions) to get started.

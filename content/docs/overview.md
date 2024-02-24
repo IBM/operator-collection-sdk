@@ -12,7 +12,7 @@ draft: true
 The IBM Operator Collection SDK suite provides a range of tools designed to simplify and expidite the development of custom Operator Collections.
 
 
-* [IBM Operator Collection SDK](/docs/operator-collection-sdk/)\
+* [IBM Operator Collection SDK](/docs/ibm-operator-collection-sdk/)\
     The IBM OC SDK is an Ansible Collection that provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker which is part of the IBM Z® and Cloud Modernization Stack.
 
 * [IBM Operator Collection SDK Extension for VS Code](docs/operator-collection-sdk-vscode-extension/)\
