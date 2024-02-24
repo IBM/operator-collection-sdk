@@ -19,7 +19,7 @@ toc: false
     export PATH=~/.local/bin:PATH
     ```
 * [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands)
-* [Install the IBM Operator Collection SDK](/docs/operator-collection-sdk/installation/) Ansible Collection
+* [Install the IBM Operator Collection SDK](/docs/ibm-operator-collection-sdk/installation/) Ansible Collection
     * Alternatively, you can install this collection via the VS Code extension upon activation.
 * [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
 

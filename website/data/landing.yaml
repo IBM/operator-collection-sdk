@@ -54,7 +54,7 @@ featureGrid:
 
     - title: Integrated Operator Collection Linter
       icon: quick_reference_all
-      description: Streamline development with the integrated Operator Collection Linter. With linting enabled, errors in key Operator Collection files can be identified and resolved quickly.
+      description: Streamline development with the integrated Operator Collection linter. With linting enabled, errors in key Operator Collection files can be identified and resolved quickly.
 
 
 #  --------------------------------------------------------------------------------------
