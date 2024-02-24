@@ -22,4 +22,4 @@ The IBM Operator Collection SDK simplifies the development of these Operator Col
 - The ability to scaffold a new Operator Collection with a preconfigured set of requirements.
 - The ability to quickly debug your Ansible automation in an operator in OpenShift, using a local build of your latest Ansible modifications.
 
-This documentation also contains the [Operator Collection specification](/docs/operator-collection-sdk/operator-collection-specification/), along with a [tutorial](/docs/operator-collection-sdk/usage-guides/tutorial/) to guide you along the development process.
+This documentation also contains the [Operator Collection specification](/docs/ibm-operator-collection-sdk/operator-collection-specification/), along with a [tutorial](/docs/ibm-operator-collection-sdk/usage-guides/tutorial/) to guide you along the development process.
