@@ -235,7 +235,6 @@ DEPENDENCY_IMPORT_ERROR = None
 
 try:
     import re
-    from kubernetes import config
     from jinja2 import Environment, FileSystemLoader
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
@@ -350,8 +349,8 @@ def validate_module_parameters(module, result):
         ]
         for param in required_params:
             if param not in params_copy["storage"] \
-                  or params_copy["storage"][param] == "" \
-                  or params_copy["storage"][param] is None:
+                    or params_copy["storage"][param] == "" \
+                    or params_copy["storage"][param] is None:
                 module.fail_json(
                     msg=f"Missing required argument '{param}'. The following arguments must be suppled when \
                         argument storage.configure is True: {', '.join(required_params)}.",
