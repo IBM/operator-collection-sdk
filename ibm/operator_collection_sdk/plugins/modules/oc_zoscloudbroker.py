@@ -178,7 +178,7 @@ error:
   description: Boolean indicating whether the module errored.
   returned: always
   type: bool
-state:
+result:
   description: The Custom Resource Definition returned by the performed operation.
   returned: success
   type: complex
@@ -349,7 +349,9 @@ def validate_module_parameters(module, result):
             "storage_class"
         ]
         for param in required_params:
-            if param not in params_copy["storage"] or params_copy["storage"][param] is None:
+            if param not in params_copy["storage"] \
+                  or params_copy["storage"][param] == "" \
+                  or params_copy["storage"][param] is None:
                 module.fail_json(
                     msg=f"Missing required argument '{param}'. The following arguments must be suppled when \
                         argument storage.configure is True: {', '.join(required_params)}.",
