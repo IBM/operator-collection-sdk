@@ -205,58 +205,43 @@
       when: encrypt_cli_available is true and username != None and ssh_key != None and passphrase != None and zosendpoint_type == "remote"
 
     - name: Create SubOperatorConfig without mapped credential
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_suboperatorconfig:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: SubOperatorConfig
-          metadata:
-            name: "{{ operatorcollection_name }}-soc"
-            namespace: "{{ target_namespace }}"
-          spec:
-            credentialType: personal
-            mapping:
-              - namespace: "{{ target_namespace }}"
-                zosendpoints:
-                  - name: "{{ zosendpoint_name }}"
-            operatorCollection: "{{ operatorcollection_name }}"
-      when: encrypt_cli_available is false or (username == "" and ssh_key == "") and zosendpoint_type == "remote"
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+        credentialType: personal
+        endpointMapping:
+          - namespace: "{{ target_namespace }}"
+            zosendpoints:
+              - name: "{{ zosendpoint_name }}"
+        collection_name: "{{ operatorcollection_name }}"
+      when: (encrypt_cli_available is false or (username == "" and ssh_key == "")) and zosendpoint_type == "remote"
 
     - name: Create SubOperatorConfig without mapped credential for local endpoint type
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_suboperatorconfig:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: SubOperatorConfig
-          metadata:
-            name: "{{ operatorcollection_name }}-soc"
-            namespace: "{{ target_namespace }}"
-          spec:
-            credentialType: shared
-            mapping:
-              - namespace: "{{ target_namespace }}"
-                zosendpoints:
-                  - name: "{{ zosendpoint_name }}"
-            operatorCollection: "{{ operatorcollection_name }}"
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+        credentialType: shared
+        endpointMapping:
+          - namespace: "{{ target_namespace }}"
+            zosendpoints:
+              - name: "{{ zosendpoint_name }}"
+        collection_name: "{{ operatorcollection_name }}"
       when: zosendpoint_type == "local"
 
     - name: Create SubOperatorConfig with mapped credential
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_suboperatorconfig:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: SubOperatorConfig
-          metadata:
-            name: "{{ operatorcollection_name }}-soc"
-            namespace: "{{ target_namespace }}"
-          spec:
-            credentialType: shared
-            mapping:
-              - namespace: "{{ target_namespace }}"
-                zosendpoints:
-                  - name: "{{ zosendpoint_name }}"
-                    credentialName: "{{ credential_name }}"
-            operatorCollection: "{{ operatorcollection_name }}"
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+        credentialType: shared
+        endpointMapping:
+          - namespace: "{{ target_namespace }}"
+            zosendpoints:
+              - name: "{{ zosendpoint_name }}"
+                credentialName: "{{ credential_name }}"
+        collection_name: "{{ operatorcollection_name }}"
       when: encrypt_cli_available is true and username != "" and ssh_key != "" and zosendpoint_type == "remote"
 
     - name: Validate SubOperatorConfig installed successfully
