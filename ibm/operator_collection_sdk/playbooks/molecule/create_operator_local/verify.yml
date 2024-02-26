@@ -9,7 +9,7 @@
   connection: local
   gather_facts: false
   vars:
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
 
   tasks:
     - name: Validate ZosEndpoint

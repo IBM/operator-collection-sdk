@@ -110,4 +110,4 @@
 - import_playbook: ../../create_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
