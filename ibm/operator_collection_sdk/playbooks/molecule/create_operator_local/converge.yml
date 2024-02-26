@@ -7,10 +7,7 @@
 - name: Converge
   hosts: all
   connection: local
-  gather_facts: false
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
-    
+  gather_facts: false 
   tasks:
     - name: Create Namespace
       kubernetes.core.k8s:
@@ -110,4 +107,4 @@
 - import_playbook: ../../create_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
+    ocpnamespace: "{{ ocpnamespace }}"

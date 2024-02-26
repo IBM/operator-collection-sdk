@@ -26,7 +26,7 @@ provisioner:
         collection_namespace: ibm
         subscription_name: ibm-zoscb
         zoscloudbroker_name: zoscloudbroker
-        ocpNamespace: ${OCP_NAMESPACE:-molecule}
+        ocpnamespace: "{{ '${OCP_NAMESPACE:-molecule}' | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
         zosendpoint_name: ibmcloud-vm
         secret_name: "test-secret"
         openshift_token: ${OPENSHIFT_TOKEN}
