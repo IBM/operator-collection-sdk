@@ -8,15 +8,12 @@
   import_playbook: ../../delete_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
+    ocpnamespace: "{{ ocpnamespace }}"
 - name: Destroy
   hosts: localhost
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
-
   tasks:
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:

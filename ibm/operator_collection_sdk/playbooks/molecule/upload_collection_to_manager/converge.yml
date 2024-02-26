@@ -5,24 +5,25 @@
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
   tasks:
-  - name: Copy example Racf operator directory
-    ansible.builtin.copy:
-      src: "{{ operator_path }}"
-      dest: "{{ test_operator_path }}"
+    - name: Copy example Racf operator directory
+      ansible.builtin.copy:
+        src: "{{ operator_path }}"
+        dest: "{{ test_operator_path }}"
 
-  - name: Build Collection
-    ansible.builtin.include_role:
-      name: ../../roles/build_collection
-      tasks_from: main.yml
-    vars:
-      path: "{{ test_operator_path }}"
+    - name: Build Collection
+      ansible.builtin.include_role:
+        name: ../../roles/build_collection
+        tasks_from: main.yml
+      vars:
+        path: "{{ test_operator_path }}"
 
-  - name: Test "upload_collection_to_manager" role
-    ansible.builtin.include_role:
-      name: ../../roles/upload_collection_to_manager
-      tasks_from: main.yml
-    vars:
-      path: "{{ test_operator_path }}"
+    - name: Test "upload_collection_to_manager" role
+      ansible.builtin.include_role:
+        name: ../../roles/upload_collection_to_manager
+        tasks_from: main.yml
+      vars:
+        path: "{{ test_operator_path }}"
+        target_namespace: "{{ ocpnamespace }}"
       
 
     
