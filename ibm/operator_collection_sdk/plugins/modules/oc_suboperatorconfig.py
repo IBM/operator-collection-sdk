@@ -7,15 +7,15 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
-module: oc_zosendpoint
+module: oc_suboperatorconfig
 
-short_description: This module creates a zosendpoint
+short_description: This module creates a suboperatorconfig
 
 version_added: "1.0.0"
 
-description: This module creates a zosendpoint.
+description: This module creates a suboperatorconfig.
 
 options:
     state:
@@ -44,61 +44,66 @@ options:
         description: The kind of resource.
         required: false
         type: str
-        default: ZosEndpoint
-    endpointType:
-        description: Sets endpoint type to remote or local.
+        default: SubOperatorConfig
+    credentialType:
+        description: Sets credential type to shared or personal.
         required: true
         type: str
-        choices: [local, remote]
-    host:
-        description: If provided, it sets host of the zosendpoint.
-        required: false
+        choices: [ personal, shared ]
+    collection_name:
+        description: Sets location of the collection source.
+        required: true
         type: str
-    port:
-        description: If provided, it sets port of the zosendpoint.
-        required: false
-        type: int
-    variables:
-        description: If provided, it sets vars of the zosendpoint.
-        required: false
+    endpointMapping:
+        description: Sets location of the collection source.
+        required: true
         type: list
-        default: []
-        elements: str
+        elements: dict
+
+
 
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
 # extends_documentation_fragment:
-#     - ibm.operator_collection_sdk.my_doc_fragment_name
+#     - ocsdk.collection.my_doc_fragment_name
 
 author:
     - Your Name (@zohiba)
-'''
+"""
 
 EXAMPLES = r'''
 # Pass in a message
-- name: Test with remote endpointType
-  ibm.operator_collection_sdk.oc_zosendpoint:
-    name: endpoint-1
+- name: Test with shared suboperatorconfig
+  ibm.operator_collection_sdk.oc_suboperatorconfig:
+    name: suboperatorconfig-1
     namespace: test-world
-    host: test-host-1
-    port: 123
-    endpointType: remote
+    credentialType: shared
+    endpointMapping:
+      - namespace: "test-world"
+        zosendpoints:
+          - name: "new-ep1"
+    collection_name: "zos-package-manager.zpm.2.1.0"
     state: present
 
 # pass in a message and have changed true
-- name: Test with local endpointType
-  ibm.operator_collection_sdk.oc_zosendpoint:
-    name: endpoint-2
-    namespace: test-world
+- name: Test with personal suboperatorconfig
+  ibm.operator_collection_sdk.oc_suboperatorconfig:
+    name: suboperatorconfig-2
     state: present
-    endpointType: local
+    namespace: "zarin-dev"
+    credentialType: personal
+    endpointMapping:
+      - namespace: "zarin-dev"
+        zosendpoints:
+          - name: "new-ep1"
+    collection_name: "zos-package-manager.zpm.2.1.0"
 # fail the module
 - name: Test failure of the module
-  ibm.operator_collection_sdk.oc_zosendpoint:
-    name: endpoint-3
+  ibm.operator_collection_sdk.oc_suboperatorconfig:
+    name: suboperatorconfig-3
     namespace: test-world
-    state: blah
-    endpointType: blah
+    state: present
+    credentialType: blah
 '''
 
 RETURN = r'''
@@ -120,6 +125,7 @@ DEPENDENCY_IMPORT_ERROR = None
 
 try:
     from jinja2 import Environment, FileSystemLoader
+    # from ansible.module_utils.basic import AnsibleModule
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
@@ -127,25 +133,18 @@ except ImportError as e:
     DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
 
 
-def run_zosendpoint_module():
-
+def run_suboperatorconfig_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
-        kind=dict(type='str', default="ZosEndpoint"),
+        kind=dict(type='str', default="SubOperatorConfig"),
         api_version=dict(type='str', default="zoscb.ibm.com/v2beta2"),
         name=dict(type='str', required=True),
         namespace=dict(type='str', required=True),
-        host=dict(type='str', required=False),
-        port=dict(type='int', required=False),
-        endpointType=dict(type='str', required=True, choices=["remote", "local"]),
-        variables=dict(type="list", required=False, elements="str", default=[]),
+        collection_name=dict(type='str', required=True),
+        credentialType=dict(type='str', required=True, choices=["personal", "shared"]),
+        endpointMapping=dict(type="list", elements="dict", required=True),
         state=dict(type='str', required=True, choices=["absent", "present", "patched"]),
     )
-
-    # make sure host and port is provided when endpointType is set to "remote"
-    required_if_args = [
-        ["endpointType", "remote", ["host", "port"]]
-    ]
 
     # seed the result dict in the object
     # we primarily care about changed and resource
@@ -168,28 +167,20 @@ def run_zosendpoint_module():
         module_class=AnsibleModule,
         argument_spec=module_args,
         supports_check_mode=True,
-        required_if=required_if_args,
     )
 
-    errorMsg = verify_arguments_passed(module)
-
-    if errorMsg is not None:
-        result['error'] = True
-        module.fail_json(msg=errorMsg, **result)
-
     environment = Environment(loader=FileSystemLoader("./templates"))
-    template = environment.get_template("endpoint.yml")
+    template = environment.get_template("suboperatorconfig.yml")
     content = template.render(
         module.params
     )
-
     module.params["resource_definition"] = content
 
     # # if the user is working with this module in only check mode we do not
     # # want to make any changes to the environment, just return the current
     # # state with no modifications
-    # if module.check_mode:
-    #     module.exit_json(**result)
+    if module.check_mode:
+        module.exit_json(**result)
 
     try:
         run_module(module)
@@ -197,32 +188,17 @@ def run_zosendpoint_module():
     except CoreException as e:
         result["error"] = True
         module.fail_from_exception(e)
+    # during the execution of the module, if there is an exception or a
+    # conditional state that effectively causes a failure, run
+    # AnsibleModule.fail_json() to pass in the message and the result
 
-    # # during the execution of the module, if there is an exception or a
-    # # conditional state that effectively causes a failure, run
-    # # AnsibleModule.fail_json() to pass in the message and the result
-
-    # # in the event of a successful module execution, you will want to
-    # # simple AnsibleModule.exit_json(), passing the key/value results
+    # in the event of a successful module execution, you will want to
+    # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
 
-def verify_arguments_passed(module):
-
-    if module.params["endpointType"] == "local" and (module.params["host"] or module.params["port"]):
-        return "EndpointType local shouldn't have host or port defined"
-
-    if module.params["endpointType"] == "remote" and module.params["host"] == "":
-        return "Valid Host required when endpointType is remote"
-
-    if module.params["endpointType"] == "remote" and module.params["port"] <= 0 :
-        return "Valid Port required when endpointType is remote"
-
-    return None
-
-
 def main():
-    run_zosendpoint_module()
+    run_suboperatorconfig_module()
 
 
 if __name__ == '__main__':
