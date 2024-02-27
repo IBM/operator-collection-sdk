@@ -18,14 +18,13 @@
     - name: Get Manager Pod Name
       kubernetes.core.k8s_info:
         kind: Pod
-        namespace: "{{ target_namespace }}"
+        namespace: "{{ ocpnamespace }}"
         label_selectors:
           - component = manager
       register: pod_results
     
     - name: Remove Operator Collection from Manager Pod
       ansible.builtin.command: oc exec -i -n "{{ pod_results.resources[0].metadata.namespace }}" "{{ pod_results.resources[0].metadata.name }}" -- rm -rf collections/suboperator/"{{ operator_name }}"
-      register: pod_collections
       when: pod_results.resources | length > 0
     
     - name: Delete test Racf Collection
