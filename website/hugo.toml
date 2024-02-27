@@ -1,4 +1,4 @@
-baseURL = 'https://operatorcollection.io/'
+baseURL = 'https://ibm.github.io/operator-collection-sdk'
 languageCode = 'en-us'
 title = 'IBM Operator Collection SDK Documentation'
 

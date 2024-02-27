@@ -59,10 +59,9 @@
                     {{ with .subtitle }}
                     <p class="para-desc text-muted mb-0">{{ . | markdownify }}</p>
                     {{ end }}
-
                     <div class="mt-3">
                         {{ with .ctaButton }}
-                            <a href="{{ .Page.RelPermalink }}{{ .url }}" class="btn btn-lg btn-primary me-2 mt-2">
+                            <a href="{{ relLangURL .url }}" class="btn btn-lg btn-primary me-2 mt-2">
                                 {{ with .icon }}
                                     <span class="material-icons align-middle">{{ . }}</span>
                                 {{ end }}

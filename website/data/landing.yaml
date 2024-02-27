@@ -30,7 +30,7 @@ hero:
   ctaButton:
     icon: rocket_launch
     btnText: "Get Started"
-    url: "/docs/"
+    url: "/operator-collection-sdk/docs/"
 
 #  --------------------------------------------------------------------------------------
 #  *********************************** Feature Grid *************************************
