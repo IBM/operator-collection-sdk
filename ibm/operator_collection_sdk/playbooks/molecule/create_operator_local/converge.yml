@@ -107,4 +107,3 @@
 - import_playbook: ../../create_operator.yml
   vars:
     filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpnamespace }}"
