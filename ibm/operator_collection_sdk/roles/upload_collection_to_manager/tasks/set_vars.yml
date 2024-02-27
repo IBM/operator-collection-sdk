@@ -17,20 +17,20 @@
   when: target_namespace is undefined
 
 # Setting the "operator_name" and "operator_version" vars
+
 - name: Locate operator-config.yml file
   ansible.builtin.find:
     paths: "{{ path }}"
-    patterns: 'operator-config.yml,operator-config.yaml'
+    patterns: "operator-config.yml,operator-config.yaml"
   register: oc_file_results
   when: operator_name is undefined or operator_version is undefined
 
 - name: Verify operator-config.yml file exists in path
   ansible.builtin.fail:
-    msg: "Missing required variables \"operator_name\" and \"operator_version\". Variables must be supplied because the current path does not contain an operator-config.yml file. Path: {{ path }}"
-  when: >
-    oc_file_results.files | length == 0 
-    and operator_name is undefined 
-    or operator_version is undefined
+    msg: "Missing required variables 'operator_name' and 'operator_version'. Variables must be supplied because the current path does not contain an operator-config.yml file. Path: {{ path }}"
+  when:
+    - oc_file_results.files | length == 0
+    - (operator_name is undefined) or (operator_version is undefined)
 
 - name: Read operator-config.yml
   ansible.builtin.set_fact:

@@ -90,6 +90,7 @@
         wait: true
         wait_sleep: 5
         wait_timeout: 140
+        ignore_errors: true
 
     - name: Set OperatorCollection name
       ansible.builtin.set_fact:
