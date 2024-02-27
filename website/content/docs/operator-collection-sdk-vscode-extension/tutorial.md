@@ -19,7 +19,7 @@ This tutorial is a walkthrough of building a new operator collection that perfor
 
 ## Install or Upgrade the IBM Operator Collection SDK
 ---
-You can install or update the IBM Operator Collection SDK from the extension for VS Code if necessary. If you're installing it for the first time from the extension, make sure the [install the specified requirements](/docs/ibm-operator-collection-sdk/installation/#requirements).
+You can install or update the IBM Operator Collection SDK from the extension for VS Code if necessary. If you're installing it for the first time from the extension, make sure to [install the specified requirements](/docs/ibm-operator-collection-sdk/installation/#requirements).
 
 ![Upgrade the IBM Operator Collection SDK](/images/vs-code-extension/tutorial-install-ocsdk.png)
 
