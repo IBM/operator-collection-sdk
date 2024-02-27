@@ -35,7 +35,7 @@ where `PATH_TO_PYTHON` is the path to your python executable, i.e. `/usr/bin/pyt
 
 ## SSL Certificates
 ---
-If you experience issues with `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]`, or similar issues, you may need to install and use SSL Certificates before running this extension.
+If you experience issues with `urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]`, or similar issues, you may need to install and use SSL Certificates before running commands that connect to a cluster.
 
 To install SSL Certificates in Python, you can install the [`certifi`](https://pypi.org/project/certifi/) package via `pip`:
 

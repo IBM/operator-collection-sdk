@@ -5,6 +5,6 @@ description: "Guides on how to build, sign, and deploy your Operator Collections
 icon: "construction"
 date: "2024-02-09T16:02:17-08:00"
 lastmod: "2024-02-09T16:02:17-08:00"
-draft: true
+draft: false
 toc: true
 ---
