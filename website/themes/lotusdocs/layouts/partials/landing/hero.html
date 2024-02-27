@@ -62,7 +62,7 @@
 
                     <div class="mt-3">
                         {{ with .ctaButton }}
-                            <a href="{{ relLangURL .url }}" class="btn btn-lg btn-primary me-2 mt-2">
+                            <a href="{{ absURL .url }}" class="btn btn-lg btn-primary me-2 mt-2">
                                 {{ with .icon }}
                                     <span class="material-icons align-middle">{{ . }}</span>
                                 {{ end }}
@@ -72,7 +72,7 @@
                             </a>
                         {{ end }}
                         {{ with .cta2Button }}
-                        <a href="{{ relLangURL .url }}" class="btn btn-lg btn-outline-primary mt-2">
+                        <a href="{{ absURL .url }}" class="btn btn-lg btn-outline-primary mt-2">
                             {{ with .icon }}
                                 <span class="material-icons align-middle">{{ . }}</span>
                             {{ end }}
