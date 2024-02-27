@@ -4,8 +4,5 @@ examples/racf-operator/local/*
 .vscode/*
 *.idea/
 
-# Website
-website/public/
-website/resources/
-website/node_modules/
-website/tech-doc-hugo
+website/public/*
+website/resources/*
