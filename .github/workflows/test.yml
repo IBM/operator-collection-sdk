@@ -5,12 +5,12 @@ name: Test
 on:
   push:
     branches:
-      - '**'
+      - "**"
     paths-ignore:
-      - 'docs/**'
-      - '**.md'
+      - "docs/**"
+      - "**.md"
     tags-ignore:
-      - '**'
+      - "**"
   pull_request_target:
 
 jobs:
@@ -39,8 +39,8 @@ jobs:
       - name: Install Python Requirements
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-          cache: 'pip'
+          python-version: "3.10"
+          cache: "pip"
 
       - name: Perform PIP installs
         run: pip install ansible-lint==6.16.0
@@ -75,15 +75,19 @@ jobs:
       - name: Install Python Requirements
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-          cache: 'pip'
+          python-version: "3.10"
+          cache: "pip"
 
       - name: Perform PIP installs
         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
 
       - name: Perform collection installs
         run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
-      
+
+      - name: Perform Sanity Tests
+        working-directory: ${{ runner.home }}/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+        run: ansible-test sanity -v --venv
+
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -101,6 +105,6 @@ jobs:
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
         env:
-            OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-            OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-            ZOSCB_RELEASE: ibm-zoscb.${{ vars.ZOSCB_RELEASE }}
+          OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+          OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+          ZOSCB_RELEASE: ibm-zoscb.${{ vars.ZOSCB_RELEASE }}
