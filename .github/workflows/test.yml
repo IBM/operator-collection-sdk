@@ -84,8 +84,14 @@ jobs:
       - name: Perform collection installs
         run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
+      - name: Test path 1
+        run: ls ${GITHUB_WORKSPACE}
+
+      - name: Test path 2
+        run: ls ~/
+
       - name: Perform Sanity Tests
-        working-directory: ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+        working-directory: .ansible/collections/ansible_collections/ibm/operator_collection_sdk
         run: ansible-test sanity -v --venv
 
       - name: Install oc cli
