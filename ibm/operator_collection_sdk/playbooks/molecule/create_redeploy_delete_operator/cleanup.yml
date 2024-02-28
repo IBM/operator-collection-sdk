@@ -12,7 +12,7 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: Delete test Racf Collection
+    - name: Remove local build
       ansible.builtin.file:
-        path: "{{ test_operator_path }}"
+        path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/local"
         state: absent
