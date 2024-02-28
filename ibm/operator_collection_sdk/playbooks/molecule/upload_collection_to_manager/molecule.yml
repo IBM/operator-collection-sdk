@@ -16,6 +16,9 @@ provisioner:
   inventory:
     group_vars:
       all:
+        subscription_name: ibm-zoscb
+        zoscloudbroker_name: zoscloudbroker
+        zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.5}
         operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/"
         test_operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/"
         ocpnamespace: "{{ '${OCP_NAMESPACE:-molecule}' | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"

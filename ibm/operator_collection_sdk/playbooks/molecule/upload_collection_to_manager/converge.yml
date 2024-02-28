@@ -1,4 +1,12 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
 ---
+- name: Set up test environment
+  import_playbook: ../cluster_setup.yml
+
 - name: Converge
   hosts: all
   connection: local
