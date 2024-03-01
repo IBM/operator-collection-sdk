@@ -243,83 +243,6 @@ except ImportError as e:
     DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
 
 
-def run_zoscloudbroker_module():
-    module_args = dict(
-        state=dict(type="str", required=False, default="present", choices=["absent", "present"]),
-        name=dict(type="str", required=False, default="zoscloudbroker"),
-        namespace=dict(type="str", required=True),
-        accept_license=dict(type="bool", required=False, default=False),
-        labels=dict(type="list", elements="str", required=False, default=[]),
-        multi_namespace_suboperators=dict(type="bool", required=False, default=True, aliases=["multi_namespace"]),
-        log_level=dict(type="str", required=False, default="debug", choices=["info", "debug", "trace"]),
-        ansible_galaxy_configuration=dict(
-            type="dict",
-            required=False,
-            default=dict(enabled="true", url="https://galaxy.ansible.com"),
-            aliases=["galaxy_configuration", "galaxyConfig", "galaxy_config"],
-            options=dict(
-                enabled=dict(type="bool", required=False, default=True),
-                url=dict(type="str", required=False, default="https://galaxy.ansible.com"),
-            )
-        ),
-        storage=dict(
-            type="dict",
-            required=False,
-            options=dict(
-                configure=dict(type="bool", required=False),
-                enabled=dict(type="bool", required=False),
-                volume_access_mode=dict(type="str", default="ReadWriteMany", choices=["ReadWriteMany"]),
-                storage_size=dict(type="str", required=False, default="5Gi"),
-                storage_class=dict(type="str", required=False),
-                volume_mode=dict(type="str", required=False, default="Filesystem", choices=["Filesystem", "filesystem", "FILESYSTEM"]),
-                persistent_volume_claim=dict(type="str", required=False, aliases=["pvc", "volume_claim"])
-            )
-        )
-    )
-
-    if DEPENDENCY_IMPORT_ERROR is not None:
-        module = AnsibleModule(argument_spec=module_args)
-        module.fail_json(msg=DEPENDENCY_IMPORT_ERROR)
-
-    module = AnsibleK8SModule(
-        module_class=AnsibleModule,
-        argument_spec=module_args,
-        supports_check_mode=True,
-        required_if=[
-            ["state", "present", ["accept_license", "storage"], True],
-            ["state", "absent", ["name"], True]
-        ]
-    )
-
-    result = dict(
-        changed=False,  # if this module effectively modified the target
-        error=False
-    )
-
-    # if in only check mode, return the state with no modifications
-    if module.check_mode:
-        module.exit_json(**result)
-
-    validated_params = validate_module_parameters(module=module, result=result)
-
-    # load template and render CRD
-    environment = Environment(loader=FileSystemLoader("./templates/"))
-    template = environment.get_template("zoscloudbroker.yml")
-    custom_resource_definition = template.render(validated_params)
-    module.params["resource_definition"] = custom_resource_definition
-
-    # attempt to modify target
-    try:
-        run_module(module)
-        result["changed"] = True
-    except CoreException as e:
-        result["error"] = True
-        module.fail_from_exception(e)
-
-    # successful module execution, exit and pass results
-    module.exit_json(**result)
-
-
 def validate_module_parameters(module, result):
     # make a copy of module params
     params_copy = {**module.params}
@@ -382,8 +305,90 @@ def validate_module_parameters(module, result):
     return params_copy
 
 
+def create_and_validate_module():
+    module_args = dict(
+        state=dict(type="str", required=False, default="present", choices=["absent", "present"]),
+        name=dict(type="str", required=False, default="zoscloudbroker"),
+        namespace=dict(type="str", required=True),
+        accept_license=dict(type="bool", required=False, default=False),
+        labels=dict(type="list", elements="str", required=False, default=[]),
+        multi_namespace_suboperators=dict(type="bool", required=False, default=True, aliases=["multi_namespace"]),
+        log_level=dict(type="str", required=False, default="debug", choices=["info", "debug", "trace"]),
+        ansible_galaxy_configuration=dict(
+            type="dict",
+            required=False,
+            default=dict(enabled="true", url="https://galaxy.ansible.com"),
+            aliases=["galaxy_configuration", "galaxyConfig", "galaxy_config"],
+            options=dict(
+                enabled=dict(type="bool", required=False, default=True),
+                url=dict(type="str", required=False, default="https://galaxy.ansible.com"),
+            )
+        ),
+        storage=dict(
+            type="dict",
+            required=False,
+            options=dict(
+                configure=dict(type="bool", required=False),
+                enabled=dict(type="bool", required=False),
+                volume_access_mode=dict(type="str", default="ReadWriteMany", choices=["ReadWriteMany"]),
+                storage_size=dict(type="str", required=False, default="5Gi"),
+                storage_class=dict(type="str", required=False),
+                volume_mode=dict(type="str", required=False, default="Filesystem", choices=["Filesystem", "filesystem", "FILESYSTEM"]),
+                persistent_volume_claim=dict(type="str", required=False, aliases=["pvc", "volume_claim"])
+            )
+        )
+    )
+
+    if DEPENDENCY_IMPORT_ERROR is not None:
+        module = AnsibleModule(argument_spec=module_args)
+        module.fail_json(msg=DEPENDENCY_IMPORT_ERROR)
+
+    module = AnsibleK8SModule(
+        module_class=AnsibleModule,
+        argument_spec=module_args,
+        supports_check_mode=True,
+        required_if=[
+            ["state", "present", ["accept_license", "storage"], True],
+            ["state", "absent", ["name"], True]
+        ]
+    )
+
+    result = dict(
+        changed=False,  # if this module effectively modified the target
+        error=False
+    )
+
+    validated_params = validate_module_parameters(module=module, result=result)
+
+    return module, result, validated_params
+
+
+def run_zoscloudbroker_module(module, result, validated_params):
+    # if in only check mode, return the state with no modifications
+    if module.check_mode:
+        module.exit_json(**result)
+
+    # load template and render CRD
+    environment = Environment(loader=FileSystemLoader("./templates/"))
+    template = environment.get_template("zoscloudbroker.yml")
+    custom_resource_definition = template.render(validated_params)
+    module.params["resource_definition"] = custom_resource_definition
+
+    # attempt to modify target
+    try:
+        run_module(module)
+        result["changed"] = True
+    except CoreException as e:
+        result["error"] = True
+        module.fail_from_exception(e)
+
+    # successful module execution, exit and pass results
+    module.exit_json(**result)
+
+
 def main():
-    run_zoscloudbroker_module()
+    module, result, validated_params = create_and_validate_module()
+    run_zoscloudbroker_module(module, result, validated_params)
 
 
 if __name__ == '__main__':

@@ -82,17 +82,19 @@ jobs:
         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
 
       - name: Perform collection installs
-        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+        run: |
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
+          ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
-      - name: Test path 1
-        run: ls ${GITHUB_WORKSPACE}
-
-      - name: Test path 2
-        run: ls ~/
-
-      - name: Perform Sanity Tests
-        working-directory: .ansible/collections/ansible_collections/ibm/operator_collection_sdk
-        run: ansible-test sanity -v --venv
+      - name: Perform Ansible Sanity Tests
+        run: |
+          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+          ansible-test sanity -v --venv
+      
+      - name: Perform Ansible Unit Tests
+        run: |
+          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+          ansible-test units -v --venv
 
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
