@@ -1,0 +1,9 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Integration Test - oc_zoscloudbroker
+  debug:
+    msg: "TESTING"

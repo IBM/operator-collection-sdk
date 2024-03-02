@@ -123,7 +123,7 @@ class TestValidateParams(unittest.TestCase):
         assert ("TestLabel1" in labels and labels["TestLabel1"] == "LabelValue1")
         assert ("TestLabel2" in labels and labels["TestLabel2"] == "LabelValue2")
 
-    def test_module_validates_and_constructs_invalid_labels_arg(self):
+    def test_module_fails_when_labels_arg_invalid(self):
         with self.assertRaises(AnsibleFailJson) as result:
             misshapenLabel = "This=Is=A=Misshapen=Label"
 

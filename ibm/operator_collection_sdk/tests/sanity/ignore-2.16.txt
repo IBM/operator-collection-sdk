@@ -5,3 +5,6 @@ plugins/modules/oc_zoscloudbroker.py validate-modules:return-syntax-error # "met
 plugins/modules/oc_zoscloudbroker.py validate-modules:missing-gplv3-license # ignore gplv3 license, we use apache
 playbooks/templates/endpoint.yml yamllint!skip
 playbooks/templates/suboperatorconfig.yml yamllint!skip
+tests/integration/integration.sh shebang
+tests/sanity/sanity.sh shebang
+tests/unit/unit.sh shebang
