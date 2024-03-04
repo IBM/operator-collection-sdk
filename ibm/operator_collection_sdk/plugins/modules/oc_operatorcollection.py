@@ -211,6 +211,7 @@ def run_operatorcollection_module():
         if manager_pod_err is not None:
             result['error'] = True
             module.fail_json(msg=manager_pod_err, **result)
+        os.remove(filename)
 
     environment = Environment(loader=FileSystemLoader("./templates"))
     template = environment.get_template("operatorcollection.yml")
