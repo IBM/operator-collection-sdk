@@ -31,7 +31,7 @@ provisioner:
         secret_name: "test-secret"
         openshift_token: ${OPENSHIFT_TOKEN}
         openshift_server: ${OPENSHIFT_SERVER}
-        zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.6}
+        zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.5}
         skip_credential_check: true
 scenario:
   test_sequence:
