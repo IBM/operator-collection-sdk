@@ -129,6 +129,7 @@ try:
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
     import subprocess
     import yaml
+    import os
     from kubernetes import config, client
 except ImportError as e:
     DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
