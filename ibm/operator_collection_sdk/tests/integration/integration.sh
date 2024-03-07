@@ -99,8 +99,8 @@ echo "Tearing Down Cluster Environment after Integration Tests..."
 ANSIBLE_JINJA2_NATIVE=true ansible-playbook "$collection_path"/playbooks/molecule/cluster_clean.yml \
     --extra-vars @"$collection_path"/tests/integration/integration_config.yml
 
-exit_status="$?"
-if [[ ${exit_status} != 0 ]]; then
+_exit_status="$?"
+if [[ ${_exit_status} != 0 ]]; then
     echo -e "\n\033[1;31m Failed to tear down cluster environment after Integration Tests! Review logs. \033[00m"
 fi
 
