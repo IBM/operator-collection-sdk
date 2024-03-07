@@ -57,6 +57,7 @@ jobs:
     name: Test
     needs: [lint, authorize]
     runs-on: ${{matrix.os}}
+    environment: testenv
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
