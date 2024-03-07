@@ -121,13 +121,6 @@
       vars:
         path: "{{ local_directory }}"
 
-    - name: Upload collection to manager pod
-      ansible.builtin.include_role:
-        name: upload_collection_to_manager
-      vars:
-        path: "{{ local_directory }}"
-        namespace: "{{ target_namespace }}"
-
     - name: Set OperatorCollection name
       ansible.builtin.set_fact:
         operatorcollection_name: "{{ operator_name + '.' + operator_domain + '.' + operator_version }}"
@@ -165,22 +158,17 @@
       ansible.builtin.debug:
         msg: '{{ endpoint_output }}'
 
+    - name: Show local dir
+      ansible.builtin.debug:
+        msg: "{{ local_directory }}/local/builds/{{operator_version}}/{{operator_domain}}-{{operator_name}}-{{operator_version}}.tar.gz"
+
     - name: Create OperatorCollection
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_operatorcollection:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: OperatorCollection
-          metadata:
-            name: "{{ operatorcollection_name }}"
-            namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-          spec:
-            skipSignatureVerification: true
+        name: "{{ operatorcollection_name }}"
+        namespace: "{{ target_namespace }}"
+        skipSignatureVerification: true
+        collection_src: "{{ local_directory }}/local/builds/{{operator_version}}/{{operator_domain}}-{{operator_name}}-{{operator_version}}.tar.gz"
 
     - name: Validate OperatorCollection installed successfully
       kubernetes.core.k8s_info:
