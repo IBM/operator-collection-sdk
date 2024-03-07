@@ -82,6 +82,7 @@ try:
     from kubernetes import client, config
     import subprocess
     import yaml
+    import base64
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
 except ImportError as e:
@@ -144,8 +145,8 @@ def run_get_encrypted_secret_module():
             # print(result_command.stdout)
             result["changed"] = True
             data = yaml.safe_load(result_command.stdout)
-            result["ssh_key"] = data["data"]["ssh_key"]
-            result["username"] = data["data"]["username"]
+            result["ssh_key"] = base64.b64decode(data["data"]["ssh_key"])
+            result["username"] = base64.b64decode(data["data"]["username"])
         except subprocess.CalledProcessError as e:
             result["error"] = True
             # print("Command '{}' failed with exit code {}".format(e.cmd, e.returncode))
