@@ -96,6 +96,9 @@ jobs:
           cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
           ansible-test units -v --venv
 
+      - name: Perform Ansible Integration Tests
+        run: sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh --install-collection=false
+
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
         with:

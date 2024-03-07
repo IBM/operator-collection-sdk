@@ -4,6 +4,91 @@
 #
 
 ---
-- name: Integration Test - oc_zoscloudbroker
-  debug:
-    msg: "TESTING"
+- name: Test oc_zoscloudbroker module
+  block:
+    - name: Delete ZosCloudBroker if it exists
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+
+    - name: Create ZosCloudBroker
+      ibm.operator_collection_sdk.oc_zoscloudbroker:
+        state: present
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+        accept_license: true
+        multi_namespace: true
+        log_level: trace
+        labels:
+          - mylabel=testlabel
+        galaxy_configuration:
+          enabled: false
+          url: "www.example.com"
+        storage:
+          enabled: false
+          configure: false
+
+    - name: Validating ZosCloudBroker installed successfully
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+      register: zoscb_results
+      until: "zoscb_results.resources[0].status.phase == 'Successful'"
+      retries: 30
+      delay: 5
+
+    - name: Assert ZosCloudBroker fields are accurate
+      ansible.builtin.assert:
+        that:
+          - zoscb_results.resources[0].spec.galaxyConfig.enabled == false
+          - zoscb_results.resources[0].spec.galaxyConfig.galaxyURL == 'www.example.com'
+          - zoscb_results.resources[0].metadata.labels.mylabel == 'testlabel'
+          - zoscb_results.resources[0].spec.logLevel == 'trace'
+          - zoscb_results.resources[0].spec.storage.enabled == false
+          - zoscb_results.resources[0].spec.storage.configure == false
+
+    - name: Delete ZosCloudBroker
+      ibm.operator_collection_sdk.oc_zoscloudbroker:
+        state: absent
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+      register: zcb_results
+
+    - name: Validate ZosCloudBroker is deleted
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+      register: zoscb_results
+
+    - name: Assert ZosCloudBroker is deleted
+      ansible.builtin.assert:
+        that: 
+          - zoscb_results.resources | length == 0
+
+  always:
+    - name: Delete ZosCloudBoker
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+      when: zoscloudbroker_name is defined
+
+    - name: Revert Changes to Cluster Environment
+      include_tasks: revert_changes.yml

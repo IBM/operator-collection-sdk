@@ -234,8 +234,10 @@ from ansible.module_utils.basic import AnsibleModule
 DEPENDENCY_IMPORT_ERROR = None
 
 try:
+    import os
     import re
     from jinja2 import Environment, FileSystemLoader
+    from ..module_utils.util import get_collection_root_path
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
@@ -369,8 +371,14 @@ def run_zoscloudbroker_module(module, result, validated_params):
         module.exit_json(**result)
 
     # load template and render CRD
-    environment = Environment(loader=FileSystemLoader("./templates/"))
-    template = environment.get_template("zoscloudbroker.yml")
+    collections_root_path, error = get_collection_root_path()
+    if error is not None:
+        module.fail_json(msg=f"Failed to locate the ibm.operator_collection_sdk collection in paths \
+                              specified under COLLECTIONS_PATHS in the ansible.cfg: {error}")
+
+    template_path = os.path.join(collections_root_path, "playbooks", "templates")
+    environment = Environment(loader=FileSystemLoader(searchpath=template_path))
+    template = environment.get_template("zoscloudbroker.yml.j2")
     custom_resource_definition = template.render(validated_params)
     module.params["resource_definition"] = custom_resource_definition
 

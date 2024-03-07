@@ -1,10 +1,11 @@
-{# templates/zoscloudbroker.yml #}
+{# templates/zoscloudbroker.yml.j2 #}
 
 apiVersion: zoscb.ibm.com/v2beta1
 kind: ZosCloudBroker
 metadata:
   name: {{name}}
   namespace: {{namespace}}
+  labels: {{ labels }}
 spec:
   catalogResources: {}
   galaxyConfig:
@@ -13,7 +14,6 @@ spec:
   license:
     accept: {{ accept_license }}
   logLevel: {{ log_level }}
-  labels: {{ labels }}
   managerResources: {}
   multiNamespace: {{ multi_namespace_suboperators }}
   storage:

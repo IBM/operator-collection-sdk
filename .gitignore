@@ -4,3 +4,4 @@ examples/racf-operator/local/*
 .vscode/*
 *.idea/
 __pycache__
+integration_config.yml

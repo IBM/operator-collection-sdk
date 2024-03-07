@@ -1,23 +1,50 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # (c) Copyright IBM Corp. 2024
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
-cwd=$(pwd)
-if [[ ${cwd} =~ "ibm/operator_collection_sdk" ]]; then 
-    echo "Installing collection locally..."
-    echo "\n"
+function parseCommandLine {
+    for arg in "$@"; do
+        case $arg in
+            -i=*|--install-collection=*)
+                install_collection=${arg#*=}
+                break
+        ;;
+            -i|--install-collection)
+                install_collection=true
+                break
+        ;;
+            *)
+                echo "Unrecognized option: $arg"
+                echo "Usage: [--install-collection=<true|false>] (alias: [-i=<true|false>]), default: true"
+                exit 1;
+        ;;
+        esac
+    done
 
-    collection_path=$(echo ${cwd} | sed -e 's/ibm\/operator_collection_sdk.*$/ibm\/operator_collection_sdk/g')
-    ansible-galaxy collection install  ${collection_path} -f
+    if [[ $(echo "${install_collection}" | tr '[:upper:]' '[:lower:]') == "true" ]]; then
+        install_collection=true
+    else
+        install_collection=false
+    fi
+}
 
-    cd ${cwd}
-else 
-    echo -e "\n\033[1;31m Expected script to be run from somewhere within '~/.../ibm/operator_collection_sdk/.../' instead got '${cwd}'\033[00m" 
-    exit 1
+install_collection=true
+parseCommandLine "$@"
+
+if [[ "${install_collection}" == "true" ]]; then
+    cwd=$(pwd)
+    if [[ ${cwd} =~ "ibm/operator_collection_sdk" ]]; then 
+        echo "\n\033[1;32m Installing collection locally... \033[00m"
+        collection_path=$(echo ${cwd} | sed -e 's/ibm\/operator_collection_sdk.*$/ibm\/operator_collection_sdk/g')
+        ansible-galaxy collection install  ${collection_path} -f
+    else 
+        echo -e "\n\033[1;31m Expected script to be run from somewhere within '~/**/ibm/operator_collection_sdk/*' instead got '${cwd}'\033[00m" 
+        exit 1
+    fi
 fi
 
-Run Sanity Tests
+# Run Sanity Tests
 cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
 ansible-test sanity -v --venv
 exit_status=$(echo $?)

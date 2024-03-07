@@ -1,0 +1,11 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+# Leave a trailing newline at the end of this file.
+# Do not add secrets/tokens to this file.
+---
+ocp_namespace: ${OCP_NAMESPACE:-ocsdk-integration}
+zoscb_release: ${ZOSCB_RELEASE:-ibm-zoscb.v2.2.5}
+zoscloudbroker_name: zoscloudbroker
+subscription_name: ibm-zoscb
