@@ -86,7 +86,7 @@ jobs:
       #   with:
       #     collection-root: /ibm/operator_collection_sdk/
       #     ansible-core-version: stable-2.16
-      #     target-python-version: 3.11
+      #     target-python-version: 3.10
       #     testing-type: units
       #     test-deps: >-
       #       kubernetes.core
@@ -111,7 +111,7 @@ jobs:
         with:
           collection-root: /ibm/operator_collection_sdk/
           ansible-core-version: stable-2.16
-          target-python-version: 3.11
+          target-python-version: 3.10
           controller-python-version: auto
           testing-type: integration
           test-deps: >-
