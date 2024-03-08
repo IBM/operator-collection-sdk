@@ -8,10 +8,9 @@ import os
 import subprocess
 from re import findall
 from json import loads
-from typing import Optional, Tuple
 
 
-def get_collection_root_path() -> Tuple[Optional[str], Optional[str]]:
+def get_collection_root_path():
     error = None
     collections_root_path = None
 

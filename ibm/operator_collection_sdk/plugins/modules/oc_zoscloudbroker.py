@@ -236,6 +236,7 @@ DEPENDENCY_IMPORT_ERROR = None
 try:
     import os
     import re
+    import copy
     from jinja2 import Environment, FileSystemLoader
     from ..module_utils.util import get_collection_root_path
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.core import AnsibleK8SModule
@@ -247,7 +248,7 @@ except ImportError as e:
 
 def validate_module_parameters(module, result):
     # make a copy of module params
-    params_copy = {**module.params}
+    params_copy = copy.deepcopy(module.params)
 
     if params_copy["state"] == "absent":
         return params_copy
