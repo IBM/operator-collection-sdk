@@ -277,8 +277,8 @@ def validate_module_parameters(module, result):
                     or params_copy["storage"][param] == "" \
                     or params_copy["storage"][param] is None:
                 module.fail_json(
-                    msg=f"Missing required argument '{param}'. The following arguments must be suppled when \
-                        argument storage.configure is True: {', '.join(required_params)}.",
+                    msg="Missing required argument '{}'. The following arguments must be suppled when \
+                        argument storage.configure is True: {}.".format(param, ', '.join(required_params)),
                     **result)
     elif params_copy["storage"]["enabled"]:
         if "persistent_volume_claim" not in params_copy["storage"] \
@@ -295,8 +295,8 @@ def validate_module_parameters(module, result):
         for label in params_copy["labels"]:
             if re.match("^[^=]*=[^=]*$", label) is None:
                 module.fail_json(
-                    msg=f"Recieved label with misshapen form: '{label}'. Each label in the list should take the \
-                        form 'key=value'.",
+                    msg="Recieved label with misshapen form: '{}'. Each label in the list should take the \
+                        form 'key=value'.".format(label),
                     **result)
             else:
                 [key, value] = label.split("=")
@@ -373,8 +373,8 @@ def run_zoscloudbroker_module(module, result, validated_params):
     # load template and render CRD
     collections_root_path, error = get_collection_root_path()
     if error is not None:
-        module.fail_json(msg=f"Failed to locate the ibm.operator_collection_sdk collection in paths \
-                              specified under COLLECTIONS_PATHS in the ansible.cfg: {error}")
+        module.fail_json(msg="Failed to locate the ibm.operator_collection_sdk collection in paths \
+                              specified under COLLECTIONS_PATHS in the ansible.cfg: {}".format(error))
 
     template_path = os.path.join(collections_root_path, "playbooks", "templates")
     environment = Environment(loader=FileSystemLoader(searchpath=template_path))

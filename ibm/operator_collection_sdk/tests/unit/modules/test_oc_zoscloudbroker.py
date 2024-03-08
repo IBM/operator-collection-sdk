@@ -135,8 +135,8 @@ class TestValidateParams(unittest.TestCase):
         assert (
             error_equal(
                 result.exception.args[0]["msg"],
-                f"Recieved label with misshapen form: '{misshapenLabel}'. Each label in the list should take the \
-                form 'key=value'."))
+                "Recieved label with misshapen form: '{}'. Each label in the list should take the \
+                form 'key=value'.".format(misshapenLabel)))
 
         with self.assertRaises(AnsibleFailJson) as result:
             misshapenLabel = "AMisshapenLabel"
@@ -148,5 +148,5 @@ class TestValidateParams(unittest.TestCase):
         assert (
             error_equal(
                 result.exception.args[0]["msg"],
-                f"Recieved label with misshapen form: '{misshapenLabel}'. Each label in the list should take the \
-                form 'key=value'."))
+                "Recieved label with misshapen form: '{}'. Each label in the list should take the \
+                form 'key=value'.".format(misshapenLabel)))

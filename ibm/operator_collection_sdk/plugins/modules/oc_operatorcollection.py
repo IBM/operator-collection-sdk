@@ -280,7 +280,7 @@ def extract_and_grep(localpath):
         return filename, "HII"
 
     except Exception as e:
-        return "", f"Error extracting operator-config yaml: {e}"
+        return "", "Error extracting operator-config yaml: {}".format(e)
 
 
 def fetch_manager_pod_name_and_copy_collection_to_manager(namespace, localpath, name, version):
@@ -309,13 +309,12 @@ def fetch_manager_pod_name_and_copy_collection_to_manager(namespace, localpath, 
             oc_command = "oc cp " + localpath + " " + remote_dir
             result = subprocess.run(oc_command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
         except subprocess.CalledProcessError as e:
-            return f"Error copying tar file to pod: {e}"
+            return "Error copying tar file to pod: {}".format(e)
 
-        # print(f"Successfully copied {localpath} to {pod_name} at {remote_dir}")
         return None
 
     except Exception as e:
-        return f"Error fetching manager pod info: {e}"
+        return "Error fetching manager pod info: {}".format(e)
     return None
 
 
