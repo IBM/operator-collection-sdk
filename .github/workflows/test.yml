@@ -28,42 +28,40 @@ jobs:
     steps:
       - run: true
 
-  # lint:
-  #   name: Lint
-  #   needs: authorize
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check-out repository for Branch builds
-  #       uses: actions/checkout@v3
-  #       if: github.event_name != 'pull_request_target'
+  lint:
+    name: Lint
+    needs: authorize
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository for Branch builds
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request_target'
 
-  #     - name: Check-out repository for PR builds
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: "refs/pull/${{ github.event.number }}/merge"
-  #       if: github.event_name == 'pull_request_target'
+      - name: Check-out repository for PR builds
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+        if: github.event_name == 'pull_request_target'
 
-  #     - name: Install Python Requirements
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.10"
-  #         cache: "pip"
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-  #     - name: Perform PIP installs
-  #       run: pip install ansible-lint==6.16.0
+      - name: Perform PIP installs
+        run: pip install ansible-lint==6.16.0
 
-  #     - name: Perform collection installs
-  #       run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
-  #     - name: Run ansible-lint
-  #       run: |
-  #         ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
-  #         ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
-
+      - name: Run ansible-lint
+        run: |
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
+          ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
 
   ansible-test:
     name: Run Ansible Tests (Ⓐ${{ matrix.ansible }})
-    # needs: [lint, authorize]
     needs: [authorize]
     runs-on: >-
       ${{ contains(fromJson(
@@ -75,44 +73,48 @@ jobs:
           - stable-2.16
           - milestone
     steps:
-      - name: Perform sanity testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          testing-type: sanity
+      # - name: Perform sanity testing with ansible-test
+      #   uses: ansible-community/ansible-test-gh-action@release/v1
+      #   with:
+      #     collection-root: /ibm/operator_collection_sdk/
+      #     ansible-core-version: stable-2.16
+      #     testing-type: sanity
 
-      - name: Perform unit testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          target-python-version: 3.11
-          testing-type: units
-          test-deps: >-
-            kubernetes.core
+      # - name: Perform unit testing with ansible-test
+      #   uses: ansible-community/ansible-test-gh-action@release/v1
+      #   with:
+      #     collection-root: /ibm/operator_collection_sdk/
+      #     ansible-core-version: stable-2.16
+      #     target-python-version: 3.11
+      #     testing-type: units
+      #     test-deps: >-
+      #       kubernetes.core
+
+      - name: Setup Cluster Environment after integration Tests
+        run: |
+          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
       - name: Perform integration testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
           collection-root: /ibm/operator_collection_sdk/
           ansible-core-version: stable-2.16
-          pre-test-cmd: |
-            sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
-              --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           target-python-version: 3.11
           controller-python-version: auto
-          integration-retry-on-error: true
           testing-type: integration
           test-deps: >-
             kubernetes.core
 
+      - name: Cleanup Cluster Environment after integration Tests
+        run: |
+          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
+            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+
   test:
     name: Test
-    # needs: [lint, authorize]
-    needs: [authorize]
+    needs: [lint, authorize]
     runs-on: ${{matrix.os}}
-    environment: testenv
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
@@ -141,11 +143,6 @@ jobs:
         run: |
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
           ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
-
-      - name: Cleanup Cluster Environment after integration Tests
-        run: |
-          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
-            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
