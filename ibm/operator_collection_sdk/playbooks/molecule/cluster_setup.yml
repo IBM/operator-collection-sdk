@@ -19,6 +19,11 @@
         var: python_path
       when: python_path.stdout_lines | length > 0
 
+    - name: test
+      pip:
+        name:
+          - kubernetes
+
     - name: Create Namespace
       kubernetes.core.k8s:
         state: present
