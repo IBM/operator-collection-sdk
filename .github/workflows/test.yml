@@ -97,7 +97,6 @@ jobs:
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
 
       - name: Setup Cluster Environment after integration Tests
-        shell: bash
         run: |
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
@@ -117,7 +116,6 @@ jobs:
 
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
-        shell: bash
         run: |
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
