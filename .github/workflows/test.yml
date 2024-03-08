@@ -72,8 +72,6 @@ jobs:
     strategy:
       matrix:
         ansible:
-          - stable-2.14
-          - stable-2.15
           - stable-2.16
           - milestone
     steps:
@@ -97,7 +95,7 @@ jobs:
       - name: Perform integration testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          collection-root: /ibm/operator_collection_sdk/
           ansible-core-version: stable-2.16
           pre-test-cmd: |
             sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \

@@ -15,4 +15,3 @@
       ansible.builtin.file:
         path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test"
         state: absent
-
