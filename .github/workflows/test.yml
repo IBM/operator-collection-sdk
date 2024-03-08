@@ -60,6 +60,55 @@ jobs:
   #         ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
   #         ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
 
+
+  ansible-test:
+    name: Run Ansible Tests (Ⓐ${{ matrix.ansible }})
+    # needs: [lint, authorize]
+    needs: [authorize]
+    runs-on: >-
+      ${{ contains(fromJson(
+          '["stable-2.9", "stable-2.10", "stable-2.11"]'
+      ), matrix.ansible) && 'ubuntu-20.04' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.14
+          - stable-2.15
+          - stable-2.16
+          - milestone
+    steps:
+      - name: Perform sanity testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          testing-type: sanity
+
+      - name: Perform unit testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          target-python-version: 3.11
+          testing-type: units
+          test-deps: >-
+            kubernetes.core
+
+      - name: Perform integration testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          ansible-core-version: stable-2.16
+          pre-test-cmd: |
+            sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+              --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          target-python-version: 3.11
+          controller-python-version: auto
+          integration-retry-on-error: true
+          testing-type: integration
+          test-deps: >-
+            kubernetes.core
+
   test:
     name: Test
     # needs: [lint, authorize]
@@ -94,41 +143,6 @@ jobs:
         run: |
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
           ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
-
-      - name: Ls directory
-        run: ls /Users/runner/.local/bin/
-
-      - name: Perform sanity testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          testing-type: sanity
-
-      - name: Perform unit testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          target-python-version: 3.11
-          testing-type: units
-          test-deps: >-
-            kubernetes.core
-
-      - name: Perform integration testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-          ansible-core-version: stable-2.16
-          pre-test-cmd: |
-            sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
-              --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-          target-python-version: 3.11
-          controller-python-version: auto
-          integration-retry-on-error: true
-          testing-type: integration
-          test-deps: >-
-            kubernetes.core
 
       - name: Cleanup Cluster Environment after integration Tests
         run: |
