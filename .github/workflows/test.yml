@@ -97,7 +97,7 @@ jobs:
       #     ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
 
       - name: Which python
-        run: echo "$(which python)"
+        run: echo "$VIRTUAL_ENV"
 
       - name: Setup Cluster Environment after integration Tests
         run: |
