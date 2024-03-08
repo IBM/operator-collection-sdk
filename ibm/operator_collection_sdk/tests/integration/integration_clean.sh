@@ -27,6 +27,27 @@ function parseCommandLine {
 
 parseCommandLine "$@"
 
+# Populate integration_config.yml file with environment variables
+ocpnamespace=""
+truncate -s 0 "$collection_root"/tests/integration/integration_config.yml
+while read -r line;
+do
+    if [[ "$line" =~ "#" ]]; then
+        continue
+    fi
+    eval 'echo "'"$line"'" >> "'"$collection_root"'"/tests/integration/integration_config.yml'
+
+    # determine ocpnamespace
+    if [[ "$line" =~ "ocp_namespace" ]]; then
+        l=$(eval 'echo "'"$line"'"')
+
+        # isolate namespace | trim spaces | make lowercase | replace non-alphanumeric with "-"
+        ocpnamespace=$(echo "$l" | sed -e 's/^.*:[[:space:]]*//' | sed 's/[[:space:]]*$//g' | tr '[:upper:]' '[:lower:]' | sed -e 's/[^-a-zA-Z0-9]/-/g')
+        echo 'ocpnamespace: "'"$ocpnamespace"'"' >> "$collection_root"/tests/integration/integration_config.yml
+    fi
+done < "$collection_root/tests/integration/integration_config.yml.template"
+
+
 echo "Tearing Down Cluster Environment after Integration Tests..."
 ANSIBLE_JINJA2_NATIVE=true ansible-playbook "$collection_root"/playbooks/molecule/cluster_clean.yml \
     --extra-vars @"$collection_root"/tests/integration/integration_config.yml

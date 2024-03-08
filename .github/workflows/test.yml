@@ -73,6 +73,7 @@ jobs:
           - stable-2.16
           - milestone
     steps:
+      - uses: actions/checkout@v2
       # - name: Perform sanity testing with ansible-test
       #   uses: ansible-community/ansible-test-gh-action@release/v1
       #   with:
@@ -91,8 +92,10 @@ jobs:
       #       kubernetes.core
 
       - name: Setup Cluster Environment after integration Tests
+        shell: bash
         run: |
-          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+          chmod +x ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
+          sh ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
       - name: Perform integration testing with ansible-test
@@ -107,8 +110,10 @@ jobs:
             kubernetes.core
 
       - name: Cleanup Cluster Environment after integration Tests
+        shell: bash
         run: |
-          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
+          chmod +x ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
+          sh ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
   test:
