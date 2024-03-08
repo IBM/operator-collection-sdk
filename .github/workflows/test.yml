@@ -97,8 +97,6 @@ jobs:
       - name: Perform sanity testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           ansible-core-version: stable-2.16
           testing-type: sanity
 
