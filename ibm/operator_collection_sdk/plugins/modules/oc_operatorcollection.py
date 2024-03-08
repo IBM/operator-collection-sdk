@@ -132,7 +132,7 @@ try:
     import os
     from kubernetes import config, client
 except ImportError as e:
-    DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
+    DEPENDENCY_IMPORT_ERROR = "Failed to import dependency: {}".format(e)
 
 
 def run_operatorcollection_module():
