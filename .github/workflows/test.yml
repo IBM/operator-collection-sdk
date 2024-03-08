@@ -94,12 +94,21 @@ jobs:
       - name: Perform PIP and Galaxy Collection Dependency Installs
         run: |
           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
-          "$(which python)" -m pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+          pip3 install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+          
+      # "$(which python)" -m pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+      - name: Debug
+        run: |
+          ls
+     
+      - name: Debug
+        run: |
+          pip list show
 
       - name: Debug
         run: |
-          docker info
+          pip3 list show
 
       # - name: Debug
       #   run: |
