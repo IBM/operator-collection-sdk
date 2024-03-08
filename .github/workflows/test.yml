@@ -103,8 +103,8 @@ jobs:
 
       - name: Debug
         run: |
-          mkdir /etc/ansible
-          touch /etc/ansible/hosts
+          sudo mkdir /etc/ansible
+          sudo touch /etc/ansible/hosts
           echo "ansible_connection=local ansible_python_interpreter=/usr/bin/python" >> /etc/ansible/hosts
           
 
