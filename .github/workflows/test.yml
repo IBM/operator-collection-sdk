@@ -94,8 +94,8 @@ jobs:
       - name: Setup Cluster Environment after integration Tests
         shell: bash
         run: |
-          chmod +x ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
-          sh ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
+          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
       - name: Perform integration testing with ansible-test
@@ -112,8 +112,8 @@ jobs:
       - name: Cleanup Cluster Environment after integration Tests
         shell: bash
         run: |
-          chmod +x ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
-          sh ./${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
+          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
+          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
   test:
