@@ -9,20 +9,6 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: Get Virtual Env path if it exists
-      ansible.builtin.command: echo $VIRTUAL_ENV
-      register: venv_path
-
-    - name: Install Dependencies when in a Virtual Env
-      pip:
-        virtualenv: "{{ venv_path.stdout_lines[0] }}"
-        name:
-          - openshift
-          - pyyaml
-          - kubernetes 
-      when: 
-        - venv_path.stdout_lines | length > 0
-        - venv_path.stdout_lines[0] != "$VIRTUAL_ENV"
 
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:
