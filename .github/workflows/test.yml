@@ -13,6 +13,13 @@ on:
       - "**"
   pull_request_target:
 
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{
+      github.event.pull_request.number || github.sha
+    }}
+  cancel-in-progress: true
+
 jobs:
   authorize:
     name: Authorize
@@ -87,18 +94,41 @@ jobs:
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
           ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
-      - name: Perform Ansible Sanity Tests
-        run: |
-          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
-          ansible-test sanity -v --venv
-      
-      - name: Perform Ansible Unit Tests
-        run: |
-          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
-          ansible-test units -v --venv
+      - name: Perform sanity testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          ansible-core-version: stable-2.16
+          testing-type: sanity
 
-      - name: Perform Ansible Integration Tests
-        run: sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh --install-collection=false
+      - name: Perform unit testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          ansible-core-version: stable-2.16
+          target-python-version: 3.11
+          testing-type: units
+          test-deps: >-
+            kubernetes.core
+
+      - name: Perform integration testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          ansible-core-version: stable-2.16
+          pre-test-cmd: |
+            sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+              --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          target-python-version: 3.11
+          controller-python-version: auto
+          testing-type: integration
+          test-deps: >-
+            kubernetes.core
+
+      - name: Cleanup Cluster Environment after integration Tests
+        run: |
+          sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
+            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
