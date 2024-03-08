@@ -26,11 +26,6 @@ options:
         description: The endpoint is created in this provided namespace.
         required: true
         type: str
-    api_version:
-        description: The apiversion.
-        required: false
-        type: str
-        default: v1
 
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
@@ -93,7 +88,6 @@ def run_get_encrypted_secret_module():
 
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
-        api_version=dict(type='str', default="v1"),
         name=dict(type='str', required=True),
         namespace=dict(type='str', required=True),
     )
@@ -125,15 +119,6 @@ def run_get_encrypted_secret_module():
         config.load_kube_config()
         # Create a Kubernetes API client
         core_api = client.CoreV1Api()
-        install_zoscb_encrypt_cli = """
-            mkdir -vp temp/ &&
-            OS=$(uname -s | tr '[:upper:]' '[:lower:]') &&
-            ARCH=$(uname -m | sed -E "s/i686|x86_64/amd64/g") &&
-            echo $OS &&
-            echo $ARCH &&
-            oc image extract icr.io/cpopen/ibm-zoscb-encryption-cli:latest --path /bin/${OS}-${ARCH}-zoscb-encrypt:temp/
-            """
-        result_command = subprocess.run(install_zoscb_encrypt_cli, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
         try:
             command = ["zoscb-encrypt get-credential-secret --namespace",
                        module.params["namespace"],
@@ -145,8 +130,8 @@ def run_get_encrypted_secret_module():
             # print(result_command.stdout)
             result["changed"] = True
             data = yaml.safe_load(result_command.stdout)
-            result["ssh_key"] = base64.b64decode(data["data"]["ssh_key"])
-            result["username"] = base64.b64decode(data["data"]["username"])
+            for items in data["data"]:
+                result[items] = base64.b64decode(data["data"][items])
         except subprocess.CalledProcessError as e:
             result["error"] = True
             # print("Command '{}' failed with exit code {}".format(e.cmd, e.returncode))
