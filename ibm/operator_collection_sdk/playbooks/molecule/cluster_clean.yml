@@ -10,6 +10,11 @@
   gather_facts: false
   tasks:
 
+    - name: test
+      pip:
+        name:
+          - kubernetes
+
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
