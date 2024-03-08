@@ -50,6 +50,7 @@ done < "$collection_root/tests/integration/integration_config.yml.template"
 
 printf "Setting Up Cluster for Integration Tests...\n"
 ANSIBLE_JINJA2_NATIVE=true ansible-playbook "$collection_root"/playbooks/molecule/cluster_setup.yml \
-    --extra-vars @"$collection_root"/tests/integration/integration_config.yml
+    --extra-vars @"$collection_root"/tests/integration/integration_config.yml \
+    -i "$collection_root"/tests/integration/inventory
 
 exit "$?"
