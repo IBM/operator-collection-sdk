@@ -97,14 +97,14 @@ jobs:
       - name: Perform sanity testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           ansible-core-version: stable-2.16
           testing-type: sanity
 
       - name: Perform unit testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           ansible-core-version: stable-2.16
           target-python-version: 3.11
           testing-type: units
@@ -114,7 +114,7 @@ jobs:
       - name: Perform integration testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          collection-root: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          collection-src-directory: ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           ansible-core-version: stable-2.16
           pre-test-cmd: |
             sh ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
