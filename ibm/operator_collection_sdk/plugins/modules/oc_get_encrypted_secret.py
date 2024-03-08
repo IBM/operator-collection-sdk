@@ -38,13 +38,13 @@ author:
 
 EXAMPLES = r'''
 # Pass in a message
-- name: Test with remote endpointType
+- name: Test with a secret name in a namespace
   ibm.operator_collection_sdk.oc_get_encrypted_secret:
     name: secret1
     namespace: test-world
 
 # pass in a message and have changed true
-- name: Test with local endpointType
+- name: Test with another secret name in a namespace
   ibm.operator_collection_sdk.oc_get_encrypted_secret:
     name: secret12
     namespace: test-world
