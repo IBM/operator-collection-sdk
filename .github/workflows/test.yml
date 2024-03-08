@@ -91,17 +91,17 @@ jobs:
       #     test-deps: >-
       #       kubernetes.core
 
-      # - name: Perform PIP and Galaxy Collection Dependency Installs
-      #   run: |
-      #     "$(which python)" -m pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
-      #     ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+      - name: Perform PIP and Galaxy Collection Dependency Installs
+        run: |
+          export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
+          "$(which python)" -m pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
 
       - name: Which python
         run: echo "$VIRTUAL_ENV"
 
       - name: Setup Cluster Environment after integration Tests
         run: |
-          export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
@@ -120,7 +120,6 @@ jobs:
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
         run: |
-          export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
