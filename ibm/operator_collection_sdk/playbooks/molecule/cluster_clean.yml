@@ -10,10 +10,10 @@
   gather_facts: false
   tasks:
 
-    - name: test
-      pip:
-        name:
-          - kubernetes
+    # - name: test
+    #   pip:
+    #     name:
+    #       - kubernetes
 
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:
