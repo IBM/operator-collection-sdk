@@ -63,6 +63,7 @@ jobs:
   ansible-test:
     name: Run Ansible Tests (Ⓐ${{ matrix.ansible }})
     needs: [authorize]
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: >-
       ${{ contains(fromJson(
           '["stable-2.9", "stable-2.10", "stable-2.11"]'
