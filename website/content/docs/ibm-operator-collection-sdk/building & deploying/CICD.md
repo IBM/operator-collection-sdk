@@ -167,7 +167,7 @@ You can use GitHub Workflows to automate the Operator Collection signing process
 |-------------------|------------------------------------------------------------------------------------------|
 | `COLLECTION_PATH` | (Enviornment Variable) The path from repository root to the folder that holds both your `galaxy` and `operator-config` files, i.e. "ibm/operator-collection-sdk". |
 | `COLLECTION_NAME` | (Enviornment Variable) The name of your Operator Collection. One term where words are demarcated with hyphens or underscore, i.e. "file-manager". |
-| `GALAXY_API_KEY`  | (Secret) Your Ansible Galaxy API access token. Remove this secret and the [publishing](/docs/ibm-operator-collection-sdk/building-deploying/cicd/#publishing-to-ansible-galaxy) step if you would not like to upload your signed collections to Ansible Galaxy.|
+| `GALAXY_API_KEY`  | (Secret) Your Ansible Galaxy API access token. Remove this secret and the [publishing](/docs/ibm-operator-collection-sdk/building-&-deploying/cicd/#publishing-to-ansible-galaxy) step if you would not like to upload your signed collections to Ansible Galaxy.|
         {{< /table >}}
 
         ![Release Variables](/images/operator-collection-sdk/release-variables.png)

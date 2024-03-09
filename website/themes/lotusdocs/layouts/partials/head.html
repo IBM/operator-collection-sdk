@@ -1,16 +1,34 @@
 <head>
     <meta charset="utf-8" />
-    <title>{{- .Site.Title }}</title>
+    <title>
+        {{- if .IsHome -}}
+          {{ .Site.Title }}
+        {{- else if .Page.Title -}}
+          {{ .Page.Title }} | {{ .Site.Title }}
+        {{- else -}}
+          {{ .Site.Title }}
+        {{- end -}}
+    </title> 
     {{- if not hugo.IsProduction }}
     <meta name="robots" content="noindex">
     {{- end }}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A Lightweight, Modern Documentation Theme for Hugo" />
-    <meta name="keywords" content="Documentation, Hugo, Hugo Theme, Bootstrap" />
-    <meta name="author" content="Colin Wilson - Lotus Labs" />
-    <meta name="email" content="support@aigis.uk" />
-    <meta name="website" content="https://lotusdocs.dev" />
-    <meta name="Version" content="v0.1.0" />
+    {{- if .IsHome -}}
+    <meta name="description" content="{{ .Site.Params.Description }}" />
+    <meta name="keywords" content="{{ .Site.Params.Keywords }}" />
+    {{- else -}}
+    <meta name="description" content="{{ .Params.Description }}" />
+    <meta name="keywords" content="{{ .Params.Keywords }}" />
+    {{- end }}
+    <meta name="author" content="" />
+    <meta name="email" content="" />
+    <meta name="website" content="{{ .Site.BaseURL }}" />
+    <meta name="Version" content="v1.1.1" />
+    {{- if isset .Params "canonical" -}}
+    <link rel="canonical" href="{{ .Params.canonical }}" />
+    {{- else -}}
+    <link rel="canonical" href="{{ .Permalink }}" />
+    {{- end }}
     <!-- favicon -->
     {{ block "head/favicon" . }}{{ partialCached "head/favicon.html" . }}{{ end }}
     <!-- Google Fonts -->
@@ -26,6 +44,7 @@
         {{- $style = $style | minify | fingerprint "sha384" }}
     {{- end -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $style.Data.Integrity }}"{{ end -}}/>
+    <link rel="canonical" href="{{ .Permalink }}" />
     <!-- Bootstrap JS -->
     {{ $js := resources.Get "js/bootstrap.js" }}
     {{ $params := dict }}
