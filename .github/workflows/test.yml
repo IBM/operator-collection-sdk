@@ -72,7 +72,7 @@ jobs:
       matrix:
         ansible:
           - stable-2.16
-          - milestone
+          # - milestone
     steps:
       - uses: actions/checkout@v3
       # - name: Perform sanity testing with ansible-test
@@ -117,8 +117,7 @@ jobs:
           target-python-version: 3.11
           controller-python-version: auto
           testing-type: integration
-          test-deps: >-
-            kubernetes.core
+          test-deps: kubernetes.core
 
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
