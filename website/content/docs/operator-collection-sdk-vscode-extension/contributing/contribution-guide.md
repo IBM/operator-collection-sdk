@@ -20,7 +20,7 @@ This project uses the "Git flow" Git branching strategy for development and rele
 To contribute code or documentation, you should first create a fork of this repo, and once the feature is complete,
 submit a [pull request](https://github.com/IBM/operator-collection-sdk-vscode-extension/pulls) to the `develop` branch.
 
-Please refer to the [Development Guide](/docs/operator-collection-sdk-vscode-extension/development-guide/), for further guidance during development.
+Please refer to the [Development Guide](/docs/operator-collection-sdk-vscode-extension/contributing/development-guide/), for further guidance during development.
 
 ### Proposing new features
 

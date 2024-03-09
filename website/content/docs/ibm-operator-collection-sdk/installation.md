@@ -14,9 +14,9 @@ toc: true
 - [OpenShift® Cluster (version 4.10 or later)][openshift]
 - [OpenShift® Command Line Interface (CLI)][openshift-cli]
 - [Ansible® CLI Tools (version 2.9.10 or later)][ansible]
-    - After installing Ansible, export the `~/.local/bin` path to your `PATH` variable in order to access the Ansible CLI. Optionally you can add this to your `~/.profile` (or location of choice) and `source` it.
+    Ensure you've installed Ansible correctly by restarting your terminal and running:
     ```
-    export PATH=~/.local/bin:PATH
+    ansible --version
     ```
 - [Kubernetes Python Client][kubernetes]
 - [z/OS Cloud Broker v2.2.0+][broker]

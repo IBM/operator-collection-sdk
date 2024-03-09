@@ -20,6 +20,8 @@ identifier = "docs"
 weight = 10
 
 [params]
+    Description = "The IBM Operator Collection SDK is an Ansible Collection that provides the resources and tools that are needed to develop Operator Collections against the IBM® z/OS® Cloud Broker which is part of the IBM Z® and Cloud Modernization Stack."
+    Keywords = "IBM, Operator, Collection, SDK, Documentation"
 
 # Google Fonts
 google_fonts = [
@@ -34,6 +36,8 @@ mono_font       = "IBM Plex Mono"
 [params.footer]
 copyright = "© Copyright IBM Corporation :YEAR:. Built with [**Lotus Docs**](https://github.com/colinwilson/lotusdocs)"
 
+[params.navigation]
+    logo = "website/assets/images/logo/oc.png"
 [params.docs] # Parameters for the /docs 'template'
 title           = "IBM Operator Collection SDK Documentation"   # default html title for documentation pages/sections
 repoURL         = "https://github.com/IBM/operator-collection-sdk"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]

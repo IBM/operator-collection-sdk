@@ -20,7 +20,7 @@ This project uses the "Git flow" Git branching strategy for development and rele
 To contribute code or documentation, you should first create a fork of this repo, and once the feature is complete, 
 submit a [pull request](https://github.com/IBM/operator-collection-sdk/pulls) to the `develop` branch.
 
-Please refer to the [Development Guide](docs/ibm-operator-collection-sdk/usage-guides/development-guide.md), for further guidance during development.
+Please refer to the [Development Guide](docs/ibm-operator-collection-sdk/contributing/development-guide.md), for further guidance during development.
 
 
 ### Proposing new features
