@@ -37,3 +37,4 @@ To install the collection and run all Integration tests:
 ```bash
 sh ./tests/integration/integration.sh
 ```
+Note: This test will set up and teardown a cluster environment too.

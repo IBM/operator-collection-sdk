@@ -9,11 +9,10 @@
   connection: local
   gather_facts: false
   tasks:
-
-    # - name: test
-    #   pip:
-    #     name:
-    #       - kubernetes
+    - name: Install dependency  # necessary for gh-actions use
+      pip:
+        name:
+          - kubernetes
 
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:

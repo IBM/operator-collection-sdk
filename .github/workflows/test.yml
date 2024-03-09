@@ -93,40 +93,13 @@ jobs:
 
       - name: Perform PIP and Galaxy Collection Dependency Installs
         run: |
-          export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
-          pip3 install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
-          
-      # "$(which python)" -m pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
-      - name: Debug
-        run: |
-          ls
-     
-      - name: Debug
-        run: |
-          pip list show
 
-      - name: Debug
-        run: |
-          pip3 list show
-
-      # - name: Debug
-      #   run: |
-      #     sudo true mkdir /etc/ansible
-      #     sudo touch /etc/ansible/hosts
-      #     sudo echo "ansible_connection=local ansible_python_interpreter=/usr/bin/python" >> /etc/ansible/hosts
-
-      - name: Debug
-        run: |
-          which python
-
-      - name: Debug
-        run: |
-          echo "$VIRTUAL_ENV"
-
-      - name: Debug
-        run: |
-          pip install kubernetes
+      - name: Log into OCP
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
       - name: Setup Cluster Environment before integration Tests
         run: |
