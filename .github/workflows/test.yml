@@ -103,6 +103,9 @@ jobs:
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
       - name: Setup Cluster Environment before integration Tests
+        with:
+          max_attempts: 2
+          retry_on: error
         run: |
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
