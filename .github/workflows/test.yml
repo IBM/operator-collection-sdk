@@ -129,6 +129,40 @@ jobs:
       #     bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
       #       --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
+  integration-test:
+    name: Run Integration Tests
+    needs: [lint, authorize]
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Perform PIP and Collection Installs
+        run: |
+          pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+
+      - name: Log into OCP
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+
+      - name: Setup Cluster Environment before integration Tests
+        continue-on-error: true
+        run: |
+          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
+          cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          ansible-playbook ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/targets/oc_zoscloudbroker/playbook.yml
+
+      # bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
+
   molecule-tests:
     name: Run Molecule Tests
     needs: [lint, authorize]
