@@ -113,8 +113,7 @@ jobs:
         continue-on-error: true
         run: |
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
-          bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh \
-            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
+          bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
 
       # - name: Perform integration testing with ansible-test
       #   uses: ansible-community/ansible-test-gh-action@release/v1
