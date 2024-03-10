@@ -137,15 +137,10 @@ jobs:
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
-      - name: Perform integration testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          target-python-version: 3.11
-          controller-python-version: auto
-          testing-type: integration
-          test-deps: kubernetes.core
+      - name: Perform Integration Testing with ansible-test
+        run: |
+          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+          ansible-test integration -v --venv
 
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
