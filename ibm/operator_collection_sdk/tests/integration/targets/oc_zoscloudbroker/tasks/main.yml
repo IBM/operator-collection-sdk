@@ -6,6 +6,11 @@
 ---
 - name: Test oc_zoscloudbroker module
   block:
+    - name: Install dependency  # necessary for gh-actions use
+      pip:
+        name:
+          - kubernetes
+    
     - name: Delete ZosCloudBroker if it exists
       kubernetes.core.k8s:
         state: absent
