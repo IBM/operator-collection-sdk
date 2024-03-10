@@ -60,8 +60,8 @@ jobs:
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
           ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
 
-  ansible-test:
-    name: Run Ansible Tests (Ⓐ${{ matrix.ansible }})
+  sanity:
+    name: Run Sanity Tests (Ⓐ${{ matrix.ansible }})
     needs: [lint, authorize]
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: >-
@@ -74,7 +74,6 @@ jobs:
           - stable-2.16
           # - milestone
     steps:
-      - uses: actions/checkout@v3
       - name: Perform sanity testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
@@ -82,6 +81,19 @@ jobs:
           ansible-core-version: stable-2.16
           testing-type: sanity
 
+  unit:
+    name: Run Unit Tests (Ⓐ${{ matrix.ansible }})
+    needs: [lint, authorize]
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: >-
+      ${{ contains(fromJson(
+          '["stable-2.9", "stable-2.10", "stable-2.11"]'
+      ), matrix.ansible) && 'ubuntu-20.04' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.16
+    steps:
       - name: Perform unit testing with ansible-test
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
@@ -92,40 +104,7 @@ jobs:
           test-deps: >-
             kubernetes.core
 
-      # - name: Log into OCP
-      #   uses: redhat-actions/oc-login@v1
-      #   with:
-      #     openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-      #     openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-
-      # - name: Setup Cluster Environment before integration Tests
-      #   continue-on-error: true
-      #   run: |
-      #     chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
-      #     bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
-      #       --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-
-      # - name: Perform integration testing with ansible-test
-      #   uses: ansible-community/ansible-test-gh-action@release/v1
-      #   with:
-      #     collection-root: /ibm/operator_collection_sdk/
-      #     ansible-core-version: stable-2.16
-      #     pre-test-cmd: |
-      #       pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
-      #       ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
-      #     target-python-version: 3.11
-      #     controller-python-version: auto
-      #     testing-type: integration
-      #     test-deps: kubernetes.core
-
-      # - name: Cleanup Cluster Environment after integration Tests
-      #   if: always()
-      #   run: |
-      #     chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
-      #     bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
-      #       --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-
-  integration-test:
+  integration:
     name: Run Integration Tests
     needs: [lint, authorize]
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
@@ -154,11 +133,26 @@ jobs:
       - name: Setup Cluster Environment before integration Tests
         continue-on-error: true
         run: |
-          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
-          cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
-          ansible-playbook ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/targets/oc_zoscloudbroker/playbook.yml
+          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh
+          bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
+            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
-      # bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
+      - name: Perform integration testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          target-python-version: 3.11
+          controller-python-version: auto
+          testing-type: integration
+          test-deps: kubernetes.core
+
+      - name: Cleanup Cluster Environment after integration Tests
+        if: always()
+        run: |
+          chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh
+          bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_clean.sh \
+            --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
   molecule-tests:
     name: Run Molecule Tests
