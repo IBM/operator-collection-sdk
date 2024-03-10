@@ -112,6 +112,7 @@ jobs:
       - name: Perform Integration Tests
         continue-on-error: true
         run: |
+          sudo pip install openshift pyyaml kubernetes 
           chmod +x ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
           cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration.sh
