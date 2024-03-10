@@ -75,32 +75,28 @@ jobs:
           # - milestone
     steps:
       - uses: actions/checkout@v3
-      # - name: Perform sanity testing with ansible-test
-      #   uses: ansible-community/ansible-test-gh-action@release/v1
-      #   with:
-      #     collection-root: /ibm/operator_collection_sdk/
-      #     ansible-core-version: stable-2.16
-      #     testing-type: sanity
-
-      # - name: Perform unit testing with ansible-test
-      #   uses: ansible-community/ansible-test-gh-action@release/v1
-      #   with:
-      #     collection-root: /ibm/operator_collection_sdk/
-      #     ansible-core-version: stable-2.16
-      #     target-python-version: 3.11
-      #     testing-type: units
-      #     test-deps: >-
-      #       kubernetes.core
-
-      # - name: Galaxy Collection Dependency Installs
-      #   run: |
-      #     ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
-
-      - name: Log into OCP
-        uses: redhat-actions/oc-login@v1
+      - name: Perform sanity testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          testing-type: sanity
+
+      - name: Perform unit testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          target-python-version: 3.11
+          testing-type: units
+          test-deps: >-
+            kubernetes.core
+
+      # - name: Log into OCP
+      #   uses: redhat-actions/oc-login@v1
+      #   with:
+      #     openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+      #     openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
       # - name: Setup Cluster Environment before integration Tests
       #   continue-on-error: true
@@ -109,18 +105,18 @@ jobs:
       #     bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
       #       --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
-      - name: Perform integration testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
-        with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          pre-test-cmd: |
-            pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
-            ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
-          target-python-version: 3.11
-          controller-python-version: auto
-          testing-type: integration
-          test-deps: kubernetes.core
+      # - name: Perform integration testing with ansible-test
+      #   uses: ansible-community/ansible-test-gh-action@release/v1
+      #   with:
+      #     collection-root: /ibm/operator_collection_sdk/
+      #     ansible-core-version: stable-2.16
+      #     pre-test-cmd: |
+      #       pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+      #       ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+      #     target-python-version: 3.11
+      #     controller-python-version: auto
+      #     testing-type: integration
+      #     test-deps: kubernetes.core
 
       # - name: Cleanup Cluster Environment after integration Tests
       #   if: always()
@@ -147,6 +143,7 @@ jobs:
         run: |
           pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+          ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
       - name: Log into OCP
         uses: redhat-actions/oc-login@v1
