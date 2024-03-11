@@ -112,17 +112,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Install Python Requirements
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.11"
-      #     cache: "pip"
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
 
-      # - name: Perform PIP and Collection Installs
-      #   run: |
-      #     pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
-      #     ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
-      #     ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+      - name: Perform PIP and Collection Installs
+        run: |
+          pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+          ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
       # - name: Log into OCP
       #   uses: redhat-actions/oc-login@v1
