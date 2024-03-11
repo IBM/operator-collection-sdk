@@ -140,7 +140,7 @@ jobs:
       - name: Perform Integration Testing with ansible-test
         run: |
           cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
-          ansible-test integration -v --local
+          ansible-test integration -v
 
       # - name: Cleanup Cluster Environment after integration Tests
       #   if: always()
