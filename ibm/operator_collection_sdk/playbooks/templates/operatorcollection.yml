@@ -1,0 +1,24 @@
+{# templates/operatorcollection.yml #}
+
+apiVersion: zoscb.ibm.com/v2beta2
+kind: OperatorCollection
+metadata:
+  name: {{name}}
+  namespace: {{namespace}}
+  {% if labels != None %}
+  labels: {{labels}}
+  {% endif %}
+spec:
+  skipSignatureVerification: {{ skipSignatureVerification}}
+  {% if skipSignatureVerification == false %}
+  signatureSecret: "{{signatureSecret}}"
+  {% endif %}
+  {% if collectionURLToken != None %}
+  collectionURLToken: "{{collectionURLToken}}"
+  {% endif %}
+  {% if collectionURL != None %}
+  collectionURL: {{collectionURL}}
+  {% endif %}
+  {% if collection_src != None %}
+  collection_src: "{{collection_src}}"
+  {% endif %}
