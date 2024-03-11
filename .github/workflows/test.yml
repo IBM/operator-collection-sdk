@@ -137,14 +137,10 @@ jobs:
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
-      - name: test
-        run: |
-          cat ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_config.yml
-
       - name: Perform Integration Testing with ansible-test
         run: |
           cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
-          ansible-test integration -v
+          ansible-test integration -v --local
 
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
