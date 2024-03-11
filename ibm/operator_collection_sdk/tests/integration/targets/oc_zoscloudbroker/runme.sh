@@ -8,6 +8,6 @@ echo $(ls)
 echo $(ls ..)
 echo $(ls ../..)
 
-echo $(cat ../../integration.cfg)
+echo "$GITHUB_WORKSPACE"
 
 ansible-playbook playbook.yml "$@"
