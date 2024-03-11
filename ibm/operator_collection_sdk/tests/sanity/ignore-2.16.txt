@@ -1,0 +1,3 @@
+playbooks/templates/endpoint.yml yamllint!skip
+playbooks/templates/suboperatorconfig.yml yamllint!skip
+playbooks/templates/operatorcollection.yml yamllint!skip
