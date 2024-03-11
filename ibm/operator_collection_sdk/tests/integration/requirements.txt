@@ -1,4 +1,2 @@
-pytest
-jsonpatch==1.32
-kubernetes==24.2.0
-PyYAML==6.0
+kubernetes
+pyaml

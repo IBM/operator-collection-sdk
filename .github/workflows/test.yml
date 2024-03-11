@@ -60,8 +60,8 @@ jobs:
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
           ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
 
-  ansible-test:
-    name: Run Ansible Tests (Ⓐ${{ matrix.ansible }})
+  sanity:
+    name: Run Sanity Tests (Ⓐ${{ matrix.ansible }})
     needs: [lint, authorize]
     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: >-
@@ -74,27 +74,43 @@ jobs:
           - stable-2.16
           # - milestone
     steps:
+      - name: Perform sanity testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          testing-type: sanity
+
+  unit:
+    name: Run Unit Tests (Ⓐ${{ matrix.ansible }})
+    needs: [lint, authorize]
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: >-
+      ${{ contains(fromJson(
+          '["stable-2.9", "stable-2.10", "stable-2.11"]'
+      ), matrix.ansible) && 'ubuntu-20.04' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.16
+    steps:
+      - name: Perform unit testing with ansible-test
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          collection-root: /ibm/operator_collection_sdk/
+          ansible-core-version: stable-2.16
+          target-python-version: 3.11
+          testing-type: units
+          test-deps: >-
+            kubernetes.core
+
+  integration:
+    name: Run Integration Tests
+    needs: [lint, authorize]
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v3
-      # - name: Perform sanity testing with ansible-test
-      #   uses: ansible-community/ansible-test-gh-action@release/v1
-      #   with:
-      #     collection-root: /ibm/operator_collection_sdk/
-      #     ansible-core-version: stable-2.16
-      #     testing-type: sanity
-
-      # - name: Perform unit testing with ansible-test
-      #   uses: ansible-community/ansible-test-gh-action@release/v1
-      #   with:
-      #     collection-root: /ibm/operator_collection_sdk/
-      #     ansible-core-version: stable-2.16
-      #     target-python-version: 3.11
-      #     testing-type: units
-      #     test-deps: >-
-      #       kubernetes.core
-
-      - name: Perform PIP and Galaxy Collection Dependency Installs
-        run: |
-          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
 
       - name: Log into OCP
         uses: redhat-actions/oc-login@v1
@@ -109,15 +125,22 @@ jobs:
           bash ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/integration_setup.sh \
             --collection-root=${GITHUB_WORKSPACE}/ibm/operator_collection_sdk
 
-      - name: Perform integration testing with ansible-test
-        uses: ansible-community/ansible-test-gh-action@release/v1
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
         with:
-          collection-root: /ibm/operator_collection_sdk/
-          ansible-core-version: stable-2.16
-          target-python-version: 3.11
-          controller-python-version: auto
-          testing-type: integration
-          test-deps: kubernetes.core
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Perform PIP and Collection Installs
+        run: |
+          pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.txt
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/tests/integration/requirements.yml
+          ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+
+      - name: Perform Integration Testing with ansible-test
+        run: |
+          cd ~/.ansible/collections/ansible_collections/ibm/operator_collection_sdk
+          ansible-test integration -v
 
       - name: Cleanup Cluster Environment after integration Tests
         if: always()
