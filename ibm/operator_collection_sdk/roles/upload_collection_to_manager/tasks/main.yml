@@ -4,10 +4,18 @@
 #
 
 ---
+- name: Set Required Variables
+  import_tasks: set_vars.yml
+  when: > 
+    path is undefined 
+    or target_namespace is undefined
+    or operator_name is undefined
+    or operator_version is undefined
+
 - name: Get Manager Pod Name
   kubernetes.core.k8s_info:
     kind: Pod
-    namespace: "{{ namespace }}"
+    namespace: "{{ target_namespace }}"
     label_selectors:
       - component = manager
   register: pod_results
@@ -26,7 +34,7 @@
   kubernetes.core.k8s_info:
     api_version: zoscb.ibm.com/v2beta2
     kind: SubOperatorConfig
-    namespace: "{{ namespace }}"
+    namespace: "{{ target_namespace }}"
     label_selectors:
       - "operator-name = {{ operator_name }}"
   register: soc_results
@@ -41,7 +49,7 @@
     api_version: zoscb.ibm.com/v2beta2
     kind: OperatorCollection
     name: "{{ soc_results.resources[0].spec.operatorCollection }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ target_namespace }}"
   register: oc_results
   when: soc_results.resources | length > 0
 

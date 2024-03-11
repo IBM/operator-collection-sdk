@@ -1,0 +1,101 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Clean Test Environment
+  hosts: all
+  connection: local
+  gather_facts: false 
+  tasks:
+    - name: Get SubOperatorConfigs
+      kubernetes.core.k8s_info:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ ocpnamespace }}"
+      register: soc_results
+
+    - name: Remove Orphaned SubOperatorConfigs
+      kubernetes.core.k8s_json_patch:
+        api_version: zoscb.ibm.com/v2beta2
+        kind: SubOperatorConfig
+        namespace: "{{ ocpnamespace }}"
+        name: "{{ item.metadata.name }}"
+        patch:
+          - op: replace
+            path: /metadata/finalizers
+            value: []
+      ignore_errors: true
+      when: soc_results.resources | length > 0
+      with_items: "{{ soc_results.resources }}"
+
+    - name: Delete test secret
+      kubernetes.core.k8s:
+        state: absent
+        kind: secret
+        name: "{{ secret_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+      when: secret_name is defined
+
+    - name: Delete ZosEndpoint
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta2
+        kind: ZosEndpoint
+        name: "{{ zosendpoint_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+      when: zosendpoint_name is defined
+
+    - name: Delete ZosCloudBoker
+      kubernetes.core.k8s:
+        state: absent
+        api_version: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        name: "{{ zoscloudbroker_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+      when: zoscloudbroker_name is defined
+
+    - name: Delete Subscripton
+      kubernetes.core.k8s:
+        state: absent
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        name: "{{ subscription_name }}"
+        namespace: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true
+      when: subscription_name is defined
+
+    - name: Delete OperatorGroup
+      kubernetes.core.k8s:
+        state: absent
+        api_version: operators.coreos.com/v1
+        kind: OperatorGroup
+        name: "{{ ocpnamespace }}"
+        namespace: "{{ ocpnamespace }}"
+      ignore_errors: true
+
+    - name: Delete Namespace
+      kubernetes.core.k8s:
+        state: absent
+        kind: Namespace
+        name: "{{ ocpnamespace }}"
+        wait: true
+        wait_sleep: 5
+        wait_timeout: 140
+      ignore_errors: true

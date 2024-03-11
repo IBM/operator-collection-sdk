@@ -1,0 +1,40 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Verify
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Locate galaxy.yml file
+      ansible.builtin.find:
+        paths: "{{ test_operator_path }}"
+        patterns: 'galaxy.yml,galaxy.yaml'
+      register: galaxy_file_results
+
+    - name: Verify galaxy.yml file exists in test path
+      ansible.builtin.debug:
+        msg: "Current path does not contain an galaxy.yml file. Path: {{ test_operator_path }}"
+      when: galaxy_file_results.files | length == 0
+
+    - name: Read galaxy.yml
+      ansible.builtin.set_fact:
+        galaxy_file: "{{ lookup('template', '{{ galaxy_file_results.files[0].path }}')| from_yaml | to_json | from_json }}"
+
+    - name: Determine tarball name
+      ansible.builtin.set_fact:
+        tarball_name: "{{ galaxy_file.namespace }}-{{ galaxy_file.name }}-{{ galaxy_file.version }}.tar.gz"
+    
+    - name: Get status of Operator Collection tarball
+      stat:
+        path: "{{ test_operator_path }}/local/builds/{{ galaxy_file.version }}/{{ tarball_name }}"
+      register: stat_result
+    
+    - name: Assert the Operator Collection tarball has been created
+      ansible.builtin.assert:
+          that: 
+            - "stat_result.stat.exists"
+

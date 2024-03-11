@@ -1,22 +1,16 @@
 #
-# Copyright 2023 IBM Inc. All rights reserved
+# Copyright 2024 IBM Inc. All rights reserved
 # SPDX-License-Identifier: Apache2.0
 #
 
 ---
-- name: Delete Operator
-  import_playbook: ../../delete_operator.yml
-  vars:
-    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-
 - name: Clean test environment
   import_playbook: ../cluster_clean.yml
 
-- name: Destroy
+- name: Cleanup
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}"
   tasks:
     - name: Remove local build
       ansible.builtin.file:
