@@ -5,4 +5,3 @@ examples/racf-operator/local/*
 *.idea/
 __pycache__
 integration_config.yml
-tests/integration/targets/oc_zoscloudbroker/vars/*
