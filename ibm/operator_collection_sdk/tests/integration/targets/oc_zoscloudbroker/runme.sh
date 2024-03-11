@@ -8,4 +8,6 @@ echo $(ls)
 echo $(ls ..)
 echo $(ls ../..)
 
+echo $(cat ../../integration.cfg)
+
 ansible-playbook playbook.yml "$@"
