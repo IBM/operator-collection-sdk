@@ -1,6 +1,6 @@
 ---
 weight: 2300
-title: "VS Code Operator Collection Tutorial"
+title: "Operator Collection Tutorial"
 description: "A step-by-step walkthrough of building a new Operator Collection using the extension for VS Code."
 icon: "developer_guide"
 date: "2024-01-18T16:50:12-08:00"
