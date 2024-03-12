@@ -12,9 +12,9 @@ toc: true
 ---
 {{< alert context="warning" text="This extension is not supported on Windows OS." />}}
 
-The IBM Operator Collection SDK extension for VS Code simplifies the Operator Collection development experience by allowing you to manage the deployment of your operator in OpenShift® and debug direcly from your VS Code editor.
+The IBM Operator Collection SDK extension for VS Code simplifies the Operator Collection development experience by allowing you to manage the deployment of your Operator in OpenShift® and debug direcly from your VS Code editor.
 
-Get started by [installing the extension for VS Code](/docs/operator-collection-sdk-vscode-extension/installation/) today.
+Get started by [installing the extension for VS Code](/docs/operator-collection-sdk-vscode-extension/installation/).
 
 
 ## Features
@@ -22,7 +22,7 @@ Get started by [installing the extension for VS Code](/docs/operator-collection-
 
 ### Deploy your operator to OpenShift with single-click actions
 
-- Single-click actions to Create, Re-deploy, and Delete your operator in OpenShift.
+- Single-click actions to create, redeploy, and delete your operator in OpenShift.
 
 ![Deploy and manage operator](images/vs-code-extension/oc-sdk-actions.png)
 

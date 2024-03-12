@@ -14,10 +14,12 @@ toc: true
 - [OpenShift® Cluster (version 4.10 or later)][openshift]
 - [OpenShift® Command Line Interface (CLI)][openshift-cli]
 - [Ansible® CLI Tools (version 2.9.10 or later)][ansible]
+
     Ensure you've installed Ansible correctly by restarting your terminal and running:
     ```
     ansible --version
     ```
+
 - [Kubernetes Python Client][kubernetes]
 - [z/OS Cloud Broker v2.2.0+][broker]
 - [z/OS Cloud Broker Encryption CLI][cli] (optional)
