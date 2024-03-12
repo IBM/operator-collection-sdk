@@ -12,18 +12,19 @@ toc: false
 ---
 {{< alert context="warning" text="This extension is not supported on Windows OS." />}}
 
-**Requirements:** This VS Code extension requires the following dependencies to function:
+**Requirements:**
 * [Install Ansible®](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version 2.9.10 or higher)
+
     Ensure you've installed Ansible correctly by restarting your terminal and running:
     ```
     ansible --version
     ```
+
 * [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli-web-console_cli-developer-commands)
 * [Install the IBM Operator Collection SDK](/docs/ibm-operator-collection-sdk/installation/) Ansible Collection
-    * Alternatively, you can install this collection via the VS Code extension upon activation.
-* [Install the OpenShift® Command Line Interface (CLI)](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html)
+    * Alternatively, you can install this collection via the VS Code extension upon activation. Just be sure to install its [requirements](docs/ibm-operator-collection-sdk/installation/#requirements).
 
-Depending on your environment configuration, you may also need to [install SSL Certificates](docs/operator-collection-sdk-vscode-extension/troubleshooting/#ssl-certificates), before using this extension.
+Depending on your environment configuration, you may also want to [install SSL Certificates](docs/operator-collection-sdk-vscode-extension/troubleshooting/#ssl-certificates), before using this extension.
 
 **Installing the IBM Operator Collection SDK extension for VS Code:**\
 {{< tabs tabTotal="3">}}
@@ -33,7 +34,7 @@ Depending on your environment configuration, you may also need to [install SSL C
 
 {{% tab tabName="From .vsix" %}}
 
-1. Download the `.vsix` file from the "Assests" section of the latest [release](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases) in the IBM Operator Collection SDK VS Code extension repository on github.
+1. Download the `.vsix` file from the "Assests" section of the latest [release](https://github.com/IBM/operator-collection-sdk-vscode-extension/releases) in the IBM Operator Collection SDK VS Code extension repository on GitHub.
 
 2. Install the `.vsix` file from the "Extensions" tab in your VS Code editor:
 
