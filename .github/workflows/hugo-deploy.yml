@@ -4,7 +4,7 @@ name: Deploy Hugo site to Pages
 on:
   push:
     branches:
-      - website
+      - main
     paths:
       - 'website/**'
   workflow_dispatch:
