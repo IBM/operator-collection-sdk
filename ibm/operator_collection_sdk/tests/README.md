@@ -21,20 +21,23 @@ Usage:
 #### Unit Tests
 To install the collection and run all unit tests:
 ```bash
-sh ./tests/unit/unit.sh
+chmod +x ./tests/unit/unit.sh
+./tests/unit/unit.sh
 ```
 ---
 
 #### Sanity Tests
 To install the collection and run sanity tests:
 ```bash
-sh ./tests/unit/unit.sh
+chmod +x ./tests/unit/unit.sh
+./tests/unit/unit.sh
 ```
 ---
 
 #### Integration Tests
 To install the collection and run all Integration tests:
 ```bash
-sh ./tests/integration/integration.sh
+chmod +x ./tests/integration/integration.sh
+./tests/integration/integration.sh
 ```
 Note: This test will set up and teardown a cluster environment too.
