@@ -46,6 +46,9 @@ jobs:
       - name: Perform PIP installs
         run: pip install ansible-lint==6.16.0
 
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+
       - name: Run ansible-lint
         run: |
           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
@@ -78,6 +81,9 @@ jobs:
 
       - name: Perform PIP installs
         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
+
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
       
       - name: Install oc cli
         uses: redhat-actions/openshift-tools-installer@v1
