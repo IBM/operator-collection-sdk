@@ -11,7 +11,7 @@ toc: true
 
 ## Initializing your Operator Collection
 ---
-Below are the steps to initialize a new Operator Collection, or to configure an operator collection from an existing Ansible® Collection.
+Below are the steps to initialize a new Operator Collection, or to configure an Operator Collection from an existing Ansible® Collection.
 
 ### Initializing a new Operator Collection
 Run the following command to initialize your Operator Collection for development.
@@ -46,12 +46,12 @@ ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
 **Note:** To execute this playbook, it is required that your are in the root directory of the collection that you are developing, with a valid `galaxy.yml` and `operator-config.yml` file in the same directory
 
 ### Creating the initial operator on the OpenShift cluster
-1. Run the following command to create the operator on the cluster
+1. Run the following command to create the operator on the cluster:
 
     ```bash
     ANSIBLE_JINJA2_NATIVE=true ansible-playbook ibm.operator_collection_sdk.create_operator
     ```
-2. Once prompted, enter the name, host, and port of the `ZosEndpoint` to execute your collection against
+2. Once prompted, enter the name, host, and port of the `ZosEndpoint` to execute your collection against.
 
     **Note:** You can also pass the required variable as extra vars to bypass input prompts:
 
@@ -61,7 +61,7 @@ ansible-playbook ibm.operator_collection_sdk.create_offline_requirements
 
 ### Re-deploying your Ansible Collection after making local playbook/role modifications
 
-In the event where modifications are needed to your collection, you can run the following command to quickly apply those modifications to your operator
+In the event where modifications are needed to your collection, you can run the following command to quickly apply those modifications to your operator:
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.redeploy_collection
@@ -69,7 +69,7 @@ ansible-playbook ibm.operator_collection_sdk.redeploy_collection
 
 ### Re-deploying your Ansible Collection after making local playbook/role modifications, and modifications to your operator-config file
 
-In the event where modifications are needed to your collection AND your `operator-config.yml` file (i.e. adding new input variables), the operator would then need to be reconfigured and reinstalled to account for these new operator-config changes. To pick up these changes, you should run the following command to redeploy your operator
+In the event where modifications are needed to your collection AND your `operator-config.yml` file (i.e. adding new input variables), the operator would then need to be reconfigured and reinstalled to account for these new operator-config changes. To pick up these changes, you should run the following command to redeploy your operator:
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.redeploy_operator
@@ -79,7 +79,7 @@ ansible-playbook ibm.operator_collection_sdk.redeploy_operator
 
 If you're currently unable to install the [z/OS Cloud Broker Encryption CLI][cli], you also have the option to generate these encrypted credentials using the `zoscb-encrypt` CLI within the operator container. 
 
-Run the following command to generate encrypted credentials in the current Namespace.
+Run the following command to generate encrypted credentials in the current Namespace:
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.create_credential_secret
@@ -88,7 +88,7 @@ ansible-playbook ibm.operator_collection_sdk.create_credential_secret
 **Note:** Creating encrypted credentials with passphrases are currently not supported via the IBM Operator Collection SDK.
 
 ### Deleting the Operator
-Run the following command to uninstall the operator.
+Run the following command to uninstall the operator:
 
 ```bash
 ansible-playbook ibm.operator_collection_sdk.delete_operator
@@ -137,7 +137,7 @@ To simplify the commands needed to be executed, linux/mac users should consider 
     source ~/.zshrc
     ```
 
-4. The aliases that were created can now be called instead of the full `ansible-playbook` commands
+4. The aliases that were created can now be called instead of the full `ansible-playbook` commands.
 
     ```bash
     ~> ocsdk-create-operator

@@ -33,7 +33,7 @@ This tutorial is a walkthrough of building a new operator collection that perfor
 
 ## (Optional) Configure the IBM Operator Collection SDK Alias Commands
 ---
-Alternatively, you can configure alias commands to simplify the IBM Operator Collection SDK `ansible-playbook` commands:
+Optionally, you can configure alias commands to simplify the IBM Operator Collection SDK `ansible-playbook` commands:
 
 1. Open your bash profile using the following command:
 
@@ -73,7 +73,7 @@ Alternatively, you can configure alias commands to simplify the IBM Operator Col
     source ~/.zshrc
     ```
 
-4. The aliases that were created can now be called instead of the full `ansible-playbook` commands
+4. The aliases that were created can now be called instead of the full `ansible-playbook` commands.
 
     ```bash
     ~> ocsdk-create-operator
