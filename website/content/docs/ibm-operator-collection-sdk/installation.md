@@ -70,7 +70,7 @@ ansible-galaxy collection install ibm.operator_collection_sdk --upgrade
 
 ## Setup
 ---
-The following steps are required prior to deploying your operator in OpenShift® using the IBM Operator Collection SDK playbooks:
+The following steps are required prior to deploying your Operator in OpenShift® using the IBM Operator Collection SDK playbooks:
 
 1. Install the z/OS Cloud Broker Operator in your namespace and create an instance of `ZosCloudBroker`.
 2. Log into the OpenShift cluster from the command line and run the `oc project` command to navigate to the project where the z/OS Cloud Broker Operator is installed.

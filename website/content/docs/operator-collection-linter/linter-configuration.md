@@ -11,10 +11,9 @@ toc: true
 
 ## Linter Configuration
 ---
-The IBM Operator Collection SDK extension for VS Code has a built-in linter meant to validate your `operator-config` yaml file. 
+The IBM Operator Collection SDK extension for VS Code has a built-in linter meant to validate your `operator-config` YAML file. 
 
-
-The linter can be configured with a yaml file called **`.oc-lint`**, which should be placed in the same directory as your `operator-config` file. It contains the following format:
+The linter can be configured with a YAML file called **`.oc-lint`**, which should be placed in the same directory as your `operator-config` file. It contains the following format:
 
 ```yaml
 ---
@@ -67,6 +66,6 @@ You can customize the linter rules and files to suit your needs. By default, the
 
 ## Quick Fix Options
 ---
-The built-in linter will attempt to remedy playbooks specified in the `operator-config` yaml file with playbooks that it finds in the collection workspace. When errors are found, for instance in the case that the specifed playbook cannot be located, the linter may provide options to quickly resolve them:
+The built-in linter will attempt to remedy playbooks specified in the `operator-config` YAML file with playbooks that it finds in the collection workspace. When errors are found, for instance in the case that the specifed playbook cannot be located, the linter may provide options to quickly resolve them:
 
 ![Linter Quick Fix Options](/images/vs-code-extension/linter-quick-fix-options.png) 

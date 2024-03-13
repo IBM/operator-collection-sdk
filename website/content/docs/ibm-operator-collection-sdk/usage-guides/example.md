@@ -1,7 +1,7 @@
 ---
 weight: 1320
-title: "Example"
-description: "An example definition for an Operator Config yaml file. "
+title: "Example operator-config File"
+description: "An example definition for an operator-config YAML file. "
 icon: "category"
 date: "2024-01-18T16:50:21-08:00"
 lastmod: "2024-01-18T16:50:21-08:00"
