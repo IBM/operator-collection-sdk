@@ -15,4 +15,3 @@
       ansible.builtin.file:
         path: "{{ lookup('env', 'PWD') }}/{{ collection_namespace  | lower | replace('-','_') }}"
         state: absent
-

@@ -40,8 +40,8 @@
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "'operator_sdk.util' in requirementsyml.collections[0].name"
-          -  "'kubernetes.core' in requirementsyml.collections[1].name"
+          - "'operator_sdk.util' in requirementsyml.collections[0].name"
+          - "'kubernetes.core' in requirementsyml.collections[1].name"
 
     - name: Find playbooks directory
       ansible.builtin.find:
@@ -64,8 +64,8 @@
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "'all' in playbookyml[0].hosts"
-          -  "'vars/my_vars.yml' in playbookyml[0].vars_files[0]"
+          - "'all' in playbookyml[0].hosts"
+          - "'vars/my_vars.yml' in playbookyml[0].vars_files[0]"
 
     - name: Find roles directory
       ansible.builtin.find:
@@ -75,7 +75,7 @@
     - name: Assert that the roles directory exists
       ansible.builtin.assert:
         that: 
-          -  roles_path.warnings is not defined
+          - roles_path.warnings is not defined
 
     - name: Find galaxy.yml file
       ansible.builtin.find:
@@ -86,7 +86,7 @@
     - name: Assert that the galaxy.yml file exists
       ansible.builtin.assert:
         that: 
-          -  galaxyyml.matched == 1
+          - galaxyyml.matched == 1
 
     - name: Read galaxy.yml
       ansible.builtin.set_fact:
@@ -101,7 +101,7 @@
     - name: Assert that the operator-config.yml file exists
       ansible.builtin.assert:
         that: 
-          -  operatorconfig.matched == 1
+          - operatorconfig.matched == 1
 
     - name: Read operator-config
       ansible.builtin.set_fact:
@@ -110,19 +110,19 @@
     - name: Assert that operator-config.yml contains correct values
       ansible.builtin.assert:
         that: 
-          -  operatorconfigdata.description == galaxydata.description
-          -  operatorconfigdata.version == galaxydata.version
-          -  operatorconfigdata.displayName is defined
-          -  operatorconfigdata.domain == "{{ collection_namespace  | lower | replace('_','-') }}"
-          -  operatorconfigdata.name == "{{ collection_name  | lower | replace('_','-') }}"
-          -  operatorconfigdata.resources[0].description is defined
-          -  operatorconfigdata.resources[0].displayName is defined
-          -  operatorconfigdata.resources[0].kind is defined
-          -  operatorconfigdata.resources[0].playbook == 'playbooks/playbook.yml'
-          -  operatorconfigdata.resources[0].vars[0].description is defined
-          -  operatorconfigdata.resources[0].vars[0].displayName is defined
-          -  operatorconfigdata.resources[0].vars[0].name is defined
-          -  operatorconfigdata.resources[0].vars[0].type is defined
+          - operatorconfigdata.description == galaxydata.description
+          - operatorconfigdata.version == galaxydata.version
+          - operatorconfigdata.displayName is defined
+          - operatorconfigdata.domain == "{{ collection_namespace  | lower | replace('_','-') }}"
+          - operatorconfigdata.name == "{{ collection_name  | lower | replace('_','-') }}"
+          - operatorconfigdata.resources[0].description is defined
+          - operatorconfigdata.resources[0].displayName is defined
+          - operatorconfigdata.resources[0].kind is defined
+          - operatorconfigdata.resources[0].playbook == 'playbooks/playbook.yml'
+          - operatorconfigdata.resources[0].vars[0].description is defined
+          - operatorconfigdata.resources[0].vars[0].displayName is defined
+          - operatorconfigdata.resources[0].vars[0].name is defined
+          - operatorconfigdata.resources[0].vars[0].type is defined
     
     - name: Find ./.vscode/extensions.json file"
       ansible.builtin.stat:
@@ -140,6 +140,6 @@
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "'recommendations' in extensionsjson"
-          -  "'ibm.operator-collection-sdk' in extensionsjson.recommendations"
-          -  "'redhat.ansible' in extensionsjson.recommendations"
+          - "'recommendations' in extensionsjson"
+          - "'ibm.operator-collection-sdk' in extensionsjson.recommendations"
+          - "'redhat.ansible' in extensionsjson.recommendations"

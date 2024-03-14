@@ -1,17 +1,19 @@
 #
-# Copyright 2023 IBM Inc. All rights reserved
+# Copyright 2024 IBM Inc. All rights reserved
 # SPDX-License-Identifier: Apache2.0
 #
 
 ---
-- name: Converge
-  hosts: all
+- name: Test Environment Setup
+  hosts: localhost
   connection: local
   gather_facts: false
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-    
   tasks:
+    - name: Install dependency  # necessary for gh-actions use
+      pip:
+        name:
+          - kubernetes
+
     - name: Create Namespace
       kubernetes.core.k8s:
         state: present
@@ -73,18 +75,27 @@
       retries: 30
       delay: 5
 
-    - name: Create ZosCloudBroker
-      ibm.operator_collection_sdk.oc_zoscloudbroker:
+    - name: Create ZosCloudBoker
+      kubernetes.core.k8s:
         state: present
-        namespace: "{{ ocpnamespace }}"
-        accept_license: true
-        multi_namespace: true
-        log_level: trace
-        storage:
-          configure: false
-          enabled: false
-          storage_size: 5Gi
-          volume_mode: Filesystem
+        definition:
+          apiVersion: zoscb.ibm.com/v2beta1
+          kind: ZosCloudBroker
+          metadata:
+            name: "{{ zoscloudbroker_name }}"
+            namespace: "{{ ocpnamespace }}"
+          spec:
+            catalogResources: {}
+            license:
+              accept: true
+            logLevel: trace
+            managerResources: {}
+            storage:
+              configure: false
+              enabled: false
+              size: 5Gi
+              volumeMode: Filesystem
+            uiResources: {}
 
     - name: Validate ZosCloudBroker installed successfully
       kubernetes.core.k8s_info:
@@ -96,23 +107,3 @@
       until: "zoscb_results.resources[0].status.phase == 'Successful'"
       retries: 30
       delay: 5
-
-
-- import_playbook: ../../create_operator.yml
-  vars:
-    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-
-- import_playbook: ../../create_credential_secret.yml
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-
-- import_playbook: ../../redeploy_operator.yml
-  vars:
-    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-
-- import_playbook: ../../redeploy_collection.yml
-  vars:
-    filepath: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"

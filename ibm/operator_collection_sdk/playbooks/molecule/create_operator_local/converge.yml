@@ -73,27 +73,18 @@
       retries: 30
       delay: 5
 
-    - name: Create ZosCloudBoker
-      kubernetes.core.k8s:
+    - name: Create ZosCloudBroker
+      ibm.operator_collection_sdk.oc_zoscloudbroker:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta1
-          kind: ZosCloudBroker
-          metadata:
-            name: "{{ zoscloudbroker_name }}"
-            namespace: "{{ ocpnamespace }}"
-          spec:
-            catalogResources: {}
-            license:
-              accept: true
-            logLevel: trace
-            managerResources: {}
-            storage:
-              configure: false
-              enabled: false
-              size: 5Gi
-              volumeMode: Filesystem
-            uiResources: {}
+        namespace: "{{ ocpnamespace }}"
+        accept_license: true
+        multi_namespace: true
+        log_level: trace
+        storage:
+          configure: false
+          enabled: false
+          storage_size: 5Gi
+          volume_mode: Filesystem
 
     - name: Validate ZosCloudBroker installed successfully
       kubernetes.core.k8s_info:
