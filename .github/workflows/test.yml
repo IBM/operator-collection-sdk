@@ -63,7 +63,6 @@ jobs:
   sanity:
     name: Run Sanity Tests (Ⓐ${{ matrix.ansible }})
     needs: [lint, authorize]
-    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: >-
       ${{ contains(fromJson(
           '["stable-2.9", "stable-2.10", "stable-2.11"]'
@@ -84,7 +83,6 @@ jobs:
   unit:
     name: Run Unit Tests (Ⓐ${{ matrix.ansible }})
     needs: [lint, authorize]
-    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: >-
       ${{ contains(fromJson(
           '["stable-2.9", "stable-2.10", "stable-2.11"]'
@@ -107,7 +105,6 @@ jobs:
   integration:
     name: Run Integration Tests
     needs: [lint, authorize]
-    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
