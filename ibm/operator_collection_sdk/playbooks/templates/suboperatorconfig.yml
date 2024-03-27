@@ -1,0 +1,11 @@
+{# templates/suboperatorconfig.yml #}
+
+apiVersion: zoscb.ibm.com/v2beta2
+kind: SubOperatorConfig
+metadata:
+  name: {{name}}
+  namespace: {{namespace}}
+spec:
+  credentialType: {{ credentialType}}
+  operatorCollection: {{ collection_name }}
+  mapping: {{endpointMapping}}

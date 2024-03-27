@@ -26,14 +26,6 @@
       vars:
         path: "{{ local_directory }}"
 
-    - name: Upload collection to manager pod
-      ansible.builtin.include_role:
-        name: upload_collection_to_manager
-      vars:
-        path: "{{ local_directory }}"
-        namespace: "{{ target_namespace }}"
-        redeploy: true
-
     - name: Get SubOperatorConfig
       kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
@@ -96,21 +88,12 @@
         operatorcollection_name: "{{ operator_name + '.' + operator_domain + '.' + operator_version }}"
 
     - name: Create OperatorCollection
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_operatorcollection:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: OperatorCollection
-          metadata:
-            name: "{{ operatorcollection_name }}"
-            namespace: "{{ target_namespace }}"
-            labels:
-              managed-by: ibm-zos-cloud-broker
-              operator-domain: "{{ operator_domain }}"
-              operator-name: "{{ operator_name }}"
-              operator-version: "{{ operator_version }}"
-          spec:
-            skipSignatureVerification: true
+        name: "{{ operatorcollection_name }}"
+        namespace: "{{ target_namespace }}"
+        skipSignatureVerification: true
+        collection_src: "{{ local_directory }}/local/builds/{{operator_version}}/{{operator_domain}}-{{operator_name}}-{{operator_version}}.tar.gz"
 
     - name: Validate OperatorCollection installed successfully
       kubernetes.core.k8s_info:
@@ -124,18 +107,13 @@
       delay: 5
 
     - name: Create SubOperatorConfig
-      kubernetes.core.k8s:
+      ibm.operator_collection_sdk.oc_suboperatorconfig:
         state: present
-        definition:
-          apiVersion: zoscb.ibm.com/v2beta2
-          kind: SubOperatorConfig
-          metadata:
-            name: "{{ operatorcollection_name }}-soc"
-            namespace: "{{ target_namespace }}"
-          spec:
-            credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
-            mapping: "{{ soc_results.resources[0].spec.mapping }}"
-            operatorCollection: "{{ operatorcollection_name }}"
+        name: "{{ operatorcollection_name }}-soc"
+        namespace: "{{ target_namespace }}"
+        credentialType: "{{ soc_results.resources[0].spec.credentialType }}"
+        endpointMapping: "{{ soc_results.resources[0].spec.mapping }}"
+        collection_name: "{{ operatorcollection_name }}"
 
     - name: Validate SubOperatorConfig installed successfully
       kubernetes.core.k8s_info:
