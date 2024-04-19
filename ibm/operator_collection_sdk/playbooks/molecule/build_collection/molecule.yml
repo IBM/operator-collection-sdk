@@ -1,0 +1,29 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+platforms:
+  - name: instance
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      jinja2_native: true
+  playbooks:
+    cleanup: cleanup.yml
+
+  inventory:
+    group_vars:
+      all:
+        operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator/"
+        test_operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator-test/"
+
+scenario:
+  test_sequence:
+    - destroy
+    - converge
+    - verify
+    - destroy
+verifier:
+  name: ansible
