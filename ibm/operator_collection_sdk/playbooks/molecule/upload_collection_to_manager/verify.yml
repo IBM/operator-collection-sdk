@@ -1,0 +1,39 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- name: Verify
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: Set Required Variables
+      ansible.builtin.include_role:
+        name: ../../roles/upload_collection_to_manager
+        tasks_from: set_vars.yml
+      vars:
+        path: "{{ operator_path }}" # path used to set vars, nothing else
+        target_namespace: "{{ ocpnamespace }}"
+      when: operator_name is undefined
+
+    - name: Get Manager Pod Name
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: "{{ ocpnamespace }}"
+        label_selectors:
+          - component = manager
+      register: pod_results
+    
+    - name: Check Manager for Operator Collections
+      ansible.builtin.command: oc exec -i -n "{{ pod_results.resources[0].metadata.namespace }}" "{{ pod_results.resources[0].metadata.name }}" -- ls collections/suboperator
+      register: pod_collections
+      when: pod_results.resources | length > 0
+
+    - name: Verify Operator Collection exists on manager pod
+      ansible.builtin.assert:
+          that:
+            - operator_name in pod_collections.stdout_lines
+          fail_msg: Operator Collection not detected on manager pod

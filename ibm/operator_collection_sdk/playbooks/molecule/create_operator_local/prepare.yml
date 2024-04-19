@@ -8,9 +8,6 @@
   hosts: all
   connection: local
   gather_facts: false
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-    
   tasks:
     - name: Validate OCP cluster authorization
       ansible.builtin.command: oc project
