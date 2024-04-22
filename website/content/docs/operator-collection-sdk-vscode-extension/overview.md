@@ -31,18 +31,18 @@ Get started by [installing the extension for VS Code](/docs/operator-collection-
 - Display the status of the operator pod, and each container within the pod.
 - Download and view container logs directly from your VS Code editor.
 
-![Download logs](images/vs-code-extension/oc-sdk-download-logs.gif)
+<!-- ![Download logs](images/vs-code-extension/oc-sdk-download-logs.gif) -->
 
 - Display the status of the OpenShift resources created to generate your operator (`OperatorCollections`, `SubOperatorConfigs`, `ZosEndpoints`).
 - Create and monitor the Custom Resources for your operator.
 
-![Monitor operator status](images/vs-code-extension/oc-sdk-view-create-resources.gif)
+<!-- ![Monitor operator status](images/vs-code-extension/oc-sdk-view-create-resources.gif) -->
 
 ### Manage your OpenShift cluster connection and project
 
 Configure your OpenShift server URL, and select your OpenShift Project directly from your VS Code editor
 
-![OpenShift configuration](images/vs-code-extension/oc-cluster-login-url-and-token.gif)
+<!-- ![OpenShift configuration](images/vs-code-extension/oc-cluster-login-url-and-token.gif) -->
 
 ### Quickly generate operator collections and files from scratch using the sub-menu
 
