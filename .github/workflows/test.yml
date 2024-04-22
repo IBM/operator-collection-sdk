@@ -1,107 +1,107 @@
-# # Execute Molecule Tests
+# Execute Molecule Tests
 
-# name: Test
+name: Test
 
-# on:
-#   push:
-#     branches:
-#       - '**'
-#     paths-ignore:
-#       - 'docs/**'
-#       - '**.md'
-#       - 'website/**'
-#     tags-ignore:
-#       - '**'
-#   pull_request_target:
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'website/**'
+    tags-ignore:
+      - '**'
+  pull_request_target:
 
-# jobs:
-#   authorize:
-#     name: Authorize
-#     environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: true
+jobs:
+  authorize:
+    name: Authorize
+    environment: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && 'external' || 'internal' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
 
-#   lint:
-#     name: Lint
-#     needs: authorize
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Check-out repository for Branch builds
-#         uses: actions/checkout@v3
-#         if: github.event_name != 'pull_request_target'
+  lint:
+    name: Lint
+    needs: authorize
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository for Branch builds
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request_target'
 
-#       - name: Check-out repository for PR builds
-#         uses: actions/checkout@v3
-#         with:
-#           ref: "refs/pull/${{ github.event.number }}/merge"
-#         if: github.event_name == 'pull_request_target'
+      - name: Check-out repository for PR builds
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+        if: github.event_name == 'pull_request_target'
 
-#       - name: Install Python Requirements
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
-#           cache: 'pip'
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
 
-#       - name: Perform PIP installs
-#         run: pip install ansible-lint==6.16.0
+      - name: Perform PIP installs
+        run: pip install ansible-lint==6.16.0
 
-#       - name: Perform collection installs
-#         run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
 
-#       - name: Run ansible-lint
-#         run: |
-#           ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
-#           ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
+      - name: Run ansible-lint
+        run: |
+          ansible-galaxy collection install --force -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.yml
+          ansible-lint --config-file ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/.ansible-lint  --project-dir ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/ --exclude ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks/molecule/
 
-#   test:
-#     name: Test
-#     needs: [lint, authorize]
-#     runs-on: ${{matrix.os}}
-#     strategy:
-#       matrix:
-#         os: [ubuntu-latest, macOS-latest]
+  test:
+    name: Test
+    needs: [lint, authorize]
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
 
-#     steps:
-#       - name: Check-out repository for Branch builds
-#         uses: actions/checkout@v3
-#         if: github.event_name != 'pull_request_target'
+    steps:
+      - name: Check-out repository for Branch builds
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request_target'
 
-#       - name: Check-out repository for PR builds
-#         uses: actions/checkout@v3
-#         with:
-#           ref: "refs/pull/${{ github.event.number }}/merge"
-#         if: github.event_name == 'pull_request_target'
+      - name: Check-out repository for PR builds
+        uses: actions/checkout@v3
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+        if: github.event_name == 'pull_request_target'
 
-#       - name: Install Python Requirements
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.10'
-#           cache: 'pip'
+      - name: Install Python Requirements
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
 
-#       - name: Perform PIP installs
-#         run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
+      - name: Perform PIP installs
+        run: pip install -r ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/requirements.txt
 
-#       - name: Perform collection installs
-#         run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
+      - name: Perform collection installs
+        run: ansible-galaxy collection install ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk --force
       
-#       - name: Install oc cli
-#         uses: redhat-actions/openshift-tools-installer@v1
-#         with:
-#           oc: latest
+      - name: Install oc cli
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: latest
 
-#       - name: Log into OCP
-#         uses: redhat-actions/oc-login@v1
-#         with:
-#           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-#           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+      - name: Log into OCP
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
 
-#       - name: Execute Molecule Tests
-#         run: |
-#           cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks
-#           export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
-#           OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
-#         env:
-#             OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-#             OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-#             ZOSCB_RELEASE: ibm-zoscb.${{ vars.ZOSCB_RELEASE }}
+      - name: Execute Molecule Tests
+        run: |
+          cd ${GITHUB_WORKSPACE}/ibm/operator_collection_sdk/playbooks
+          export ANSIBLE_PYTHON_INTERPRETER="$(which python)"
+          OCP_NAMESPACE=molecule-${GITHUB_REF_NAME}-${RUNNER_OS} molecule test --all
+        env:
+            OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+            OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+            ZOSCB_RELEASE: ibm-zoscb.${{ vars.ZOSCB_RELEASE }}
