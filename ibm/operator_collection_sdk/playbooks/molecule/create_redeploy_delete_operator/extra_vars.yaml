@@ -1,7 +1,7 @@
 collection_name: test_collection
 collection_namespace: ibm
 zosendpoint_name: ibmcloud-vm
-zosendpoint_host: 52.117.98.131
+zosendpoint_host: 
 zosendpoint_port: 22
 zosendpoint_type: remote
 username: "testuser"
