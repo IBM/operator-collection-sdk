@@ -201,7 +201,7 @@ This command should now prompt you for the z/OS endpoint you would like to execu
 
 ```bash
 Enter your ZosEndpoint name: wazi-sandbox
-Enter your ZosEndpoint host: ***HOST_REMOVED***
+Enter your ZosEndpoint host: 
 Enter your ZosEndpoint port [22]: 32281
 Enter your SSH Username for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed): ibmuser
 Enter the path to your private SSH Key for this endpoint (Press Enter to skip if the zoscb-encrypt CLI isn't installed): ~/.ssh/id_rsa
