@@ -3,3 +3,6 @@ examples/racf-operator/local/*
 .DS_Store
 .vscode/*
 *.idea/
+
+website/public/*
+website/resources/*

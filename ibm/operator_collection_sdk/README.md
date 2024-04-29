@@ -25,7 +25,7 @@ The IBM Operator Collection SDK is used to assist in the end to end deployment o
 
 # Prerequisites
 - [Openshift Cluster (version 4.10 or later)][openshift]
-- [OpenShift Command Line Interface (CLI)][openshift-cli]
+- [Openshift Command Line Interface (CLI)][openshift-cli]
 - [Ansible CLI Tools (version 2.7 or later)][ansible]
 - [Kubernetes Python Client][kubernetes]
 - [z/OS Cloud Broker v2.2.0+][broker]
