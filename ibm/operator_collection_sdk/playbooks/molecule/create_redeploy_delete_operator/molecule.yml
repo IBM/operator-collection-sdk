@@ -15,8 +15,6 @@ provisioner:
   config_options:
     defaults:
       jinja2_native: true
-  playbooks:
-    cleanup: cleanup.yml
       
   ## extra-vars needed to bypass vars_prompts
   ansible_args:
@@ -28,8 +26,7 @@ provisioner:
         collection_namespace: ibm
         subscription_name: ibm-zoscb
         zoscloudbroker_name: zoscloudbroker
-        ocpnamespace: "{{ '${OCP_NAMESPACE:-molecule}' | lower | regex_replace('[^-a-zA-Z0-9]','-') }}"
-        operator_path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/../../../examples/racf-operator"
+        ocpNamespace: ${OCP_NAMESPACE:-molecule}
         zosendpoint_name: ibmcloud-vm
         secret_name: "test-secret"
         openshift_token: ${OPENSHIFT_TOKEN}

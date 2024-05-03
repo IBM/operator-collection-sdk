@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+plugins/modules/oc_zoscloudbroker.py validate-modules:parameter-type-not-in-doc # "enabled" var is erroneously flagged
+plugins/modules/oc_zoscloudbroker.py validate-modules:undocumented-parameter # "enabled" var is erroneously flagged
+plugins/modules/oc_zoscloudbroker.py validate-modules:return-syntax-error # "metadata" return field varies wildly, can't document
+plugins/modules/oc_zoscloudbroker.py validate-modules:missing-gplv3-license # ignore gplv3 license, we use apache
+>>>>>>> v2-cloudbroker
 playbooks/templates/endpoint.yml yamllint!skip
 playbooks/templates/suboperatorconfig.yml yamllint!skip
 playbooks/templates/operatorcollection.yml yamllint!skip

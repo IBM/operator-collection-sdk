@@ -1,0 +1,28 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- block:
+  - name: Create ZosCloudBoker
+    kubernetes.core.k8s:
+      state: present
+      definition:
+        apiVersion: zoscb.ibm.com/v2beta1
+        kind: ZosCloudBroker
+        metadata:
+          name: "{{ zoscloudbroker_name }}"
+          namespace: "{{ ocpnamespace }}"
+        spec:
+          catalogResources: {}
+          license:
+            accept: true
+          logLevel: trace
+          managerResources: {}
+          storage:
+            configure: false
+            enabled: false
+            size: 5Gi
+            volumeMode: Filesystem
+          uiResources: {}

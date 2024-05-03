@@ -1,0 +1,13 @@
+#
+# Copyright 2024 IBM Inc. All rights reserved
+# SPDX-License-Identifier: Apache2.0
+#
+
+---
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ../../integration_config.yml
+  roles:
+    - role: ../oc_zoscloudbroker
+    

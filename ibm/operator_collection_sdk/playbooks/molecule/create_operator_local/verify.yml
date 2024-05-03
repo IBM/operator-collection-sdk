@@ -8,6 +8,9 @@
   hosts: all
   connection: local
   gather_facts: false
+  vars:
+    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
+
   tasks:
     - name: Validate ZosEndpoint
       kubernetes.core.k8s_info:
@@ -20,9 +23,9 @@
     - name: Assert ZosEndpoint configuration
       ansible.builtin.assert:
         that: 
-          -  zosendpoint_results.resources[0].status.phase == 'Successful'
-          -  zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
-          -  zosendpoint_results.resources[0].spec.endpointType == "local"
+          - zosendpoint_results.resources[0].status.phase == 'Successful'
+          - zosendpoint_results.resources[0].status.suboperatorconfigs | length == 1
+          - zosendpoint_results.resources[0].spec.endpointType == "local"
 
     - name: Validate SubOperatorConfig
       kubernetes.core.k8s_info:
@@ -35,15 +38,15 @@
     - name: Assert SubOperatorConfig configuration
       ansible.builtin.assert:
         that: 
-          -  suboperatorconfig_results.resources[0].spec.credentialType == 'shared'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpoint_name }}'
-          -  suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
-          -  suboperatorconfig_results.resources[0].spec.operatorCollection is defined
-          -  suboperatorconfig_results.resources[0].status.phase == 'Successful'
-          -  suboperatorconfig_results.resources[0].status.clusterserviceversion is defined
-          -  suboperatorconfig_results.resources[0].status.customresourcedefinition | length > 0
-          -  suboperatorconfig_results.resources[0].status.packages is defined
+          - suboperatorconfig_results.resources[0].spec.credentialType == 'shared'
+          - suboperatorconfig_results.resources[0].spec.mapping[0].namespace == '{{ ocpnamespace }}'
+          - suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].name == '{{ zosendpoint_name }}'
+          - suboperatorconfig_results.resources[0].spec.mapping[0].zosendpoints[0].credentialName is undefined
+          - suboperatorconfig_results.resources[0].spec.operatorCollection is defined
+          - suboperatorconfig_results.resources[0].status.phase == 'Successful'
+          - suboperatorconfig_results.resources[0].status.clusterserviceversion is defined
+          - suboperatorconfig_results.resources[0].status.customresourcedefinition | length > 0
+          - suboperatorconfig_results.resources[0].status.packages is defined
 
     - name: Validate OperatorCollection
       kubernetes.core.k8s_info:
@@ -56,10 +59,10 @@
     - name: Assert OperatorCollection configuration
       ansible.builtin.assert:
         that: 
-          -  operatorcollection_results.resources[0].spec.skipSignatureVerification is true
-          -  operatorcollection_results.resources[0].status.config.collectionPath is defined
-          -  operatorcollection_results.resources[0].status.phase == 'Successful'
-          -  operatorcollection_results.resources[0].status.subOperatorConfigMappingStatus | length == 1
+          - operatorcollection_results.resources[0].spec.skipSignatureVerification is true
+          - operatorcollection_results.resources[0].status.config.collectionPath is defined
+          - operatorcollection_results.resources[0].status.phase == 'Successful'
+          - operatorcollection_results.resources[0].status.subOperatorConfigMappingStatus | length == 1
 
     - name: Validate CSV
       kubernetes.core.k8s_info:
@@ -76,4 +79,4 @@
     - name: Assert CSV configuration
       ansible.builtin.assert:
         that: 
-          -  csv_results.resources[0].status.phase == 'Succeeded'
+          - csv_results.resources[0].status.phase == 'Succeeded'
