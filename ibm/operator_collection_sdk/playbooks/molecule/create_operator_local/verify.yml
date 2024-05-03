@@ -8,9 +8,6 @@
   hosts: all
   connection: local
   gather_facts: false
-  vars:
-    ocpnamespace: "{{ ocpNamespace | lower | replace('_','-') | replace('/','-') }}"
-
   tasks:
     - name: Validate ZosEndpoint
       kubernetes.core.k8s_info:

@@ -125,10 +125,10 @@ class TestValidateParams(unittest.TestCase):
 
     def test_module_fails_when_labels_arg_invalid(self):
         with self.assertRaises(AnsibleFailJson) as result:
-            misshapenLabel = "This=Is=A=Misshapen=Label"
+            misshapen_label = "This=Is=A=Misshapen=Label"
 
             args = {**self.mock_module_params}
-            args["labels"] = [misshapenLabel]
+            args["labels"] = [misshapen_label]
             set_module_args(args)
             oc_zoscloudbroker.create_and_validate_module()
 
@@ -136,12 +136,12 @@ class TestValidateParams(unittest.TestCase):
             error_equal(
                 result.exception.args[0]["msg"],
                 "Recieved label with misshapen form: '{}'. Each label in the list should take the \
-                form 'key=value'.".format(misshapenLabel)))
+                form 'key=value'.".format(misshapen_label)))
 
         with self.assertRaises(AnsibleFailJson) as result:
-            misshapenLabel = "AMisshapenLabel"
+            misshapen_label = "AMisshapenLabel"
 
-            args["labels"] = [misshapenLabel]
+            args["labels"] = [misshapen_label]
             set_module_args(args)
             oc_zoscloudbroker.create_and_validate_module()
 
@@ -149,4 +149,4 @@ class TestValidateParams(unittest.TestCase):
             error_equal(
                 result.exception.args[0]["msg"],
                 "Recieved label with misshapen form: '{}'. Each label in the list should take the \
-                form 'key=value'.".format(misshapenLabel)))
+                form 'key=value'.".format(misshapen_label)))

@@ -9,7 +9,7 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: Install dependency  # necessary for gh-actions use
+    - name: Install dependency  # necessary for gh-actions ansible tests
       pip:
         name:
           - kubernetes
