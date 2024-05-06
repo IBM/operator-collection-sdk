@@ -55,7 +55,7 @@
     - name: Assert that requirements.yml contains correct ansible requirements
       ansible.builtin.assert:
         that: 
-          -  "zos_core_filename in requirementsyml.collections[0].name"
+          - "zos_core_filename in requirementsyml.collections[0].name"
 
     - name: Search for wheelhouse directory
       ansible.builtin.find:

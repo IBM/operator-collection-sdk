@@ -94,7 +94,7 @@ print_pass: true
 ##################################################################################################################
 # Specifies the SMTP server to use for sending email, if sending email is desired.
 ##################################################################################################################
-smtp_server: ***HOST_REMOVED***
+smtp_server: ""
 
 ##################################################################################################################
 # Specifies the SMTP port to use for sending email, if sending email is desired.

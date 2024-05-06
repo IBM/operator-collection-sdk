@@ -14,5 +14,5 @@
 source_system:
   hosts:
     zos_host:
-      ansible_host: ***HOST_REMOVED***
+      ansible_host: ""
       ansible_user: omvsadm

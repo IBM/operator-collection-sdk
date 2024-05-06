@@ -1,0 +1,37 @@
+{# templates/zoscloudbroker.yml.j2 #}
+
+apiVersion: zoscb.ibm.com/v2beta1
+kind: ZosCloudBroker
+metadata:
+  name: {{name}}
+  namespace: {{namespace}}
+  labels: {{ labels }}
+spec:
+  catalogResources: {}
+  galaxyConfig:
+    enabled: {{ ansible_galaxy_configuration.enabled }}
+    galaxyURL: {{ ansible_galaxy_configuration.url }}
+  license:
+    accept: {{ accept_license }}
+  logLevel: {{ log_level }}
+  managerResources: {}
+  multiNamespace: {{ multi_namespace_suboperators }}
+  storage:
+    {% if storage.configure %}
+    accessModes: ReadWriteMany
+    volumeMode: Filesystem
+    configure: true
+    enabled: false
+    size: {{ storage.storage_size }}
+    storageClassName: {{ storage.storage_class }}
+    {% else %}
+    {% if storage.enabled %}
+    configure: false
+    enabled: true 
+    pvc: {{ storage.persistent_volume_claim }}
+    {% else %}
+    configure: false
+    enabled: false 
+    {% endif %}
+    {% endif %}
+  uiResources: {}

@@ -42,4 +42,3 @@
     operator_name: "{{ operator_config.name | lower }}"
     operator_version: "{{ operator_config.version }}"
   when: operator_name is undefined or operator_version is undefined
-

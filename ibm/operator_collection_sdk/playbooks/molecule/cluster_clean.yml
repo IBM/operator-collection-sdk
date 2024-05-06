@@ -5,10 +5,15 @@
 
 ---
 - name: Clean Test Environment
-  hosts: all
+  hosts: localhost
   connection: local
-  gather_facts: false 
+  gather_facts: false
   tasks:
+    - name: Install dependency  # necessary for gh-actions ansible tests
+      pip:
+        name:
+          - kubernetes
+
     - name: Get SubOperatorConfigs
       kubernetes.core.k8s_info:
         api_version: zoscb.ibm.com/v2beta2
