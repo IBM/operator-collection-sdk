@@ -1,4 +1,6 @@
-# IBM Operator Collection SDK
+# DEPRECATED
+
+# DEPRECATED IBM Operator Collection SDK
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Test](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/IBM/operator-collection-sdk/actions/workflows/test.yml)
 [![Release](https://github.com/IBM/operator-collection-sdk/actions/workflows/release.yml/badge.svg)](https://github.com/IBM/operator-collection-sdk/actions/workflows/release.yml)
