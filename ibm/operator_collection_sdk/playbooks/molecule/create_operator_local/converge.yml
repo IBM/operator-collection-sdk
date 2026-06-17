@@ -9,5 +9,3 @@
 
 - name: Converge
   import_playbook: ../../create_operator.yml
-  vars:
-    filepath: "{{ operator_path }}"

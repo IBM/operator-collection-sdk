@@ -124,7 +124,7 @@ try:
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.runner import run_module
     from ansible_collections.kubernetes.core.plugins.module_utils.k8s.exceptions import CoreException
 except ImportError as e:
-    DEPENDENCY_IMPORT_ERROR = f"Failed to import dependency: {e}"
+    DEPENDENCY_IMPORT_ERROR = "Failed to import dependency: {}".format(e)
 
 
 def run_zosendpoint_module():

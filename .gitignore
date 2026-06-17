@@ -3,3 +3,5 @@ examples/racf-operator/local/*
 .DS_Store
 .vscode/*
 *.idea/
+__pycache__
+integration_config.yml
